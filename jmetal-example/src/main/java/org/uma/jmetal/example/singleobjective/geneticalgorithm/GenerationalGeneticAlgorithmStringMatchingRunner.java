@@ -26,49 +26,49 @@ import java.util.stream.Collectors;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class GenerationalGeneticAlgorithmStringMatchingRunner {
-  public static void main(String[] args) {
-    StringMatching problem;
-    Algorithm<CharSequenceSolution> algorithm;
-    CrossoverOperator<CharSequenceSolution> crossover;
-    MutationOperator<CharSequenceSolution> mutation;
-    SelectionOperator<List<CharSequenceSolution>, CharSequenceSolution> selection;
+    public static void main(String[] args) {
+        StringMatching problem;
+        Algorithm<CharSequenceSolution> algorithm;
+        CrossoverOperator<CharSequenceSolution> crossover;
+        MutationOperator<CharSequenceSolution> mutation;
+        SelectionOperator<List<CharSequenceSolution>, CharSequenceSolution> selection;
 
-    problem = new StringMatching("jMetal is an optimization framework");
+        problem = new StringMatching("jMetal is an optimization framework");
 
-    crossover = new NullCrossover<>();
+        crossover = new NullCrossover<>();
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    mutation = new CharSequenceRandomMutation(mutationProbability, problem.getAlphabet());
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        mutation = new CharSequenceRandomMutation(mutationProbability, problem.getAlphabet());
 
-    selection = new BinaryTournamentSelection<>(new RankingAndCrowdingDistanceComparator<>());
+        selection = new BinaryTournamentSelection<>(new RankingAndCrowdingDistanceComparator<>());
 
-    algorithm =
-        new GeneticAlgorithmBuilder<>(problem, crossover, mutation)
-            .setPopulationSize(50)
-            .setMaxEvaluations(250000)
-            .setSelectionOperator(selection)
-            .build();
+        algorithm =
+                new GeneticAlgorithmBuilder<>(problem, crossover, mutation)
+                        .setPopulationSize(50)
+                        .setMaxEvaluations(250000)
+                        .setSelectionOperator(selection)
+                        .build();
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-    CharSequenceSolution solution = algorithm.getResult();
-    List<CharSequenceSolution> population = new ArrayList<>(1);
-    population.add(solution);
+        CharSequenceSolution solution = algorithm.getResult();
+        List<CharSequenceSolution> population = new ArrayList<>(1);
+        population.add(solution);
 
-    long computingTime = algorithmRunner.getComputingTime();
+        long computingTime = algorithmRunner.getComputingTime();
 
-    JMetalLogger.logger.info(
-        "Best found string: '"
-            + solution.variables().stream().map(String::valueOf).collect(Collectors.joining())
-            + "'");
+        JMetalLogger.logger.info(
+                "Best found string: '"
+                        + solution.variables().stream().map(String::valueOf).collect(Collectors.joining())
+                        + "'");
 
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-        .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
+                .print();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
-  }
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
+    }
 }

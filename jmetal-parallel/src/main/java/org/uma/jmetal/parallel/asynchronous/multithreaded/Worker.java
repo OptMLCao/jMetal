@@ -6,42 +6,42 @@ import java.util.concurrent.BlockingQueue;
 import java.util.function.Function;
 
 public class Worker<T extends ParallelTask<?>> extends Thread {
-  private BlockingQueue<T> completedTaskQueue;
-  private BlockingQueue<T> pendingTaskQueue;
+    private BlockingQueue<T> completedTaskQueue;
+    private BlockingQueue<T> pendingTaskQueue;
 
-  protected Function<T, T> computeFunction;
+    protected Function<T, T> computeFunction;
 
-  public Worker(
-      Function<T, T> computeFunction,
-      BlockingQueue<T> pendingTaskQueue,
-      BlockingQueue<T> completedTaskQueue) {
-    this.computeFunction = computeFunction;
-    this.completedTaskQueue = completedTaskQueue;
-    this.pendingTaskQueue = pendingTaskQueue;
-  }
-
-  @Override
-  public void run() {
-    while (true) {
-      T taskToCompute = null;
-
-      try {
-        taskToCompute = pendingTaskQueue.take();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-
-      T computedTask = computeFunction.apply(taskToCompute);
-
-      completedTaskQueue.add(computedTask);
+    public Worker(
+            Function<T, T> computeFunction,
+            BlockingQueue<T> pendingTaskQueue,
+            BlockingQueue<T> completedTaskQueue) {
+        this.computeFunction = computeFunction;
+        this.completedTaskQueue = completedTaskQueue;
+        this.pendingTaskQueue = pendingTaskQueue;
     }
-  }
 
-  public BlockingQueue<T> getCompletedTaskQueue() {
-    return completedTaskQueue;
-  }
+    @Override
+    public void run() {
+        while (true) {
+            T taskToCompute = null;
 
-  public BlockingQueue<T> getPendingTaskQueue() {
-    return pendingTaskQueue;
-  }
+            try {
+                taskToCompute = pendingTaskQueue.take();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            T computedTask = computeFunction.apply(taskToCompute);
+
+            completedTaskQueue.add(computedTask);
+        }
+    }
+
+    public BlockingQueue<T> getCompletedTaskQueue() {
+        return completedTaskQueue;
+    }
+
+    public BlockingQueue<T> getPendingTaskQueue() {
+        return pendingTaskQueue;
+    }
 }

@@ -17,102 +17,109 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("serial")
 public class DefaultDoubleSolution extends AbstractSolution<Double> implements DoubleSolution {
-  protected List<Bounds<Double>> bounds ;
+    protected List<Bounds<Double>> bounds;
 
-  /**
-   * Constructor
-   * 
-   * @deprecated Use {@link #DefaultDoubleSolution(int, int, List)} instead.
-   */
-  @Deprecated
-  public DefaultDoubleSolution(
-      List<Pair<Double, Double>> bounds,
-      int numberOfObjectives,
-      int numberOfConstraints) {
-    this(numberOfObjectives, numberOfConstraints, bounds.stream().map(Bounds::fromPair).collect(Collectors.toList())) ;
-  }
-
-  /** Constructor */
-  public DefaultDoubleSolution(
-      int numberOfObjectives,
-      int numberOfConstraints,
-      List<Bounds<Double>> boundsList) {
-    super(boundsList.size(), numberOfObjectives, numberOfConstraints) ;
-
-    this.bounds = boundsList ;
-
-    for (int i = 0 ; i < boundsList.size(); i++) {
-      Bounds<Double> bounds = boundsList.get(i);
-      variables().set(i, JMetalRandom.getInstance().nextDouble(bounds.getLowerBound(), bounds.getUpperBound())); ;
-    }
-  }
-
-  /**
-   * Constructor
-   * 
-   * @deprecated Use {@link #DefaultDoubleSolution(int, List)} instead.
-   */
-  @Deprecated
-  public DefaultDoubleSolution(
-      List<Pair<Double, Double>> bounds,
-      int numberOfObjectives) {
-    this(bounds, numberOfObjectives, 0) ;
-  }
-
-  /** Constructor */
-  public DefaultDoubleSolution(
-      int numberOfObjectives,
-      List<Bounds<Double>> boundsList) {
-    this(numberOfObjectives, 0, boundsList) ;
-  }
-
-  /** Copy constructor */
-  public DefaultDoubleSolution(DefaultDoubleSolution solution) {
-    super(solution.variables().size(), solution.objectives().length, solution.constraints().length) ;
-
-    for (int i = 0; i < solution.variables().size(); i++) {
-      variables().set(i, solution.variables().get(i));
+    /**
+     * Constructor
+     *
+     * @deprecated Use {@link #DefaultDoubleSolution(int, int, List)} instead.
+     */
+    @Deprecated
+    public DefaultDoubleSolution(
+            List<Pair<Double, Double>> bounds,
+            int numberOfObjectives,
+            int numberOfConstraints) {
+        this(numberOfObjectives, numberOfConstraints, bounds.stream().map(Bounds::fromPair).collect(Collectors.toList()));
     }
 
-    for (int i = 0; i < solution.objectives().length; i++) {
-      objectives()[i] = solution.objectives()[i];
+    /**
+     * Constructor
+     */
+    public DefaultDoubleSolution(
+            int numberOfObjectives,
+            int numberOfConstraints,
+            List<Bounds<Double>> boundsList) {
+        super(boundsList.size(), numberOfObjectives, numberOfConstraints);
+
+        this.bounds = boundsList;
+
+        for (int i = 0; i < boundsList.size(); i++) {
+            Bounds<Double> bounds = boundsList.get(i);
+            variables().set(i, JMetalRandom.getInstance().nextDouble(bounds.getLowerBound(), bounds.getUpperBound()));
+            ;
+        }
     }
 
-    for (int i = 0; i < solution.constraints().length; i++) {
-      constraints()[i] =  solution.constraints()[i];
+    /**
+     * Constructor
+     *
+     * @deprecated Use {@link #DefaultDoubleSolution(int, List)} instead.
+     */
+    @Deprecated
+    public DefaultDoubleSolution(
+            List<Pair<Double, Double>> bounds,
+            int numberOfObjectives) {
+        this(bounds, numberOfObjectives, 0);
     }
 
-    bounds = solution.bounds ;
-    attributes = new HashMap<Object, Object>(solution.attributes) ;
-  }
+    /**
+     * Constructor
+     */
+    public DefaultDoubleSolution(
+            int numberOfObjectives,
+            List<Bounds<Double>> boundsList) {
+        this(numberOfObjectives, 0, boundsList);
+    }
 
-  /**
-   * @deprecated Use {@link #getBounds(int)}{@link Bounds#getLowerBound()
-   *             .getLowerBound()} instead.
-   */
-  @Deprecated
-  @Override
-  public Double getLowerBound(int index) {
-    return this.bounds.get(index).getLowerBound() ;
-  }
+    /**
+     * Copy constructor
+     */
+    public DefaultDoubleSolution(DefaultDoubleSolution solution) {
+        super(solution.variables().size(), solution.objectives().length, solution.constraints().length);
 
-  /**
-   * @deprecated Use {@link #getBounds(int)}{@link Bounds#getUpperBound()
-   *             .getUpperBound()} instead.
-   */
-  @Deprecated
-  @Override
-  public Double getUpperBound(int index) {
-    return this.bounds.get(index).getUpperBound() ;
-  }
-  
-  @Override
-  public Bounds<Double> getBounds(int index) {
-    return this.bounds.get(index);
-  }
+        for (int i = 0; i < solution.variables().size(); i++) {
+            variables().set(i, solution.variables().get(i));
+        }
 
-  @Override
-  public DefaultDoubleSolution copy() {
-    return new DefaultDoubleSolution(this);
-  }
+        for (int i = 0; i < solution.objectives().length; i++) {
+            objectives()[i] = solution.objectives()[i];
+        }
+
+        for (int i = 0; i < solution.constraints().length; i++) {
+            constraints()[i] = solution.constraints()[i];
+        }
+
+        bounds = solution.bounds;
+        attributes = new HashMap<Object, Object>(solution.attributes);
+    }
+
+    /**
+     * @deprecated Use {@link #getBounds(int)}{@link Bounds#getLowerBound()
+     * .getLowerBound()} instead.
+     */
+    @Deprecated
+    @Override
+    public Double getLowerBound(int index) {
+        return this.bounds.get(index).getLowerBound();
+    }
+
+    /**
+     * @deprecated Use {@link #getBounds(int)}{@link Bounds#getUpperBound()
+     * .getUpperBound()} instead.
+     */
+    @Deprecated
+    @Override
+    public Double getUpperBound(int index) {
+        return this.bounds.get(index).getUpperBound();
+    }
+
+    @Override
+    public Bounds<Double> getBounds(int index) {
+        return this.bounds.get(index);
+    }
+
+    @Override
+    public DefaultDoubleSolution copy() {
+        return new DefaultDoubleSolution(this);
+    }
 }

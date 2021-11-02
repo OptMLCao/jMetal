@@ -23,26 +23,27 @@ import java.util.List;
 
 /**
  * Class representing a {@link ArchiveWithReferencePoint} archive using a crowding distance based density estimator
+ *
  * @author Antonio J. Nebro
  */
 @SuppressWarnings("serial")
 public class CrowdingDistanceArchiveWithReferencePoint<S extends Solution<?>> extends ArchiveWithReferencePoint<S> {
-  private final DensityEstimator<S> densityEstimator ;
+    private final DensityEstimator<S> densityEstimator;
 
-  public CrowdingDistanceArchiveWithReferencePoint(int maxSize, List<Double> refPointDM) {
-    super(maxSize, refPointDM, new CrowdingDistanceDensityEstimator<S>().getComparator());
+    public CrowdingDistanceArchiveWithReferencePoint(int maxSize, List<Double> refPointDM) {
+        super(maxSize, refPointDM, new CrowdingDistanceDensityEstimator<S>().getComparator());
 
-    densityEstimator = new CrowdingDistanceDensityEstimator<>() ;
-  }
+        densityEstimator = new CrowdingDistanceDensityEstimator<>();
+    }
 
-  @Override
-  public Comparator<S> getComparator() {
-    return comparator;
-  }
+    @Override
+    public Comparator<S> getComparator() {
+        return comparator;
+    }
 
-  @Override
-  public void computeDensityEstimator() {
-    densityEstimator.compute(getSolutionList());
-  }
+    @Override
+    public void computeDensityEstimator() {
+        densityEstimator.compute(getSolutionList());
+    }
 
 }

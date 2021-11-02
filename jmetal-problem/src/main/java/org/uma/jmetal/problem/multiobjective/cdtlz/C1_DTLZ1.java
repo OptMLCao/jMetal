@@ -13,31 +13,32 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  */
 @SuppressWarnings("serial")
 public class C1_DTLZ1 extends DTLZ1 {
-  /**
-   * Constructor
-   * @param numberOfVariables
-   * @param numberOfObjectives
-   */
-  public C1_DTLZ1(int numberOfVariables, int numberOfObjectives) {
-    super(numberOfVariables, numberOfObjectives) ;
+    /**
+     * Constructor
+     *
+     * @param numberOfVariables
+     * @param numberOfObjectives
+     */
+    public C1_DTLZ1(int numberOfVariables, int numberOfObjectives) {
+        super(numberOfVariables, numberOfObjectives);
 
-    setNumberOfConstraints(1);
-  }
-
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    super.evaluate(solution);
-    evaluateConstraints(solution);
-
-    return solution ;
-  }
-
-  public void evaluateConstraints(DoubleSolution solution) {
-    double sum = 0 ;
-    for (int i = 0; i < solution.objectives().length - 2; i++) {
-      sum += solution.objectives()[i] / 0.5 ;
+        setNumberOfConstraints(1);
     }
 
-    solution.constraints()[0] = 1.0 - solution.objectives()[(solution.objectives().length-1)] - sum ;
-  }
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        super.evaluate(solution);
+        evaluateConstraints(solution);
+
+        return solution;
+    }
+
+    public void evaluateConstraints(DoubleSolution solution) {
+        double sum = 0;
+        for (int i = 0; i < solution.objectives().length - 2; i++) {
+            sum += solution.objectives()[i] / 0.5;
+        }
+
+        solution.constraints()[0] = 1.0 - solution.objectives()[(solution.objectives().length - 1)] - sum;
+    }
 }

@@ -13,50 +13,52 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  */
 @SuppressWarnings("serial")
 public class C2_DTLZ2 extends DTLZ2 {
-  private double rValue ;
-  /**
-   * Constructor
-   * @param numberOfVariables
-   * @param numberOfObjectives
-   */
-  public C2_DTLZ2(int numberOfVariables, int numberOfObjectives) {
-    super(numberOfVariables, numberOfObjectives) ;
+    private double rValue;
 
-    setNumberOfConstraints(1);
+    /**
+     * Constructor
+     *
+     * @param numberOfVariables
+     * @param numberOfObjectives
+     */
+    public C2_DTLZ2(int numberOfVariables, int numberOfObjectives) {
+        super(numberOfVariables, numberOfObjectives);
 
-    if (getNumberOfObjectives() == 3) {
-      rValue = 0.4 ;
-    } else {
-      rValue = 0.5 ;
-    }
-  }
+        setNumberOfConstraints(1);
 
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    super.evaluate(solution);
-    evaluateConstraints(solution);
-
-    return solution ;
-  }
-
-  public void evaluateConstraints(DoubleSolution solution) {
-    double sum2 = 0 ;
-    double maxSum1 = Double.MIN_VALUE ;
-    for (int i = 0; i < solution.objectives().length; i++) {
-      double sum1 = Math.pow(solution.objectives()[i]-1.0, 2.0) - Math.pow(rValue, 2.0) ;
-      for (int j = 0; j < solution.objectives().length; j++) {
-        if (i != j) {
-          sum1 += Math.pow(solution.objectives()[j], 2.0) ;
+        if (getNumberOfObjectives() == 3) {
+            rValue = 0.4;
+        } else {
+            rValue = 0.5;
         }
-      }
-
-      maxSum1 = Math.max(maxSum1, sum1) ;
-
-      sum2 += Math.pow((solution.objectives()[i] - 1.0/Math.sqrt(solution.objectives().length)), 2.0)  ;
     }
 
-    sum2 -= Math.pow(rValue, 2.0) ;
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        super.evaluate(solution);
+        evaluateConstraints(solution);
 
-    solution.constraints()[0] = Math.max(maxSum1, sum2) ;
-  }
+        return solution;
+    }
+
+    public void evaluateConstraints(DoubleSolution solution) {
+        double sum2 = 0;
+        double maxSum1 = Double.MIN_VALUE;
+        for (int i = 0; i < solution.objectives().length; i++) {
+            double sum1 = Math.pow(solution.objectives()[i] - 1.0, 2.0) - Math.pow(rValue, 2.0);
+            for (int j = 0; j < solution.objectives().length; j++) {
+                if (i != j) {
+                    sum1 += Math.pow(solution.objectives()[j], 2.0);
+                }
+            }
+
+            maxSum1 = Math.max(maxSum1, sum1);
+
+            sum2 += Math.pow((solution.objectives()[i] - 1.0 / Math.sqrt(solution.objectives().length)), 2.0);
+        }
+
+        sum2 -= Math.pow(rValue, 2.0);
+
+        solution.constraints()[0] = Math.max(maxSum1, sum2);
+    }
 }

@@ -30,54 +30,54 @@ import static org.uma.jmetal.util.VectorUtils.readVectors;
  */
 public class NSGAIIStoppingByHypervolume extends AbstractAlgorithmRunner {
 
-  public static void main(String[] args) throws JMetalException, IOException {
-    Problem<DoubleSolution> problem;
-    NSGAII<DoubleSolution> algorithm;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
+    public static void main(String[] args) throws JMetalException, IOException {
+        Problem<DoubleSolution> problem;
+        NSGAII<DoubleSolution> algorithm;
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
 
-    problem = new ZDT1(100) ;
-    String referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+        problem = new ZDT1(100);
+        String referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
 
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    int populationSize = 100;
-    int offspringPopulationSize = 100;
+        int populationSize = 100;
+        int offspringPopulationSize = 100;
 
-    TerminationByQualityIndicator termination = new TerminationByQualityIndicator(
-            new PISAHypervolume(),
-            readVectors(referenceParetoFront, ","),
-            0.95, 150000);
+        TerminationByQualityIndicator termination = new TerminationByQualityIndicator(
+                new PISAHypervolume(),
+                readVectors(referenceParetoFront, ","),
+                0.95, 150000);
 
-    algorithm =
-            new NSGAII<>(
-                    problem, populationSize, offspringPopulationSize, crossover, mutation, termination);
+        algorithm =
+                new NSGAII<>(
+                        problem, populationSize, offspringPopulationSize, crossover, mutation, termination);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
-    JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations() + "\n");
-    JMetalLogger.logger.info("Successful termination: " + !termination.evaluationsLimitReached()) ;
-    JMetalLogger.logger.info("Last quality indicator value: " + termination.getComputedIndicatorValue()) ;
-    JMetalLogger.logger.info("Reference front indicator value: " + termination.getReferenceFrontIndicatorValue()) ;
+        List<DoubleSolution> population = algorithm.getResult();
+        JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
+        JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations() + "\n");
+        JMetalLogger.logger.info("Successful termination: " + !termination.evaluationsLimitReached());
+        JMetalLogger.logger.info("Last quality indicator value: " + termination.getComputedIndicatorValue());
+        JMetalLogger.logger.info("Reference front indicator value: " + termination.getReferenceFrontIndicatorValue());
 
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+                .print();
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront);
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-  }
 }

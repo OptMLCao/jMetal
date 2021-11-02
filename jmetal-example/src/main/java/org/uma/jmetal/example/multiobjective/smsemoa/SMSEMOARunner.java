@@ -28,67 +28,66 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class SMSEMOARunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws SecurityException
-   * Invoking command:
-  java org.uma.jmetal.runner.multiobjective.SMSEMOARunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    JMetalRandom.getInstance().setSeed(1) ;
-    DoubleProblem problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+    /**
+     * @param args Command line arguments.
+     * @throws SecurityException Invoking command:
+     *                           java org.uma.jmetal.runner.multiobjective.SMSEMOARunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        JMetalRandom.getInstance().setSeed(1);
+        DoubleProblem problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
-    String referenceParetoFront = "" ;
+        String referenceParetoFront = "";
 
-    String problemName ;
-    if (args.length == 1) {
-      problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
-    } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv" ;
+        String problemName;
+        if (args.length == 1) {
+            problemName = args[0];
+        } else if (args.length == 2) {
+            problemName = args[0];
+            referenceParetoFront = args[1];
+        } else {
+            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+            referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+        }
+
+        problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
+
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+
+        selection = new RandomSelection<DoubleSolution>();
+
+        Hypervolume<DoubleSolution> hypervolume;
+        hypervolume = new PISAHypervolume<>();
+        hypervolume.setOffset(100.0);
+
+        algorithm = new SMSEMOABuilder<DoubleSolution>(problem, crossover, mutation)
+                .setSelectionOperator(selection)
+                .setMaxEvaluations(25000)
+                .setPopulationSize(100)
+                .setHypervolumeImplementation(hypervolume)
+                .build();
+
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
+
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
+
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+
+        printFinalSolutionSet(population);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
-
-    double crossoverProbability = 0.9 ;
-    double crossoverDistributionIndex = 20.0 ;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
-
-    selection = new RandomSelection<DoubleSolution>();
-
-    Hypervolume<DoubleSolution> hypervolume ;
-    hypervolume = new PISAHypervolume<>() ;
-    hypervolume.setOffset(100.0);
-
-    algorithm = new SMSEMOABuilder<DoubleSolution>(problem, crossover, mutation)
-        .setSelectionOperator(selection)
-        .setMaxEvaluations(25000)
-        .setPopulationSize(100)
-        .setHypervolumeImplementation(hypervolume)
-        .build() ;
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
-
-    List<DoubleSolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
-
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
-    }
-  }
 }

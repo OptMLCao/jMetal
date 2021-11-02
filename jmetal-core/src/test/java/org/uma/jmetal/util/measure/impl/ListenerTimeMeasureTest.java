@@ -10,377 +10,379 @@ import static org.junit.Assert.*;
 
 public class ListenerTimeMeasureTest {
 
-	private class FakeListener implements MeasureListener<Object> {
+    private class FakeListener implements MeasureListener<Object> {
 
-		private final long executionTime;
+        private final long executionTime;
 
-		public FakeListener(long executionTime) {
-			this.executionTime = executionTime;
-		}
+        public FakeListener(long executionTime) {
+            this.executionTime = executionTime;
+        }
 
-		@Override
-		public void measureGenerated(Object value) {
-			try {
-				Thread.sleep(executionTime);
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	};
+        @Override
+        public void measureGenerated(Object value) {
+            try {
+                Thread.sleep(executionTime);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
-	@Ignore
-	@Test
-	public void testFakeListener() {
-		for (long expected : new Long[] { 5L, 10L, 20L }) {
-			FakeListener listener = new FakeListener(expected);
-			int rounds = 10;
-			int average = 0;
-			for (int i = 0; i < rounds; i++) {
-				long start = System.currentTimeMillis();
-				listener.measureGenerated(null);
-				long stop = System.currentTimeMillis();
-				long time = stop - start;
+    ;
 
-				average += time;
-			}
-			average /= rounds;
+    @Ignore
+    @Test
+    public void testFakeListener() {
+        for (long expected : new Long[]{5L, 10L, 20L}) {
+            FakeListener listener = new FakeListener(expected);
+            int rounds = 10;
+            int average = 0;
+            for (int i = 0; i < rounds; i++) {
+                long start = System.currentTimeMillis();
+                listener.measureGenerated(null);
+                long stop = System.currentTimeMillis();
+                long time = stop - start;
 
-			// check we are within a range of 10% around the expected time
-			assertTrue("Time spent: " + average + " instead of " + expected,
-					average > expected * 0.9 && average < expected * 1.1);
-		}
-	}
+                average += time;
+            }
+            average /= rounds;
 
-	@Ignore
-	@Test
-	public void testCountTimeInListeners() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+            // check we are within a range of 10% around the expected time
+            assertTrue("Time spent: " + average + " instead of " + expected,
+                    average > expected * 0.9 && average < expected * 1.1);
+        }
+    }
 
-		MeasureListener<Object> original10ms = new FakeListener(10);
-		MeasureListener<Object> wrapper10ms = measure
-				.wrapListener(original10ms);
+    @Ignore
+    @Test
+    public void testCountTimeInListeners() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		MeasureListener<Object> original20ms = new FakeListener(20);
-		MeasureListener<Object> wrapper20ms = measure
-				.wrapListener(original20ms);
+        MeasureListener<Object> original10ms = new FakeListener(10);
+        MeasureListener<Object> wrapper10ms = measure
+                .wrapListener(original10ms);
 
-		wrapper10ms.measureGenerated(null);
-		wrapper20ms.measureGenerated(null);
-		wrapper20ms.measureGenerated(null);
-		wrapper10ms.measureGenerated(null);
-		long expected = 60;
+        MeasureListener<Object> original20ms = new FakeListener(20);
+        MeasureListener<Object> wrapper20ms = measure
+                .wrapListener(original20ms);
 
-		// check we are within a range of 10% around the expected time
-		assertTrue("Time spent: " + measure.get() + " instead of " + expected,
-				measure.get() > expected * 0.9
-						&& measure.get() < expected * 1.1);
-	}
+        wrapper10ms.measureGenerated(null);
+        wrapper20ms.measureGenerated(null);
+        wrapper20ms.measureGenerated(null);
+        wrapper10ms.measureGenerated(null);
+        long expected = 60;
 
-	@Test
-	public void testExceptionOnNullListener() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
-		try {
-			measure.wrapListener(null);
-			fail("No exception thrown");
-		} catch (IllegalArgumentException e) {
-		}
-	}
+        // check we are within a range of 10% around the expected time
+        assertTrue("Time spent: " + measure.get() + " instead of " + expected,
+                measure.get() > expected * 0.9
+                        && measure.get() < expected * 1.1);
+    }
 
-	@Test
-	public void testReturnSameWrapperForSameListener()
-			throws InterruptedException {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+    @Test
+    public void testExceptionOnNullListener() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        try {
+            measure.wrapListener(null);
+            fail("No exception thrown");
+        } catch (IllegalArgumentException e) {
+        }
+    }
 
-		MeasureListener<Object> wrapped = new FakeListener(10);
-		MeasureListener<Object> wrapper = measure.wrapListener(wrapped);
+    @Test
+    public void testReturnSameWrapperForSameListener()
+            throws InterruptedException {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		assertEquals(wrapper, measure.wrapListener(wrapped));
-		assertEquals(wrapper, measure.wrapListener(wrapped));
-		assertEquals(wrapper, measure.wrapListener(wrapped));
-	}
+        MeasureListener<Object> wrapped = new FakeListener(10);
+        MeasureListener<Object> wrapper = measure.wrapListener(wrapped);
 
-	@Test
-	public void testForgetListenerWrapperIfNotUsedAnymore() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        assertEquals(wrapper, measure.wrapListener(wrapped));
+        assertEquals(wrapper, measure.wrapListener(wrapped));
+        assertEquals(wrapper, measure.wrapListener(wrapped));
+    }
 
-		MeasureListener<Object> wrapped = new FakeListener(10);
-		int lastHashCode = 0;
-		int differences = 0;
-		int rounds = 10;
-		for (int round = 0; round < rounds; round++) {
-			System.gc();
-			MeasureListener<Object> wrapper = measure.wrapListener(wrapped);
-			int hashCode = wrapper.hashCode();
-			if (lastHashCode != hashCode) {
-				differences++;
-			} else {
-				// maybe the same object (hashcode does not guarantee it)
-			}
-		}
+    @Test
+    public void testForgetListenerWrapperIfNotUsedAnymore() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		// check the instance always changes with an error of 10%
-		assertTrue("Differences: " + differences + "/" + rounds,
-				differences > rounds * 0.9 && differences <= rounds);
-	}
+        MeasureListener<Object> wrapped = new FakeListener(10);
+        int lastHashCode = 0;
+        int differences = 0;
+        int rounds = 10;
+        for (int round = 0; round < rounds; round++) {
+            System.gc();
+            MeasureListener<Object> wrapper = measure.wrapListener(wrapped);
+            int hashCode = wrapper.hashCode();
+            if (lastHashCode != hashCode) {
+                differences++;
+            } else {
+                // maybe the same object (hashcode does not guarantee it)
+            }
+        }
 
-	@Ignore
-	@Test
-	public void testCountTimeInMeasures() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        // check the instance always changes with an error of 10%
+        assertTrue("Differences: " + differences + "/" + rounds,
+                differences > rounds * 0.9 && differences <= rounds);
+    }
 
-		SimplePushMeasure<Object> original10ms = new SimplePushMeasure<>();
-		PushMeasure<Object> wrapper10ms = measure.wrapMeasure(original10ms);
-		wrapper10ms.register(new FakeListener(5));
-		wrapper10ms.register(new FakeListener(5));
+    @Ignore
+    @Test
+    public void testCountTimeInMeasures() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		SimplePushMeasure<Object> original20ms = new SimplePushMeasure<>();
-		PushMeasure<Object> wrapper20ms = measure.wrapMeasure(original20ms);
-		wrapper20ms.register(new FakeListener(5));
-		wrapper20ms.register(new FakeListener(10));
-		wrapper20ms.register(new FakeListener(5));
+        SimplePushMeasure<Object> original10ms = new SimplePushMeasure<>();
+        PushMeasure<Object> wrapper10ms = measure.wrapMeasure(original10ms);
+        wrapper10ms.register(new FakeListener(5));
+        wrapper10ms.register(new FakeListener(5));
 
-		original10ms.push(null);
-		original20ms.push(null);
-		original20ms.push(null);
-		original10ms.push(null);
-		long expected = 60;
+        SimplePushMeasure<Object> original20ms = new SimplePushMeasure<>();
+        PushMeasure<Object> wrapper20ms = measure.wrapMeasure(original20ms);
+        wrapper20ms.register(new FakeListener(5));
+        wrapper20ms.register(new FakeListener(10));
+        wrapper20ms.register(new FakeListener(5));
 
-		// check we are within a range of 10% around the expected time
-		assertTrue("Time spent: " + measure.get() + " instead of " + expected,
-				measure.get() > expected * 0.9
-						&& measure.get() < expected * 1.1);
-	}
+        original10ms.push(null);
+        original20ms.push(null);
+        original20ms.push(null);
+        original10ms.push(null);
+        long expected = 60;
 
-	@Test
-	public void testExceptionOnNullMeasure() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
-		try {
-			measure.wrapMeasure(null);
-			fail("No exception thrown");
-		} catch (IllegalArgumentException e) {
-		}
-	}
+        // check we are within a range of 10% around the expected time
+        assertTrue("Time spent: " + measure.get() + " instead of " + expected,
+                measure.get() > expected * 0.9
+                        && measure.get() < expected * 1.1);
+    }
 
-	@Test
-	public void testReturnSameWrapperForSameMeasure() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+    @Test
+    public void testExceptionOnNullMeasure() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        try {
+            measure.wrapMeasure(null);
+            fail("No exception thrown");
+        } catch (IllegalArgumentException e) {
+        }
+    }
 
-		SimplePushMeasure<Object> wrapped = new SimplePushMeasure<Object>();
-		PushMeasure<Object> wrapper = measure.wrapMeasure(wrapped);
+    @Test
+    public void testReturnSameWrapperForSameMeasure() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		assertEquals(wrapper, measure.wrapMeasure(wrapped));
-		assertEquals(wrapper, measure.wrapMeasure(wrapped));
-		assertEquals(wrapper, measure.wrapMeasure(wrapped));
-	}
+        SimplePushMeasure<Object> wrapped = new SimplePushMeasure<Object>();
+        PushMeasure<Object> wrapper = measure.wrapMeasure(wrapped);
 
-	@Test
-	public void testForgetMeasureWrapperIfNotUsedAnymore() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        assertEquals(wrapper, measure.wrapMeasure(wrapped));
+        assertEquals(wrapper, measure.wrapMeasure(wrapped));
+        assertEquals(wrapper, measure.wrapMeasure(wrapped));
+    }
 
-		SimplePushMeasure<Object> wrapped = new SimplePushMeasure<Object>();
-		int lastHashCode = 0;
-		int differences = 0;
-		int rounds = 10;
-		for (int round = 0; round < rounds; round++) {
-			System.gc();
-			PushMeasure<Object> wrapper = measure.wrapMeasure(wrapped);
-			int hashCode = wrapper.hashCode();
-			if (lastHashCode != hashCode) {
-				differences++;
-			} else {
-				// maybe the same object (hashcode does not guarantee it)
-			}
-		}
+    @Test
+    public void testForgetMeasureWrapperIfNotUsedAnymore() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		// check the instance always changes with an error of 10%
-		assertTrue("Differences: " + differences + "/" + rounds,
-				differences > rounds * 0.9 && differences <= rounds);
-	}
+        SimplePushMeasure<Object> wrapped = new SimplePushMeasure<Object>();
+        int lastHashCode = 0;
+        int differences = 0;
+        int rounds = 10;
+        for (int round = 0; round < rounds; round++) {
+            System.gc();
+            PushMeasure<Object> wrapper = measure.wrapMeasure(wrapped);
+            int hashCode = wrapper.hashCode();
+            if (lastHashCode != hashCode) {
+                differences++;
+            } else {
+                // maybe the same object (hashcode does not guarantee it)
+            }
+        }
 
-	@Test
-	public void testSameNameAndDescriptionThanOriginalMeasure() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        // check the instance always changes with an error of 10%
+        assertTrue("Differences: " + differences + "/" + rounds,
+                differences > rounds * 0.9 && differences <= rounds);
+    }
 
-		{
-			String name = "measure 1";
-			String description = null;
-			PushMeasure<Object> original = new SimplePushMeasure<>(name,
-					description);
-			PushMeasure<Object> wrapper = measure.wrapMeasure(original);
-			assertEquals(name, wrapper.getName());
-			assertEquals(description, wrapper.getDescription());
-		}
+    @Test
+    public void testSameNameAndDescriptionThanOriginalMeasure() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		{
-			String name = "measure 2";
-			String description = "Some description";
-			PushMeasure<Object> original = new SimplePushMeasure<>(name,
-					description);
-			PushMeasure<Object> wrapper = measure.wrapMeasure(original);
-			assertEquals(name, wrapper.getName());
-			assertEquals(description, wrapper.getDescription());
-		}
+        {
+            String name = "measure 1";
+            String description = null;
+            PushMeasure<Object> original = new SimplePushMeasure<>(name,
+                    description);
+            PushMeasure<Object> wrapper = measure.wrapMeasure(original);
+            assertEquals(name, wrapper.getName());
+            assertEquals(description, wrapper.getDescription());
+        }
 
-		{
-			String name = null;
-			String description = "Unidentified Java Object";
-			PushMeasure<Object> original = new SimplePushMeasure<>(name,
-					description);
-			PushMeasure<Object> wrapper = measure.wrapMeasure(original);
-			assertEquals(name, wrapper.getName());
-			assertEquals(description, wrapper.getDescription());
-		}
-	}
+        {
+            String name = "measure 2";
+            String description = "Some description";
+            PushMeasure<Object> original = new SimplePushMeasure<>(name,
+                    description);
+            PushMeasure<Object> wrapper = measure.wrapMeasure(original);
+            assertEquals(name, wrapper.getName());
+            assertEquals(description, wrapper.getDescription());
+        }
 
-	@Ignore
-	@Test
-	public void testCountTimeInManager() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        {
+            String name = null;
+            String description = "Unidentified Java Object";
+            PushMeasure<Object> original = new SimplePushMeasure<>(name,
+                    description);
+            PushMeasure<Object> wrapper = measure.wrapMeasure(original);
+            assertEquals(name, wrapper.getName());
+            assertEquals(description, wrapper.getDescription());
+        }
+    }
 
-		SimplePushMeasure<Object> measure1 = new SimplePushMeasure<Object>();
-		SimplePushMeasure<Object> measure2 = new SimplePushMeasure<Object>();
-		SimpleMeasureManager wrapped = new SimpleMeasureManager();
-		wrapped.setPushMeasure(1, measure1);
-		wrapped.setPushMeasure(2, measure2);
-		MeasureManager wrapper = measure.wrapManager(wrapped, null);
+    @Ignore
+    @Test
+    public void testCountTimeInManager() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		PushMeasure<Object> measure1With10ms = wrapper.getPushMeasure(1);
-		measure1With10ms.register(new FakeListener(5));
-		measure1With10ms.register(new FakeListener(5));
+        SimplePushMeasure<Object> measure1 = new SimplePushMeasure<Object>();
+        SimplePushMeasure<Object> measure2 = new SimplePushMeasure<Object>();
+        SimpleMeasureManager wrapped = new SimpleMeasureManager();
+        wrapped.setPushMeasure(1, measure1);
+        wrapped.setPushMeasure(2, measure2);
+        MeasureManager wrapper = measure.wrapManager(wrapped, null);
 
-		PushMeasure<Object> measure2With20ms = wrapper.getPushMeasure(2);
-		measure2With20ms.register(new FakeListener(5));
-		measure2With20ms.register(new FakeListener(10));
-		measure2With20ms.register(new FakeListener(5));
+        PushMeasure<Object> measure1With10ms = wrapper.getPushMeasure(1);
+        measure1With10ms.register(new FakeListener(5));
+        measure1With10ms.register(new FakeListener(5));
 
-		measure1.push(null);
-		measure2.push(null);
-		measure2.push(null);
-		measure1.push(null);
-		long expected = 60;
+        PushMeasure<Object> measure2With20ms = wrapper.getPushMeasure(2);
+        measure2With20ms.register(new FakeListener(5));
+        measure2With20ms.register(new FakeListener(10));
+        measure2With20ms.register(new FakeListener(5));
 
-		// check we are within a range of 10% around the expected time
-		assertTrue("Time spent: " + measure.get() + " instead of " + expected,
-				measure.get() > expected * 0.9
-						&& measure.get() < expected * 1.1);
-	}
+        measure1.push(null);
+        measure2.push(null);
+        measure2.push(null);
+        measure1.push(null);
+        long expected = 60;
 
-	@Test
-	public void testExceptionOnNullManager() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
-		try {
-			measure.wrapManager(null, null);
-			fail("No exception thrown");
-		} catch (IllegalArgumentException e) {
-		}
-	}
+        // check we are within a range of 10% around the expected time
+        assertTrue("Time spent: " + measure.get() + " instead of " + expected,
+                measure.get() > expected * 0.9
+                        && measure.get() < expected * 1.1);
+    }
 
-	@Test
-	public void testAdditionalKeyProvidedByManager() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
-		String key = "measure";
+    @Test
+    public void testExceptionOnNullManager() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        try {
+            measure.wrapManager(null, null);
+            fail("No exception thrown");
+        } catch (IllegalArgumentException e) {
+        }
+    }
 
-		SimpleMeasureManager wrapped = new SimpleMeasureManager();
-		MeasureManager wrapper = measure.wrapManager(wrapped, key);
+    @Test
+    public void testAdditionalKeyProvidedByManager() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        String key = "measure";
 
-		assertTrue(wrapper.getMeasureKeys().contains(key));
-	}
+        SimpleMeasureManager wrapped = new SimpleMeasureManager();
+        MeasureManager wrapper = measure.wrapManager(wrapped, key);
 
-	@Test
-	public void testAdditionalKeyForWrappedManagerReturnCurrentMeasure() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
-		String key = "measure";
+        assertTrue(wrapper.getMeasureKeys().contains(key));
+    }
 
-		SimpleMeasureManager wrapped = new SimpleMeasureManager();
-		MeasureManager wrapper = measure.wrapManager(wrapped, key);
+    @Test
+    public void testAdditionalKeyForWrappedManagerReturnCurrentMeasure() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        String key = "measure";
 
-		assertEquals(measure, wrapper.getPullMeasure(key));
-	}
+        SimpleMeasureManager wrapped = new SimpleMeasureManager();
+        MeasureManager wrapper = measure.wrapManager(wrapped, key);
 
-	@Test
-	@SuppressWarnings("serial")
-	public void testAdditionalKeyForWrappedManagerRejectAlreadyUsedKeys() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        assertEquals(measure, wrapper.getPullMeasure(key));
+    }
 
-		SimplePullMeasure<Object> pull = new SimplePullMeasure<Object>() {
+    @Test
+    @SuppressWarnings("serial")
+    public void testAdditionalKeyForWrappedManagerRejectAlreadyUsedKeys() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-			@Override
-			public Object get() {
-				return null;
-			}
-		};
-		SimplePushMeasure<Object> push = new SimplePushMeasure<Object>();
-		SimpleMeasureManager wrapped = new SimpleMeasureManager();
-		wrapped.setPullMeasure(1, pull);
-		wrapped.setPullMeasure(2, pull);
-		wrapped.setPushMeasure(3, push);
+        SimplePullMeasure<Object> pull = new SimplePullMeasure<Object>() {
 
-		int counter = 0;
-		for (Object key : wrapped.getMeasureKeys()) {
-			try {
-				measure.wrapManager(wrapped, key);
-				fail("No exception thrown for key " + key);
-			} catch (IllegalArgumentException e) {
-				counter++;
-			}
-		}
-		assertEquals(3, counter);
-	}
+            @Override
+            public Object get() {
+                return null;
+            }
+        };
+        SimplePushMeasure<Object> push = new SimplePushMeasure<Object>();
+        SimpleMeasureManager wrapped = new SimpleMeasureManager();
+        wrapped.setPullMeasure(1, pull);
+        wrapped.setPullMeasure(2, pull);
+        wrapped.setPushMeasure(3, push);
 
-	@Test
-	public void testResetToZeroWhenNoListenerIsRunning() {
-		ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        int counter = 0;
+        for (Object key : wrapped.getMeasureKeys()) {
+            try {
+                measure.wrapManager(wrapped, key);
+                fail("No exception thrown for key " + key);
+            } catch (IllegalArgumentException e) {
+                counter++;
+            }
+        }
+        assertEquals(3, counter);
+    }
 
-		MeasureListener<Object> original10ms = new FakeListener(10);
-		MeasureListener<Object> wrapper10ms = measure
-				.wrapListener(original10ms);
+    @Test
+    public void testResetToZeroWhenNoListenerIsRunning() {
+        ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		MeasureListener<Object> original20ms = new FakeListener(20);
-		MeasureListener<Object> wrapper20ms = measure
-				.wrapListener(original20ms);
+        MeasureListener<Object> original10ms = new FakeListener(10);
+        MeasureListener<Object> wrapper10ms = measure
+                .wrapListener(original10ms);
 
-		wrapper10ms.measureGenerated(null);
-		wrapper20ms.measureGenerated(null);
-		wrapper20ms.measureGenerated(null);
-		wrapper10ms.measureGenerated(null);
+        MeasureListener<Object> original20ms = new FakeListener(20);
+        MeasureListener<Object> wrapper20ms = measure
+                .wrapListener(original20ms);
 
-		measure.reset();
-		assertEquals(0, (long) measure.get());
-	}
+        wrapper10ms.measureGenerated(null);
+        wrapper20ms.measureGenerated(null);
+        wrapper20ms.measureGenerated(null);
+        wrapper10ms.measureGenerated(null);
 
-	@Ignore
-	@Test
-	public void testResetToCurrentTimeWhenListenerIsRunning() {
-		final ListenerTimeMeasure measure = new ListenerTimeMeasure();
+        measure.reset();
+        assertEquals(0, (long) measure.get());
+    }
 
-		MeasureListener<Object> original50ms = new FakeListener(50);
-		MeasureListener<Object> wrapper50ms = measure
-				.wrapListener(original50ms);
+    @Ignore
+    @Test
+    public void testResetToCurrentTimeWhenListenerIsRunning() {
+        final ListenerTimeMeasure measure = new ListenerTimeMeasure();
 
-		MeasureListener<Object> original50msWithReset = new MeasureListener<Object>() {
+        MeasureListener<Object> original50ms = new FakeListener(50);
+        MeasureListener<Object> wrapper50ms = measure
+                .wrapListener(original50ms);
 
-			@Override
-			public void measureGenerated(Object value) {
-				try {
-					Thread.sleep(25);
-					measure.reset();
-					Thread.sleep(25);
-				} catch (InterruptedException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		};
-		MeasureListener<Object> wrapper50msWithReset = measure
-				.wrapListener(original50msWithReset);
+        MeasureListener<Object> original50msWithReset = new MeasureListener<Object>() {
 
-		wrapper50ms.measureGenerated(null);
-		wrapper50msWithReset.measureGenerated(null);
-		wrapper50ms.measureGenerated(null);
-		long expected = 75;
+            @Override
+            public void measureGenerated(Object value) {
+                try {
+                    Thread.sleep(25);
+                    measure.reset();
+                    Thread.sleep(25);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        MeasureListener<Object> wrapper50msWithReset = measure
+                .wrapListener(original50msWithReset);
 
-		// check we are within a range of 10% around the expected time
-		assertTrue("Time spent: " + measure.get() + " instead of " + expected,
-				measure.get() > expected * 0.9
-						&& measure.get() < expected * 1.1);
-	}
+        wrapper50ms.measureGenerated(null);
+        wrapper50msWithReset.measureGenerated(null);
+        wrapper50ms.measureGenerated(null);
+        long expected = 75;
+
+        // check we are within a range of 10% around the expected time
+        assertTrue("Time spent: " + measure.get() + " instead of " + expected,
+                measure.get() > expected * 0.9
+                        && measure.get() < expected * 1.1);
+    }
 }

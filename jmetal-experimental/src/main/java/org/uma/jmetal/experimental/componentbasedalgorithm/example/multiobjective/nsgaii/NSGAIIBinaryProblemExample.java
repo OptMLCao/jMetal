@@ -29,41 +29,41 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class NSGAIIBinaryProblemExample extends AbstractAlgorithmRunner {
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    BinaryProblem problem;
-    NSGAII<BinarySolution> algorithm;
-    CrossoverOperator<BinarySolution> crossover;
-    MutationOperator<BinarySolution> mutation;
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        BinaryProblem problem;
+        NSGAII<BinarySolution> algorithm;
+        CrossoverOperator<BinarySolution> crossover;
+        MutationOperator<BinarySolution> mutation;
 
-    problem = new OneZeroMax(250);
+        problem = new OneZeroMax(250);
 
-    crossover = new SinglePointCrossover(0.9);
+        crossover = new SinglePointCrossover(0.9);
 
-    mutation = new BitFlipMutation(1.0 / problem.getTotalNumberOfBits());
+        mutation = new BitFlipMutation(1.0 / problem.getTotalNumberOfBits());
 
-    int populationSize = 100;
-    int offspringPopulationSize = 100;
+        int populationSize = 100;
+        int offspringPopulationSize = 100;
 
-    Termination termination = new TerminationByEvaluations(25000);
+        Termination termination = new TerminationByEvaluations(25000);
 
-    algorithm =
-        new NSGAII<>(
-            problem, populationSize, offspringPopulationSize, crossover, mutation, termination);
+        algorithm =
+                new NSGAII<>(
+                        problem, populationSize, offspringPopulationSize, crossover, mutation, termination);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<BinarySolution> population = algorithm.getResult();
+        List<BinarySolution> population = algorithm.getResult();
 
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-        .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+                .print();
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
 
-    PlotFront plot = new PlotSmile(new ArrayFront(population).getMatrix());
-    plot.plot();
-  }
+        PlotFront plot = new PlotSmile(new ArrayFront(population).getMatrix());
+        plot.plot();
+    }
 }

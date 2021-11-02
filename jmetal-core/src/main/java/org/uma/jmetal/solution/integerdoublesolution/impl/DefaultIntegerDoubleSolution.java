@@ -24,79 +24,87 @@ import java.util.List;
 @SuppressWarnings("serial")
 @Deprecated
 public class DefaultIntegerDoubleSolution extends AbstractSolution<Solution<?>>
-    implements IntegerDoubleSolution {
+        implements IntegerDoubleSolution {
 
-  /** Constructor */
-  public DefaultIntegerDoubleSolution(
-      List<Pair<Integer, Integer>> integerBounds,
-      List<Pair<Double, Double>> doubleBounds,
-      int numberOfObjectives,
-      int numberOfConstraints) {
-    super(2, numberOfObjectives, numberOfConstraints);
+    /**
+     * Constructor
+     */
+    public DefaultIntegerDoubleSolution(
+            List<Pair<Integer, Integer>> integerBounds,
+            List<Pair<Double, Double>> doubleBounds,
+            int numberOfObjectives,
+            int numberOfConstraints) {
+        super(2, numberOfObjectives, numberOfConstraints);
 
-    variables().set(
-        0, new DefaultIntegerSolution(integerBounds, numberOfObjectives, numberOfConstraints));
-    variables().set(
-        1, new DefaultDoubleSolution(doubleBounds, numberOfObjectives, numberOfConstraints));
-  }
-
-  /** Constructor */
-  public DefaultIntegerDoubleSolution(
-      List<Pair<Integer, Integer>> integerBounds,
-      List<Pair<Double, Double>> doubleBounds,
-      int numberOfObjectives) {
-    this(integerBounds, doubleBounds, numberOfObjectives, 0);
-  }
-
-  /** Constructor */
-  public DefaultIntegerDoubleSolution(
-      IntegerSolution integerSolution, DoubleSolution doubleSolution) {
-    super(2, integerSolution.objectives().length, integerSolution.constraints().length);
-    Check.that(
-        integerSolution.objectives().length == doubleSolution.objectives().length,
-        "The two solutions must have the same number of objectives");
-    Check.that(
-        integerSolution.constraints().length == doubleSolution.constraints().length,
-        "The two solutions must have the same number of constraints");
-
-    variables().set(0, integerSolution);
-    variables().set(1, doubleSolution);
-  }
-
-  /** Copy constructor */
-  public DefaultIntegerDoubleSolution(DefaultIntegerDoubleSolution solution) {
-    super(
-        solution.variables().size(),
-        solution.objectives().length,
-        solution.constraints().length);
-
-    for (int i = 0; i < solution.variables().size(); i++) {
-      variables().set(i, solution.variables().get(i).copy());
+        variables().set(
+                0, new DefaultIntegerSolution(integerBounds, numberOfObjectives, numberOfConstraints));
+        variables().set(
+                1, new DefaultDoubleSolution(doubleBounds, numberOfObjectives, numberOfConstraints));
     }
 
-    for (int i = 0; i < solution.objectives().length; i++) {
-      objectives()[i] = solution.objectives()[i];
+    /**
+     * Constructor
+     */
+    public DefaultIntegerDoubleSolution(
+            List<Pair<Integer, Integer>> integerBounds,
+            List<Pair<Double, Double>> doubleBounds,
+            int numberOfObjectives) {
+        this(integerBounds, doubleBounds, numberOfObjectives, 0);
     }
 
-    for (int i = 0; i < solution.constraints().length; i++) {
-      constraints()[i] =  solution.constraints()[i];
+    /**
+     * Constructor
+     */
+    public DefaultIntegerDoubleSolution(
+            IntegerSolution integerSolution, DoubleSolution doubleSolution) {
+        super(2, integerSolution.objectives().length, integerSolution.constraints().length);
+        Check.that(
+                integerSolution.objectives().length == doubleSolution.objectives().length,
+                "The two solutions must have the same number of objectives");
+        Check.that(
+                integerSolution.constraints().length == doubleSolution.constraints().length,
+                "The two solutions must have the same number of constraints");
+
+        variables().set(0, integerSolution);
+        variables().set(1, doubleSolution);
     }
 
-    attributes = new HashMap<Object, Object>(solution.attributes);
-  }
+    /**
+     * Copy constructor
+     */
+    public DefaultIntegerDoubleSolution(DefaultIntegerDoubleSolution solution) {
+        super(
+                solution.variables().size(),
+                solution.objectives().length,
+                solution.constraints().length);
 
-  @Override
-  public IntegerSolution getIntegerSolution() {
-    return (IntegerSolution) variables().get(0);
-  }
+        for (int i = 0; i < solution.variables().size(); i++) {
+            variables().set(i, solution.variables().get(i).copy());
+        }
 
-  @Override
-  public DoubleSolution getDoubleSolution() {
-    return (DoubleSolution) variables().get(1);
-  }
+        for (int i = 0; i < solution.objectives().length; i++) {
+            objectives()[i] = solution.objectives()[i];
+        }
 
-  @Override
-  public DefaultIntegerDoubleSolution copy() {
-    return new DefaultIntegerDoubleSolution(this);
-  }
+        for (int i = 0; i < solution.constraints().length; i++) {
+            constraints()[i] = solution.constraints()[i];
+        }
+
+        attributes = new HashMap<Object, Object>(solution.attributes);
+    }
+
+    @Override
+    public IntegerSolution getIntegerSolution() {
+        return (IntegerSolution) variables().get(0);
+    }
+
+    @Override
+    public DoubleSolution getDoubleSolution() {
+        return (DoubleSolution) variables().get(1);
+    }
+
+    @Override
+    public DefaultIntegerDoubleSolution copy() {
+        return new DefaultIntegerDoubleSolution(this);
+    }
 }

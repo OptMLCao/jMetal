@@ -15,50 +15,54 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class NMMin extends AbstractIntegerProblem {
-  private int valueN ;
-  private int valueM ;
+    private int valueN;
+    private int valueM;
 
-  public NMMin() {
-    this(20, 100, -100, -1000, +1000);
-  }
-
-  /** Constructor */
-  public NMMin(int numberOfVariables, int n, int m, int lowerBound, int upperBound)  {
-    valueN = n ;
-    valueM = m ;
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(2);
-    setName("NMMin");
-
-    List<Integer> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Integer> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
-
-    for (int i = 0; i < getNumberOfVariables(); i++) {
-      lowerLimit.add(lowerBound);
-      upperLimit.add(upperBound);
+    public NMMin() {
+        this(20, 100, -100, -1000, +1000);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
-  }
+    /**
+     * Constructor
+     */
+    public NMMin(int numberOfVariables, int n, int m, int lowerBound, int upperBound) {
+        valueN = n;
+        valueM = m;
+        setNumberOfVariables(numberOfVariables);
+        setNumberOfObjectives(2);
+        setName("NMMin");
 
-  /** Evaluate() method */
-  @Override
-  public IntegerSolution evaluate(IntegerSolution solution) {
-    int approximationToN;
-    int approximationToM ;
+        List<Integer> lowerLimit = new ArrayList<>(getNumberOfVariables());
+        List<Integer> upperLimit = new ArrayList<>(getNumberOfVariables());
 
-    approximationToN = 0;
-    approximationToM = 0;
+        for (int i = 0; i < getNumberOfVariables(); i++) {
+            lowerLimit.add(lowerBound);
+            upperLimit.add(upperBound);
+        }
 
-    for (int i = 0; i < solution.variables().size(); i++) {
-      int value = solution.variables().get(i) ;
-      approximationToN += Math.abs(valueN - value) ;
-      approximationToM += Math.abs(valueM - value) ;
+        setVariableBounds(lowerLimit, upperLimit);
     }
 
-    solution.objectives()[0] = approximationToN;
-    solution.objectives()[1] = approximationToM;
+    /**
+     * Evaluate() method
+     */
+    @Override
+    public IntegerSolution evaluate(IntegerSolution solution) {
+        int approximationToN;
+        int approximationToM;
 
-    return solution ;
-  }
+        approximationToN = 0;
+        approximationToM = 0;
+
+        for (int i = 0; i < solution.variables().size(); i++) {
+            int value = solution.variables().get(i);
+            approximationToN += Math.abs(valueN - value);
+            approximationToM += Math.abs(valueM - value);
+        }
+
+        solution.objectives()[0] = approximationToN;
+        solution.objectives()[1] = approximationToM;
+
+        return solution;
+    }
 }

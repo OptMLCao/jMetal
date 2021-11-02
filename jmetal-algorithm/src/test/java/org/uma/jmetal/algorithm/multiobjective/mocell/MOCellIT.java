@@ -21,63 +21,63 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 public class MOCellIT {
-  Algorithm<List<DoubleSolution>> algorithm;
-  DoubleProblem problem;
-  CrossoverOperator<DoubleSolution> crossover;
-  MutationOperator<DoubleSolution> mutation;
+    Algorithm<List<DoubleSolution>> algorithm;
+    DoubleProblem problem;
+    CrossoverOperator<DoubleSolution> crossover;
+    MutationOperator<DoubleSolution> mutation;
 
-  @Before
-  public void setup() {
-    problem = new ZDT4();
+    @Before
+    public void setup() {
+        problem = new ZDT4();
 
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-  }
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+    }
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
-      throws Exception {
-    algorithm =
-        new MOCellBuilder<DoubleSolution>(problem, crossover, mutation)
-            .setArchive(new CrowdingDistanceArchive<>(100))
-            .build();
+    @Test
+    public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
+            throws Exception {
+        algorithm =
+                new MOCellBuilder<DoubleSolution>(problem, crossover, mutation)
+                        .setArchive(new CrowdingDistanceArchive<>(100))
+                        .build();
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
     /*
     Rationale: the default problem is ZDT4, and MOCell, configured with standard settings, should
     return 100 solutions
     */
-    assertTrue(population.size() >= 98);
-  }
+        assertTrue(population.size() >= 98);
+    }
 
-  @Test
-  public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
-    algorithm =
-        new MOCellBuilder<DoubleSolution>(problem, crossover, mutation)
-            .setArchive(new CrowdingDistanceArchive<DoubleSolution>(100))
-            .build();
+    @Test
+    public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
+        algorithm =
+                new MOCellBuilder<DoubleSolution>(problem, crossover, mutation)
+                        .setArchive(new CrowdingDistanceArchive<DoubleSolution>(100))
+                        .build();
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
-    QualityIndicator hypervolume =
-            new PISAHypervolume(
-                    VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT4.csv", ","));
+        QualityIndicator hypervolume =
+                new PISAHypervolume(
+                        VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT4.csv", ","));
 
-    // Rationale: the default problem is ZDT4, and MOCell, configured with standard settings,
-    // should return find a front with a hypervolume value higher than 0.65
+        // Rationale: the default problem is ZDT4, and MOCell, configured with standard settings,
+        // should return find a front with a hypervolume value higher than 0.65
 
-    double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
+        double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
 
-    assertTrue(hv > 0.65);
-  }
+        assertTrue(hv > 0.65);
+    }
 }

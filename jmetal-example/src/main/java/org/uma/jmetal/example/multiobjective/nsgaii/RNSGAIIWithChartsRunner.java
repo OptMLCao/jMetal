@@ -52,162 +52,161 @@ import java.util.List;
  * @author Cristobal Barba <cbarba@lcc.uma.es>
  */
 public class RNSGAIIWithChartsRunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws JMetalException
-   * @throws FileNotFoundException
-   * Invoking command:
-    java org.uma.jmetal.runner.multiobjective.nsgaii.RNSGAIIRunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws JMetalException, IOException {
-    Problem<DoubleSolution> problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
-    String referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv" ;
+    /**
+     * @param args Command line arguments.
+     * @throws JMetalException
+     * @throws FileNotFoundException Invoking command:
+     *                               java org.uma.jmetal.runner.multiobjective.nsgaii.RNSGAIIRunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws JMetalException, IOException {
+        Problem<DoubleSolution> problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+        String referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
 
-    String problemName ;
-    if (args.length == 1) {
-      problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
-    } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv" ;
-    }
+        String problemName;
+        if (args.length == 1) {
+            problemName = args[0];
+        } else if (args.length == 2) {
+            problemName = args[0];
+            referenceParetoFront = args[1];
+        } else {
+            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+            referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+        }
 
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
+        problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    double crossoverProbability = 0.9 ;
-    double crossoverDistributionIndex = 20.0 ;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    selection = new BinaryTournamentSelection<DoubleSolution>(
-        new RankingAndCrowdingDistanceComparator<DoubleSolution>());
+        selection = new BinaryTournamentSelection<DoubleSolution>(
+                new RankingAndCrowdingDistanceComparator<DoubleSolution>());
 
-    List<Double> referencePoint = new ArrayList<>() ;
+        List<Double> referencePoint = new ArrayList<>();
 
-    // Example fig 3 of Farina and Deb's paper
-    referencePoint.add(0.1) ;
-    referencePoint.add(0.6) ;
+        // Example fig 3 of Farina and Deb's paper
+        referencePoint.add(0.1);
+        referencePoint.add(0.6);
 
-    referencePoint.add(0.3) ;
-    referencePoint.add(0.6) ;
+        referencePoint.add(0.3);
+        referencePoint.add(0.6);
 
-    referencePoint.add(0.5) ;
-    referencePoint.add(0.2) ;
+        referencePoint.add(0.5);
+        referencePoint.add(0.2);
 
-    referencePoint.add(0.7) ;
-    referencePoint.add(0.2) ;
+        referencePoint.add(0.7);
+        referencePoint.add(0.2);
 
-    referencePoint.add(0.9) ;
-    referencePoint.add(0.0) ;
+        referencePoint.add(0.9);
+        referencePoint.add(0.0);
 
-    double epsilon= 0.0045;
+        double epsilon = 0.0045;
 
-    algorithm = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint, epsilon)
-        .setSelectionOperator(selection)
-        .setMaxEvaluations(25000)
-        .setPopulationSize(100)
-        .build() ;
+        algorithm = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint, epsilon)
+                .setSelectionOperator(selection)
+                .setMaxEvaluations(25000)
+                .setPopulationSize(100)
+                .build();
 
-    /* Measure management */
-    MeasureManager measureManager = ((RNSGAII<DoubleSolution>) algorithm).getMeasureManager();
+        /* Measure management */
+        MeasureManager measureManager = ((RNSGAII<DoubleSolution>) algorithm).getMeasureManager();
 
-    BasicMeasure<List<DoubleSolution>> solutionListMeasure = (BasicMeasure<List<DoubleSolution>>) measureManager
-            .<List<DoubleSolution>>getPushMeasure("currentPopulation");
-    CountingMeasure iterationMeasure = (CountingMeasure) measureManager.<Long>getPushMeasure("currentEvaluation");
+        BasicMeasure<List<DoubleSolution>> solutionListMeasure = (BasicMeasure<List<DoubleSolution>>) measureManager
+                .<List<DoubleSolution>>getPushMeasure("currentPopulation");
+        CountingMeasure iterationMeasure = (CountingMeasure) measureManager.<Long>getPushMeasure("currentEvaluation");
 
-    ChartContainerWithReferencePoints chart = new ChartContainerWithReferencePoints(algorithm.getName(), 80);
-    chart.setFrontChart(0, 1, referenceParetoFront);
-    chart.setReferencePoint(convertReferencePointListToListOfLists(referencePoint, problem.getNumberOfObjectives()));
-    chart.initChart();
+        ChartContainerWithReferencePoints chart = new ChartContainerWithReferencePoints(algorithm.getName(), 80);
+        chart.setFrontChart(0, 1, referenceParetoFront);
+        chart.setReferencePoint(convertReferencePointListToListOfLists(referencePoint, problem.getNumberOfObjectives()));
+        chart.initChart();
 
-    solutionListMeasure.register(new ChartListener(chart));
-    iterationMeasure.register(new IterationListener(chart));
-    /* End of measure management */
+        solutionListMeasure.register(new ChartListener(chart));
+        iterationMeasure.register(new IterationListener(chart));
+        /* End of measure management */
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-            .execute() ;
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
 
-    chart.saveChart("RNSGAII", BitmapEncoder.BitmapFormat.PNG);
-    List<DoubleSolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
+        chart.saveChart("RNSGAII", BitmapEncoder.BitmapFormat.PNG);
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-            .print();
-
-    System.exit(0);
-  }
-
-  private static List<List<Double>> convertReferencePointListToListOfLists(List<Double> referencePoints, int numberOfObjectives) {
-    List<List<Double>> referencePointList;
-    referencePointList = new ArrayList<>();
-
-    for (int i = 0; i <= (referencePoints.size() - numberOfObjectives); i+=numberOfObjectives) {
-      List<Double> newReferencePoint = new ArrayList<>(numberOfObjectives) ;
-      for (int j = i; j < (i + numberOfObjectives); j++) {
-        newReferencePoint.add(referencePoints.get(j)) ;
-      }
-
-      referencePointList.add(newReferencePoint) ;
-    }
-
-    return referencePointList ;
-  }
-
-  private static class ChartListener implements MeasureListener<List<DoubleSolution>> {
-    private ChartContainerWithReferencePoints chart;
-    private int iteration = 0;
-
-    public ChartListener(ChartContainerWithReferencePoints chart) {
-      this.chart = chart;
-      this.chart.getFrontChart().setTitle("Evaluation: " + this.iteration);
-    }
-
-    private void refreshChart(List<DoubleSolution> solutionList) {
-      if (this.chart != null) {
-        iteration++;
-        this.chart.getFrontChart().setTitle("Iteration: " + this.iteration);
-        this.chart.updateFrontCharts(solutionList);
-        this.chart.refreshCharts();
-
-        new SolutionListOutput(solutionList)
-                .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + iteration + ".tsv"))
-                .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + iteration + ".tsv"))
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
                 .print();
-      }
+
+        System.exit(0);
     }
 
-    @Override
-    synchronized public void measureGenerated(List<DoubleSolution> solutions) {
-      refreshChart(solutions);
-    }
-  }
+    private static List<List<Double>> convertReferencePointListToListOfLists(List<Double> referencePoints, int numberOfObjectives) {
+        List<List<Double>> referencePointList;
+        referencePointList = new ArrayList<>();
 
-  private static class IterationListener implements MeasureListener<Long> {
-    ChartContainerWithReferencePoints chart;
+        for (int i = 0; i <= (referencePoints.size() - numberOfObjectives); i += numberOfObjectives) {
+            List<Double> newReferencePoint = new ArrayList<>(numberOfObjectives);
+            for (int j = i; j < (i + numberOfObjectives); j++) {
+                newReferencePoint.add(referencePoints.get(j));
+            }
 
-    public IterationListener(ChartContainerWithReferencePoints chart) {
-      this.chart = chart;
-      this.chart.getFrontChart().setTitle("Iteration: " + 0);
+            referencePointList.add(newReferencePoint);
+        }
+
+        return referencePointList;
     }
 
-    @Override
-    synchronized public void measureGenerated(Long iteration) {
-      if (this.chart != null) {
-        this.chart.getFrontChart().setTitle("Iteration: " + iteration);
-      }
+    private static class ChartListener implements MeasureListener<List<DoubleSolution>> {
+        private ChartContainerWithReferencePoints chart;
+        private int iteration = 0;
+
+        public ChartListener(ChartContainerWithReferencePoints chart) {
+            this.chart = chart;
+            this.chart.getFrontChart().setTitle("Evaluation: " + this.iteration);
+        }
+
+        private void refreshChart(List<DoubleSolution> solutionList) {
+            if (this.chart != null) {
+                iteration++;
+                this.chart.getFrontChart().setTitle("Iteration: " + this.iteration);
+                this.chart.updateFrontCharts(solutionList);
+                this.chart.refreshCharts();
+
+                new SolutionListOutput(solutionList)
+                        .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + iteration + ".tsv"))
+                        .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + iteration + ".tsv"))
+                        .print();
+            }
+        }
+
+        @Override
+        synchronized public void measureGenerated(List<DoubleSolution> solutions) {
+            refreshChart(solutions);
+        }
     }
-  }
+
+    private static class IterationListener implements MeasureListener<Long> {
+        ChartContainerWithReferencePoints chart;
+
+        public IterationListener(ChartContainerWithReferencePoints chart) {
+            this.chart = chart;
+            this.chart.getFrontChart().setTitle("Iteration: " + 0);
+        }
+
+        @Override
+        synchronized public void measureGenerated(Long iteration) {
+            if (this.chart != null) {
+                this.chart.getFrontChart().setTitle("Iteration: " + iteration);
+            }
+        }
+    }
 }

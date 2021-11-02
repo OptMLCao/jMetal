@@ -30,224 +30,224 @@ import static org.uma.jmetal.util.ConstraintHandling.isFeasible;
 @SuppressWarnings("serial")
 public class MOEADIEpsilon extends AbstractMOEAD<DoubleSolution> {
 
-  private DifferentialEvolutionCrossover differentialEvolutionCrossover;
-  private double epsilonK;
-  private double phiMax = -1e30;
-  private List<DoubleSolution> archive ;
+    private DifferentialEvolutionCrossover differentialEvolutionCrossover;
+    private double epsilonK;
+    private double phiMax = -1e30;
+    private List<DoubleSolution> archive;
 
-  public MOEADIEpsilon(
-      Problem<DoubleSolution> problem,
-      int populationSize,
-      int resultPopulationSize,
-      int maxEvaluations,
-      MutationOperator<DoubleSolution> mutation,
-      CrossoverOperator<DoubleSolution> crossover,
-      FunctionType functionType,
-      String dataDirectory,
-      double neighborhoodSelectionProbability,
-      int maximumNumberOfReplacedSolutions,
-      int neighborSize) {
-    super(
-        problem,
-        populationSize,
-        resultPopulationSize,
-        maxEvaluations,
-        crossover,
-        mutation,
-        functionType,
-        dataDirectory,
-        neighborhoodSelectionProbability,
-        maximumNumberOfReplacedSolutions,
-        neighborSize);
+    public MOEADIEpsilon(
+            Problem<DoubleSolution> problem,
+            int populationSize,
+            int resultPopulationSize,
+            int maxEvaluations,
+            MutationOperator<DoubleSolution> mutation,
+            CrossoverOperator<DoubleSolution> crossover,
+            FunctionType functionType,
+            String dataDirectory,
+            double neighborhoodSelectionProbability,
+            int maximumNumberOfReplacedSolutions,
+            int neighborSize) {
+        super(
+                problem,
+                populationSize,
+                resultPopulationSize,
+                maxEvaluations,
+                crossover,
+                mutation,
+                functionType,
+                dataDirectory,
+                neighborhoodSelectionProbability,
+                maximumNumberOfReplacedSolutions,
+                neighborSize);
 
-    differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
-    archive = new ArrayList<>() ;
-  }
-
-  @Override
-  public void run() {
-    initializeUniformWeight();
-    initializeNeighborhood();
-    initializePopulation();
-    idealPoint.update(population);
-
-    double[] constraints = new double[populationSize];
-    for (int i = 0; i < populationSize; i++) {
-      constraints[i] = ConstraintHandling.overallConstraintViolationDegree(population.get(i));
-      }
-    Arrays.sort(constraints);
-    double epsilonZero = Math.abs(constraints[(int) Math.ceil(0.05 * populationSize)]);
-
-    if (phiMax < Math.abs(constraints[0])) {
-      phiMax = Math.abs(constraints[0]);
+        differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
+        archive = new ArrayList<>();
     }
 
-    int tc = (int) (0.8 * maxEvaluations / populationSize);
-    tc = 800 ;
-    double tao = 0.1;
-    double rk = feasibilityRatio(population);
+    @Override
+    public void run() {
+        initializeUniformWeight();
+        initializeNeighborhood();
+        initializePopulation();
+        idealPoint.update(population);
 
-    evaluations = populationSize;
-    int generationCounter = 0 ;
-    epsilonK = epsilonZero;
-    do {
-      // Update the epsilon level
-      if (generationCounter >= tc) {
-        epsilonK = 0;
-      } else {
-        if (rk < 0.95) {
-          epsilonK = (1 - tao) * epsilonK;
+        double[] constraints = new double[populationSize];
+        for (int i = 0; i < populationSize; i++) {
+            constraints[i] = ConstraintHandling.overallConstraintViolationDegree(population.get(i));
+        }
+        Arrays.sort(constraints);
+        double epsilonZero = Math.abs(constraints[(int) Math.ceil(0.05 * populationSize)]);
+
+        if (phiMax < Math.abs(constraints[0])) {
+            phiMax = Math.abs(constraints[0]);
+        }
+
+        int tc = (int) (0.8 * maxEvaluations / populationSize);
+        tc = 800;
+        double tao = 0.1;
+        double rk = feasibilityRatio(population);
+
+        evaluations = populationSize;
+        int generationCounter = 0;
+        epsilonK = epsilonZero;
+        do {
+            // Update the epsilon level
+            if (generationCounter >= tc) {
+                epsilonK = 0;
+            } else {
+                if (rk < 0.95) {
+                    epsilonK = (1 - tao) * epsilonK;
+                } else {
+                    epsilonK = phiMax * (1 + tao);
+                }
+            }
+
+            int[] permutation = new int[populationSize];
+            MOEADUtils.randomPermutation(permutation, populationSize);
+
+            for (int i = 0; i < populationSize; i++) {
+                int subProblemId = permutation[i];
+
+                NeighborType neighborType = chooseNeighborType();
+                List<DoubleSolution> parents = parentSelection(subProblemId, neighborType);
+
+                differentialEvolutionCrossover.setCurrentSolution(population.get(subProblemId));
+                List<DoubleSolution> children = differentialEvolutionCrossover.execute(parents);
+
+                DoubleSolution child = children.get(0);
+                mutationOperator.execute(child);
+                problem.evaluate(child);
+
+                evaluations++;
+
+                // Update PhiMax
+                if (phiMax < Math.abs((double) ConstraintHandling.overallConstraintViolationDegree(child))) {
+                    phiMax = ConstraintHandling.overallConstraintViolationDegree(child);
+                }
+
+                idealPoint.update(child.objectives());
+                updateNeighborhood(child, subProblemId, neighborType);
+            }
+            rk = feasibilityRatio(population);
+
+            updateExternalArchive();
+            generationCounter++;
+        } while (evaluations < maxEvaluations);
+    }
+
+    public void initializePopulation() {
+        for (int i = 0; i < populationSize; i++) {
+            DoubleSolution newSolution = problem.createSolution();
+
+            problem.evaluate(newSolution);
+            population.add(newSolution);
+        }
+    }
+
+    @Override
+    protected void updateNeighborhood(
+            DoubleSolution individual, int subproblemId, NeighborType neighborType) {
+        int size;
+        int numberOfReplaceSolutions;
+
+        numberOfReplaceSolutions = 0;
+
+        if (neighborType == NeighborType.NEIGHBOR) {
+            size = neighborhood[subproblemId].length;
         } else {
-          epsilonK = phiMax * (1 + tao);
+            size = population.size();
         }
-      }
+        int[] perm = new int[size];
 
-      int[] permutation = new int[populationSize];
-      MOEADUtils.randomPermutation(permutation, populationSize);
+        MOEADUtils.randomPermutation(perm, size);
 
-      for (int i = 0; i < populationSize; i++) {
-        int subProblemId = permutation[i];
+        for (int i = 0; i < size; i++) {
+            int k;
+            if (neighborType == NeighborType.NEIGHBOR) {
+                k = neighborhood[subproblemId][perm[i]];
+            } else {
+                k = perm[i];
+            }
 
-        NeighborType neighborType = chooseNeighborType();
-        List<DoubleSolution> parents = parentSelection(subProblemId, neighborType);
+            double f1, f2;
+            f1 = fitnessFunction(population.get(k), lambda[k]);
+            f2 = fitnessFunction(individual, lambda[k]);
 
-        differentialEvolutionCrossover.setCurrentSolution(population.get(subProblemId));
-        List<DoubleSolution> children = differentialEvolutionCrossover.execute(parents);
+            double cons1 =
+                    Math.abs(ConstraintHandling.overallConstraintViolationDegree(population.get(k)));
+            double cons2 =
+                    Math.abs(ConstraintHandling.overallConstraintViolationDegree(individual));
 
-        DoubleSolution child = children.get(0);
-        mutationOperator.execute(child);
-        problem.evaluate(child);
+            if (cons1 < epsilonK && cons2 <= epsilonK) {
+                if (f2 < f1) {
+                    population.set(k, (DoubleSolution) individual.copy());
+                    numberOfReplaceSolutions++;
+                }
+            } else if (cons1 == cons2) {
+                if (f2 < f1) {
+                    population.set(k, (DoubleSolution) individual.copy());
+                    numberOfReplaceSolutions++;
+                }
+            } else if (cons2 < cons1) {
+                population.set(k, (DoubleSolution) individual.copy());
+                numberOfReplaceSolutions++;
+            }
 
-        evaluations++;
-
-        // Update PhiMax
-        if (phiMax < Math.abs((double) ConstraintHandling.overallConstraintViolationDegree(child))) {
-          phiMax = ConstraintHandling.overallConstraintViolationDegree(child);
+            if (numberOfReplaceSolutions >= maximumNumberOfReplacedSolutions) {
+                return;
+            }
         }
-
-        idealPoint.update(child.objectives());
-        updateNeighborhood(child, subProblemId, neighborType);
-      }
-      rk = feasibilityRatio(population);
-
-      updateExternalArchive();
-      generationCounter++ ;
-    } while (evaluations < maxEvaluations);
-  }
-
-  public void initializePopulation() {
-    for (int i = 0; i < populationSize; i++) {
-      DoubleSolution newSolution = problem.createSolution();
-
-      problem.evaluate(newSolution);
-      population.add(newSolution);
-    }
-  }
-
-  @Override
-  protected void updateNeighborhood(
-      DoubleSolution individual, int subproblemId, NeighborType neighborType) {
-    int size;
-    int numberOfReplaceSolutions;
-
-    numberOfReplaceSolutions = 0;
-
-    if (neighborType == NeighborType.NEIGHBOR) {
-      size = neighborhood[subproblemId].length;
-    } else {
-      size = population.size();
-    }
-    int[] perm = new int[size];
-
-    MOEADUtils.randomPermutation(perm, size);
-
-    for (int i = 0; i < size; i++) {
-      int k;
-      if (neighborType == NeighborType.NEIGHBOR) {
-        k = neighborhood[subproblemId][perm[i]];
-      } else {
-        k = perm[i];
-      }
-
-      double f1, f2;
-      f1 = fitnessFunction(population.get(k), lambda[k]);
-      f2 = fitnessFunction(individual, lambda[k]);
-
-      double cons1 =
-          Math.abs(ConstraintHandling.overallConstraintViolationDegree(population.get(k))) ;
-      double cons2 =
-          Math.abs(ConstraintHandling.overallConstraintViolationDegree(individual));
-
-      if (cons1 < epsilonK && cons2 <= epsilonK) {
-        if (f2 < f1) {
-          population.set(k, (DoubleSolution) individual.copy());
-          numberOfReplaceSolutions++;
-        }
-      } else if (cons1 == cons2) {
-        if (f2 < f1) {
-          population.set(k, (DoubleSolution) individual.copy());
-          numberOfReplaceSolutions++;
-        }
-      } else if (cons2 < cons1) {
-        population.set(k, (DoubleSolution) individual.copy());
-        numberOfReplaceSolutions++;
-      }
-
-      if (numberOfReplaceSolutions >= maximumNumberOfReplacedSolutions) {
-        return;
-      }
-    }
-  }
-
-  @Override
-  public List<DoubleSolution> getResult() {
-    return archive ;
-  }
-
-  @Override
-  public String getName() {
-    return "MOEA/D IEpsilon";
-  }
-
-
-  @Override
-  public String getDescription() {
-    return "MOEA/D with improved epsilon constraint handling method";
-  }
-
-  private void updateExternalArchive() {
-    List<DoubleSolution> feasibleSolutions = new ArrayList<>() ;
-    for (DoubleSolution solution: population) {
-      if (isFeasible(solution)) {
-        feasibleSolutions.add((DoubleSolution) solution.copy()) ;
-      }
     }
 
-    if (feasibleSolutions.size() > 0) {
-      feasibleSolutions.addAll(archive) ;
-      Ranking<DoubleSolution> ranking = new FastNonDominatedSortRanking<>() ;
-      ranking.compute(feasibleSolutions) ;
-
-      List<DoubleSolution> firstRankSolutions = ranking.getSubFront(0) ;
-
-      if (firstRankSolutions.size() <= populationSize) {
-        archive.clear();
-        for (DoubleSolution solution: firstRankSolutions) {
-          archive.add((DoubleSolution)solution.copy()) ;
-        }
-      } else {
-        CrowdingDistanceDensityEstimator<DoubleSolution> crowdingDistance = new CrowdingDistanceDensityEstimator<>() ;
-        while (firstRankSolutions.size() > populationSize) {
-          crowdingDistance.compute(firstRankSolutions);
-          firstRankSolutions.sort(crowdingDistance.getComparator());
-          firstRankSolutions.remove(firstRankSolutions.size() - 1) ;
-        }
-
-        archive.clear();
-        for (int i = 0 ; i < populationSize; i++) {
-          archive.add((DoubleSolution)firstRankSolutions.get(i).copy()) ;
-        }
-      }
+    @Override
+    public List<DoubleSolution> getResult() {
+        return archive;
     }
-  }
+
+    @Override
+    public String getName() {
+        return "MOEA/D IEpsilon";
+    }
+
+
+    @Override
+    public String getDescription() {
+        return "MOEA/D with improved epsilon constraint handling method";
+    }
+
+    private void updateExternalArchive() {
+        List<DoubleSolution> feasibleSolutions = new ArrayList<>();
+        for (DoubleSolution solution : population) {
+            if (isFeasible(solution)) {
+                feasibleSolutions.add((DoubleSolution) solution.copy());
+            }
+        }
+
+        if (feasibleSolutions.size() > 0) {
+            feasibleSolutions.addAll(archive);
+            Ranking<DoubleSolution> ranking = new FastNonDominatedSortRanking<>();
+            ranking.compute(feasibleSolutions);
+
+            List<DoubleSolution> firstRankSolutions = ranking.getSubFront(0);
+
+            if (firstRankSolutions.size() <= populationSize) {
+                archive.clear();
+                for (DoubleSolution solution : firstRankSolutions) {
+                    archive.add((DoubleSolution) solution.copy());
+                }
+            } else {
+                CrowdingDistanceDensityEstimator<DoubleSolution> crowdingDistance = new CrowdingDistanceDensityEstimator<>();
+                while (firstRankSolutions.size() > populationSize) {
+                    crowdingDistance.compute(firstRankSolutions);
+                    firstRankSolutions.sort(crowdingDistance.getComparator());
+                    firstRankSolutions.remove(firstRankSolutions.size() - 1);
+                }
+
+                archive.clear();
+                for (int i = 0; i < populationSize; i++) {
+                    archive.add((DoubleSolution) firstRankSolutions.get(i).copy());
+                }
+            }
+        }
+    }
 }

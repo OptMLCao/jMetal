@@ -30,73 +30,73 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class MOEAD3DProblemWithChartExample extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws SecurityException Invoking command: java
-   *     org.uma.jmetal.runner.multiobjective.moead.MOEADRunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws FileNotFoundException {
-    DoubleProblem problem;
-    MOEAD<DoubleSolution> algorithm;
-    MutationOperator<DoubleSolution> mutation;
-    CrossoverOperator<DoubleSolution> crossover;
+    /**
+     * @param args Command line arguments.
+     * @throws SecurityException Invoking command: java
+     *                           org.uma.jmetal.runner.multiobjective.moead.MOEADRunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws FileNotFoundException {
+        DoubleProblem problem;
+        MOEAD<DoubleSolution> algorithm;
+        MutationOperator<DoubleSolution> mutation;
+        CrossoverOperator<DoubleSolution> crossover;
 
-    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ";
-    String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ1.3D.csv";
+        String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ";
+        String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ1.3D.csv";
 
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
+        problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    int populationSize = 91;
+        int populationSize = 91;
 
-    crossover = new SBXCrossover(1.0, 20.0);
+        crossover = new SBXCrossover(1.0, 20.0);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    double neighborhoodSelectionProbability = 1.0;
-    int neighborhoodSize = 20;
+        double neighborhoodSelectionProbability = 1.0;
+        int neighborhoodSize = 20;
 
-    int maximumNumberOfReplacedSolutions = 2;
-    AggregativeFunction aggregativeFunction = new PenaltyBoundaryIntersection();
+        int maximumNumberOfReplacedSolutions = 2;
+        AggregativeFunction aggregativeFunction = new PenaltyBoundaryIntersection();
 
-    algorithm =
-            new MOEAD<>(
-                    problem,
-                    populationSize,
-                    mutation,
-                    crossover,
-                    aggregativeFunction,
-                    neighborhoodSelectionProbability,
-                    maximumNumberOfReplacedSolutions,
-                    neighborhoodSize,
-                    "resources/weightVectorFiles/moead",
-                    new TerminationByEvaluations(50000));
+        algorithm =
+                new MOEAD<>(
+                        problem,
+                        populationSize,
+                        mutation,
+                        crossover,
+                        aggregativeFunction,
+                        neighborhoodSelectionProbability,
+                        maximumNumberOfReplacedSolutions,
+                        neighborhoodSize,
+                        "resources/weightVectorFiles/moead",
+                        new TerminationByEvaluations(50000));
 
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-            new RunTimeChartObserver<>("MOEA/D", 80, 1000, referenceParetoFront);
+        RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
+                new RunTimeChartObserver<>("MOEA/D", 80, 1000, referenceParetoFront);
 
-    algorithm.getObservable().register(runTimeChartObserver);
-    algorithm.run();
+        algorithm.getObservable().register(runTimeChartObserver);
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
-    JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
+        List<DoubleSolution> population = algorithm.getResult();
+        JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
+        JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
 
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-        .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+                .print();
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
 
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
+
+        PlotFront plot = new PlotSmile(new ArrayFront(population).getMatrix(), problem.getName());
+        plot.plot();
     }
-
-    PlotFront plot = new PlotSmile(new ArrayFront(population).getMatrix(), problem.getName()) ;
-    plot.plot();
-  }
 }

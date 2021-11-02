@@ -30,62 +30,61 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class SMPSOHvRunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments. The first (optional) argument specifies
-   *             the problem to solve.
-   * @throws JMetalException
-   * @throws java.io.IOException
-   * @throws SecurityException
-   * Invoking command:
-  java org.uma.jmetal.runner.multiobjective.smpso.SMPSOHvRunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws Exception {
-    JMetalRandom.getInstance().setSeed(1);
-    DoubleProblem problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    MutationOperator<DoubleSolution> mutation;
+    /**
+     * @param args Command line arguments. The first (optional) argument specifies
+     *             the problem to solve.
+     * @throws JMetalException
+     * @throws java.io.IOException
+     * @throws SecurityException   Invoking command:
+     *                             java org.uma.jmetal.runner.multiobjective.smpso.SMPSOHvRunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws Exception {
+        JMetalRandom.getInstance().setSeed(1);
+        DoubleProblem problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        MutationOperator<DoubleSolution> mutation;
 
-    String referenceParetoFront = "" ;
+        String referenceParetoFront = "";
 
-    String problemName ;
-    if (args.length == 1) {
-      problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
-    } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
-      referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv" ;
+        String problemName;
+        if (args.length == 1) {
+            problemName = args[0];
+        } else if (args.length == 2) {
+            problemName = args[0];
+            referenceParetoFront = args[1];
+        } else {
+            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
+            referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+        }
+
+        problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
+
+        BoundedArchive<DoubleSolution> archive =
+                new HypervolumeArchive(100, new PISAHypervolume<>());
+
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+
+        algorithm = new SMPSOBuilder(problem, archive)
+                .setMutation(mutation)
+                .setMaxIterations(250)
+                .setSwarmSize(100)
+                .setRandomGenerator(new MersenneTwisterGenerator())
+                .setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>())
+                .build();
+
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
+
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
+
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+
+        printFinalSolutionSet(population);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
-    BoundedArchive<DoubleSolution> archive =
-        new HypervolumeArchive(100, new PISAHypervolume<>()) ;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
-
-    algorithm = new SMPSOBuilder(problem, archive)
-        .setMutation(mutation)
-        .setMaxIterations(250)
-        .setSwarmSize(100)
-        .setRandomGenerator(new MersenneTwisterGenerator())
-        .setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>())
-        .build();
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute();
-
-    List<DoubleSolution> population = algorithm.getResult();
-    long computingTime = algorithmRunner.getComputingTime();
-
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
-    }
-  }
 }

@@ -17,26 +17,26 @@ import java.util.List;
  * @author Javier Pérez
  */
 public class GenerateHtmlPages<Result extends List<? extends Solution<?>>>
-    implements ExperimentComponent {
+        implements ExperimentComponent {
 
-  private final Experiment<?, Result> experiment;
-  private StudyVisualizer.TYPE_OF_FRONT_TO_SHOW defaultTypeOfFrontToShow;
+    private final Experiment<?, Result> experiment;
+    private StudyVisualizer.TYPE_OF_FRONT_TO_SHOW defaultTypeOfFrontToShow;
 
-  public GenerateHtmlPages(Experiment<?, Result> experimentConfiguration) {
-    this(experimentConfiguration, StudyVisualizer.TYPE_OF_FRONT_TO_SHOW.BEST);
-  }
+    public GenerateHtmlPages(Experiment<?, Result> experimentConfiguration) {
+        this(experimentConfiguration, StudyVisualizer.TYPE_OF_FRONT_TO_SHOW.BEST);
+    }
 
-  public GenerateHtmlPages(
-      Experiment<?, Result> experimentConfiguration,
-      StudyVisualizer.TYPE_OF_FRONT_TO_SHOW defaultTypeOfFrontToShow) {
-    this.experiment = experimentConfiguration;
-    this.defaultTypeOfFrontToShow = defaultTypeOfFrontToShow;
-  }
+    public GenerateHtmlPages(
+            Experiment<?, Result> experimentConfiguration,
+            StudyVisualizer.TYPE_OF_FRONT_TO_SHOW defaultTypeOfFrontToShow) {
+        this.experiment = experimentConfiguration;
+        this.defaultTypeOfFrontToShow = defaultTypeOfFrontToShow;
+    }
 
-  @Override
-  public void run() throws IOException {
-    String directory = experiment.getExperimentBaseDirectory();
-    StudyVisualizer visualizer = new StudyVisualizer(directory, defaultTypeOfFrontToShow);
-    visualizer.createHTMLPageForEachIndicator();
-  }
+    @Override
+    public void run() throws IOException {
+        String directory = experiment.getExperimentBaseDirectory();
+        StudyVisualizer visualizer = new StudyVisualizer(directory, defaultTypeOfFrontToShow);
+        visualizer.createHTMLPageForEachIndicator();
+    }
 }

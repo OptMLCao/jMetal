@@ -26,50 +26,50 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class AsynchronousCellularGeneticAlgorithmBinaryExample extends AbstractAlgorithmRunner {
-  public static void main(String[] args) throws JMetalException {
-    BinaryProblem problem;
-    AsynchronousCellularGeneticAlgorithm<BinarySolution> algorithm;
-    CrossoverOperator<BinarySolution> crossover;
-    MutationOperator<BinarySolution> mutation;
+    public static void main(String[] args) throws JMetalException {
+        BinaryProblem problem;
+        AsynchronousCellularGeneticAlgorithm<BinarySolution> algorithm;
+        CrossoverOperator<BinarySolution> crossover;
+        MutationOperator<BinarySolution> mutation;
 
-    problem = new OneMax(512) ;
+        problem = new OneMax(512);
 
-    int rows = 10 ;
-    int columns = 10 ;
-    int populationSize = rows * columns ;
+        int rows = 10;
+        int columns = 10;
+        int populationSize = rows * columns;
 
-    double crossoverProbability = 0.9;
-    crossover = new SinglePointCrossover(crossoverProbability) ;
+        double crossoverProbability = 0.9;
+        crossover = new SinglePointCrossover(crossoverProbability);
 
-    double mutationProbability = 1.0 / problem.getTotalNumberOfBits() ;
-    mutation = new BitFlipMutation(mutationProbability);
+        double mutationProbability = 1.0 / problem.getTotalNumberOfBits();
+        mutation = new BitFlipMutation(mutationProbability);
 
-    Termination termination = new TerminationByEvaluations(20000);
+        Termination termination = new TerminationByEvaluations(20000);
 
-    algorithm =
-            new AsynchronousCellularGeneticAlgorithm<>(
-                    problem,
-                    populationSize,
-                    new C9<>(rows, columns),
-                    crossover,
-                    mutation,
-                    termination);
+        algorithm =
+                new AsynchronousCellularGeneticAlgorithm<>(
+                        problem,
+                        populationSize,
+                        new C9<>(rows, columns),
+                        crossover,
+                        mutation,
+                        termination);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<BinarySolution> population = algorithm.getResult();
-    JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
+        List<BinarySolution> population = algorithm.getResult();
+        JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
+        JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
 
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+                .print();
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
 
-    JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]) ;
-  }
+        JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]);
+    }
 }

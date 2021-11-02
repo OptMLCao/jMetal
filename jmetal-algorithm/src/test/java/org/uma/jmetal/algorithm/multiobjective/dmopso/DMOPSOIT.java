@@ -20,83 +20,83 @@ import static org.junit.Assert.assertTrue;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class DMOPSOIT {
-  Algorithm<List<DoubleSolution>> algorithm;
+    Algorithm<List<DoubleSolution>> algorithm;
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
-      throws Exception {
-    DoubleProblem problem = new ZDT1();
+    @Test
+    public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
+            throws Exception {
+        DoubleProblem problem = new ZDT1();
 
-    algorithm =
-        new DMOPSO(
-            problem,
-            100,
-            250,
-            0.0,
-            0.1,
-            0.0,
-            1.0,
-            1.5,
-            2.5,
-            1.5,
-            2.5,
-            0.1,
-            0.4,
-            -1.0,
-            -1.0,
-            DMOPSO.FunctionType.TCHE,
-            "",
-            2);
+        algorithm =
+                new DMOPSO(
+                        problem,
+                        100,
+                        250,
+                        0.0,
+                        0.1,
+                        0.0,
+                        1.0,
+                        1.5,
+                        2.5,
+                        1.5,
+                        2.5,
+                        0.1,
+                        0.4,
+                        -1.0,
+                        -1.0,
+                        DMOPSO.FunctionType.TCHE,
+                        "",
+                        2);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
     /*
     Rationale: the default problem is ZDT1, and dMOPSO, configured with standard settings, should
     return 100 solutions
     */
-    assertTrue(population.size() >= 98);
-  }
+        assertTrue(population.size() >= 98);
+    }
 
-  @Test
-  public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
-    DoubleProblem problem = new ZDT1();
+    @Test
+    public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
+        DoubleProblem problem = new ZDT1();
 
-    algorithm =
-        new DMOPSO(
-            problem,
-            100,
-            250,
-            0.0,
-            0.1,
-            0.0,
-            1.0,
-            1.5,
-            2.5,
-            1.5,
-            2.5,
-            0.1,
-            0.4,
-            -1.0,
-            -1.0,
-            DMOPSO.FunctionType.TCHE,
-            "",
-            2);
+        algorithm =
+                new DMOPSO(
+                        problem,
+                        100,
+                        250,
+                        0.0,
+                        0.1,
+                        0.0,
+                        1.0,
+                        1.5,
+                        2.5,
+                        1.5,
+                        2.5,
+                        0.1,
+                        0.4,
+                        -1.0,
+                        -1.0,
+                        DMOPSO.FunctionType.TCHE,
+                        "",
+                        2);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
-    QualityIndicator hypervolume =
-            new PISAHypervolume(
-                    VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
+        QualityIndicator hypervolume =
+                new PISAHypervolume(
+                        VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
 
-    // Rationale: the default problem is ZDT1, and AbYSS, configured with standard settings,
-    // should return find a front with a hypervolume value higher than 0.22
+        // Rationale: the default problem is ZDT1, and AbYSS, configured with standard settings,
+        // should return find a front with a hypervolume value higher than 0.22
 
-    double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
+        double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
 
-    assertTrue(hv > 0.64);
-  }
+        assertTrue(hv > 0.64);
+    }
 }

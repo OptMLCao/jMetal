@@ -17,44 +17,48 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class CompositeMutation implements MutationOperator<CompositeSolution> {
-  private List<MutationOperator<Solution<?>>> operators;
-  private double mutationProbability = 1.0;
+    private List<MutationOperator<Solution<?>>> operators;
+    private double mutationProbability = 1.0;
 
-  /** Constructor */
-  public CompositeMutation(List<?> operators) {
-    Check.notNull(operators);
-    Check.collectionIsNotEmpty(operators);
+    /**
+     * Constructor
+     */
+    public CompositeMutation(List<?> operators) {
+        Check.notNull(operators);
+        Check.collectionIsNotEmpty(operators);
 
-    this.operators = new ArrayList<>();
-    for (int i = 0; i < operators.size(); i++) {
-      Check.that(
-          operators.get(i) instanceof MutationOperator,
-          "The operator list does not contain an object implementing class CrossoverOperator");
-      this.operators.add((MutationOperator<Solution<?>>) operators.get(i));
-    }
-  }
-
-  /* Getters */
-  @Override
-  public double getMutationProbability() {
-    return mutationProbability;
-  }
-
-  /** Execute() method */
-  @Override
-  public CompositeSolution execute(CompositeSolution solution) {
-    Check.notNull(solution);
-
-    List<Solution<?>> mutatedSolutionComponents = new ArrayList<>();
-    int numberOfSolutionsInCompositeSolution = solution.variables().size();
-    for (int i = 0; i < numberOfSolutionsInCompositeSolution; i++) {
-      mutatedSolutionComponents.add(operators.get(i).execute(solution.variables().get(i))) ;
+        this.operators = new ArrayList<>();
+        for (int i = 0; i < operators.size(); i++) {
+            Check.that(
+                    operators.get(i) instanceof MutationOperator,
+                    "The operator list does not contain an object implementing class CrossoverOperator");
+            this.operators.add((MutationOperator<Solution<?>>) operators.get(i));
+        }
     }
 
-    return new CompositeSolution(mutatedSolutionComponents);
-  }
+    /* Getters */
+    @Override
+    public double getMutationProbability() {
+        return mutationProbability;
+    }
 
-  public List<MutationOperator<Solution<?>>> getOperators() {
-    return operators ;
-  }
+    /**
+     * Execute() method
+     */
+    @Override
+    public CompositeSolution execute(CompositeSolution solution) {
+        Check.notNull(solution);
+
+        List<Solution<?>> mutatedSolutionComponents = new ArrayList<>();
+        int numberOfSolutionsInCompositeSolution = solution.variables().size();
+        for (int i = 0; i < numberOfSolutionsInCompositeSolution; i++) {
+            mutatedSolutionComponents.add(operators.get(i).execute(solution.variables().get(i)));
+        }
+
+        return new CompositeSolution(mutatedSolutionComponents);
+    }
+
+    public List<MutationOperator<Solution<?>>> getOperators() {
+        return operators;
+    }
 }

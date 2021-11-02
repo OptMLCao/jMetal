@@ -12,32 +12,32 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class MultiThreadedSolutionListEvaluator<S> implements SolutionListEvaluator<S> {
 
-  private final int numberOfThreads;
+    private final int numberOfThreads;
 
-  public MultiThreadedSolutionListEvaluator(int numberOfThreads) {
-    if (numberOfThreads == 0) {
-      this.numberOfThreads = Runtime.getRuntime().availableProcessors();
-    } else {
-      this.numberOfThreads = numberOfThreads;
-      System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
-          "" + this.numberOfThreads);
+    public MultiThreadedSolutionListEvaluator(int numberOfThreads) {
+        if (numberOfThreads == 0) {
+            this.numberOfThreads = Runtime.getRuntime().availableProcessors();
+        } else {
+            this.numberOfThreads = numberOfThreads;
+            System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
+                    "" + this.numberOfThreads);
+        }
+        JMetalLogger.logger.info("Number of cores: " + numberOfThreads);
     }
-    JMetalLogger.logger.info("Number of cores: " + numberOfThreads);
-  }
 
-  @Override
-  public List<S> evaluate(List<S> solutionList, Problem<S> problem) {
-    solutionList.parallelStream().forEach(problem::evaluate);
+    @Override
+    public List<S> evaluate(List<S> solutionList, Problem<S> problem) {
+        solutionList.parallelStream().forEach(problem::evaluate);
 
-    return solutionList;
-  }
+        return solutionList;
+    }
 
-  public int getNumberOfThreads() {
-    return numberOfThreads;
-  }
+    public int getNumberOfThreads() {
+        return numberOfThreads;
+    }
 
-  @Override
-  public void shutdown() {
-    //This method is an intentionally-blank override.
-  }
+    @Override
+    public void shutdown() {
+        //This method is an intentionally-blank override.
+    }
 }

@@ -16,28 +16,28 @@ import java.util.Map;
  */
 public class ExternalArchiveObserver<S extends Solution<?>> implements Observer<Map<String, Object>> {
 
-  private Archive<S> archive ;
+    private Archive<S> archive;
 
-  public ExternalArchiveObserver(Archive<S> archive) {
-    this.archive = archive ;
-  }
+    public ExternalArchiveObserver(Archive<S> archive) {
+        this.archive = archive;
+    }
 
-  @Override
-  public void update(Observable<Map<String, Object>> observable, Map<String, Object> data) {
-    List<S> population = (List<S>) data.get("POPULATION");
-    population.stream().forEach(solution -> archive.add((S) solution.copy()));
-  }
+    @Override
+    public void update(Observable<Map<String, Object>> observable, Map<String, Object> data) {
+        List<S> population = (List<S>) data.get("POPULATION");
+        population.stream().forEach(solution -> archive.add((S) solution.copy()));
+    }
 
-  public Archive<S> getArchive() {
-    return archive;
-  }
+    public Archive<S> getArchive() {
+        return archive;
+    }
 
-  public String getName() {
-    return "External archive observer";
-  }
+    public String getName() {
+        return "External archive observer";
+    }
 
-  @Override
-  public String toString() {
-    return getName() ;
-  }
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

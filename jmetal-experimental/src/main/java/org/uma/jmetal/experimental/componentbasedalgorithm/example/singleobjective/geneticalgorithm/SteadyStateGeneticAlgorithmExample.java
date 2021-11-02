@@ -27,56 +27,56 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class SteadyStateGeneticAlgorithmExample
-    extends AbstractAlgorithmRunner {
-  public static void main(String[] args) throws JMetalException {
-    Problem<DoubleSolution> problem;
-    GeneticAlgorithm<DoubleSolution> algorithm;
-    NaryTournamentSelection<DoubleSolution> selection ;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
+        extends AbstractAlgorithmRunner {
+    public static void main(String[] args) throws JMetalException {
+        Problem<DoubleSolution> problem;
+        GeneticAlgorithm<DoubleSolution> algorithm;
+        NaryTournamentSelection<DoubleSolution> selection;
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
 
-    problem = new Sphere(20);
+        problem = new Sphere(20);
 
-    int populationSize = 100;
-    int offspringPopulationSize = 1;
+        int populationSize = 100;
+        int offspringPopulationSize = 1;
 
-    selection = new NaryTournamentSelection<>(2, new ObjectiveComparator<>(0)) ;
+        selection = new NaryTournamentSelection<>(2, new ObjectiveComparator<>(0));
 
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    Termination termination = new TerminationByEvaluations(150000);
+        Termination termination = new TerminationByEvaluations(150000);
 
-    algorithm =
-        new GeneticAlgorithm<>(
-            problem,
-            populationSize,
-            offspringPopulationSize,
-            selection,
-            crossover,
-            mutation,
-            termination);
+        algorithm =
+                new GeneticAlgorithm<>(
+                        problem,
+                        populationSize,
+                        offspringPopulationSize,
+                        selection,
+                        crossover,
+                        mutation,
+                        termination);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
-    JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
+        List<DoubleSolution> population = algorithm.getResult();
+        JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
+        JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
 
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-        .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+                .print();
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
 
-    JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]);
-  }
+        JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]);
+    }
 }

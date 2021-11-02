@@ -29,65 +29,64 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class MOCellHVRunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws JMetalException
-   * @throws FileNotFoundException
-   * Invoking command:
-    java org.uma.jmetal.runner.multiobjective.MOCellRunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    Problem<DoubleSolution> problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
-    String referenceParetoFront = "" ;
+    /**
+     * @param args Command line arguments.
+     * @throws JMetalException
+     * @throws FileNotFoundException Invoking command:
+     *                               java org.uma.jmetal.runner.multiobjective.MOCellRunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        Problem<DoubleSolution> problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+        String referenceParetoFront = "";
 
-    String problemName ;
-    if (args.length == 1) {
-      problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
-    } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
-      referenceParetoFront = "resources/referenceFrontsCSV/ZDT4.csv" ;
+        String problemName;
+        if (args.length == 1) {
+            problemName = args[0];
+        } else if (args.length == 2) {
+            problemName = args[0];
+            referenceParetoFront = args[1];
+        } else {
+            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
+            referenceParetoFront = "resources/referenceFrontsCSV/ZDT4.csv";
+        }
+
+        problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
+
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+
+        selection = new BinaryTournamentSelection<DoubleSolution>(new RankingAndCrowdingDistanceComparator<DoubleSolution>());
+
+        BoundedArchive<DoubleSolution> archive =
+                new HypervolumeArchive<DoubleSolution>(100, new PISAHypervolume<DoubleSolution>());
+
+        algorithm = new MOCellBuilder<DoubleSolution>(problem, crossover, mutation)
+                .setSelectionOperator(selection)
+                .setMaxEvaluations(25000)
+                .setPopulationSize(100)
+                .setArchive(archive)
+                .build();
+
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
+
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
+
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+
+        printFinalSolutionSet(population);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-
-    problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
-
-    double crossoverProbability = 0.9 ;
-    double crossoverDistributionIndex = 20.0 ;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
-
-    selection = new BinaryTournamentSelection<DoubleSolution>(new RankingAndCrowdingDistanceComparator<DoubleSolution>());
-
-    BoundedArchive<DoubleSolution> archive =
-        new HypervolumeArchive<DoubleSolution>(100, new PISAHypervolume<DoubleSolution>()) ;
-
-    algorithm = new MOCellBuilder<DoubleSolution>(problem, crossover, mutation)
-        .setSelectionOperator(selection)
-        .setMaxEvaluations(25000)
-        .setPopulationSize(100)
-        .setArchive(archive)
-        .build() ;
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
-
-    List<DoubleSolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
-
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
-    }
-  }
 }

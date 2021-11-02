@@ -33,55 +33,55 @@ import java.util.List;
  * @author Feng Zhang
  */
 public class CDGRunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws ClassNotFoundException
-   * @throws SecurityException Invoking command: java org.uma.jmetal.runner.multiobjective.CDGRunner
-   *     problemName [referenceFront]
-   */
-  public static void main(String[] args) throws FileNotFoundException {
-    DoubleProblem problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    DifferentialEvolutionCrossover crossover;
+    /**
+     * @param args Command line arguments.
+     * @throws ClassNotFoundException
+     * @throws SecurityException      Invoking command: java org.uma.jmetal.runner.multiobjective.CDGRunner
+     *                                problemName [referenceFront]
+     */
+    public static void main(String[] args) throws FileNotFoundException {
+        DoubleProblem problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        DifferentialEvolutionCrossover crossover;
 
-    String problemName;
-    String referenceParetoFront = "";
-    if (args.length == 1) {
-      problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0];
-      referenceParetoFront = args[1];
-    } else {
-      problemName = "(none)";
+        String problemName;
+        String referenceParetoFront = "";
+        if (args.length == 1) {
+            problemName = args[0];
+        } else if (args.length == 2) {
+            problemName = args[0];
+            referenceParetoFront = args[1];
+        } else {
+            problemName = "(none)";
+        }
+
+        problem = new GLT4(10);
+
+        double cr = 1.0;
+        double f = 0.5;
+        crossover =
+                new DifferentialEvolutionCrossover(
+                        cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
+
+        algorithm =
+                new CDGBuilder(problem)
+                        .setCrossover(crossover)
+                        .setMaxEvaluations(300 * 1000)
+                        .setPopulationSize(300)
+                        .setResultPopulationSize(300)
+                        .setNeighborhoodSelectionProbability(0.9)
+                        .build();
+
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
+
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+
+        printFinalSolutionSet(population);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-
-    problem = new GLT4(10);
-
-    double cr = 1.0;
-    double f = 0.5;
-    crossover =
-        new DifferentialEvolutionCrossover(
-            cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
-
-    algorithm =
-        new CDGBuilder(problem)
-            .setCrossover(crossover)
-            .setMaxEvaluations(300 * 1000)
-            .setPopulationSize(300)
-            .setResultPopulationSize(300)
-            .setNeighborhoodSelectionProbability(0.9)
-            .build();
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
-    List<DoubleSolution> population = algorithm.getResult();
-    long computingTime = algorithmRunner.getComputingTime();
-
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront);
-    }
-  }
 }

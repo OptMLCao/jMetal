@@ -22,104 +22,106 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class ExecuteAlgorithms<S extends Solution<?>, Result extends List<S>>
-    implements ExperimentComponent {
-  private Experiment<S, Result> experiment;
+        implements ExperimentComponent {
+    private Experiment<S, Result> experiment;
 
-  /** Constructor */
-  public ExecuteAlgorithms(Experiment<S, Result> configuration) {
-    this.experiment = configuration;
-  }
-
-  @Override
-  public void run() {
-    JMetalLogger.logger.info("ExecuteAlgorithms: Preparing output directory");
-    prepareOutputDirectory();
-
-    System.setProperty(
-        "java.util.concurrent.ForkJoinPool.common.parallelism",
-        "" + this.experiment.getNumberOfCores());
-
-    int retryCounter = 0 ;
-    int maxRetries = 5 ;
-    boolean computationNotFinished = true ;
-
-    while (computationNotFinished && (retryCounter < maxRetries)) {
-      List<ExperimentAlgorithm<?, ?>> unfinishedAlgorithmList = checkTaskStatus() ;
-      if (unfinishedAlgorithmList.size() == 0) {
-        computationNotFinished = false ;
-      } else {
-        JMetalLogger.logger.info(
-            "ExecuteAlgorithms: there are " + unfinishedAlgorithmList.size() + " runs pending");
-        unfinishedAlgorithmList
-            .parallelStream()
-            .forEach(algorithm -> algorithm.runAlgorithm(experiment));
-        retryCounter++;
-      }
+    /**
+     * Constructor
+     */
+    public ExecuteAlgorithms(Experiment<S, Result> configuration) {
+        this.experiment = configuration;
     }
 
-    if (computationNotFinished) {
-      JMetalLogger.logger.severe("There are unfinished tasks after " + maxRetries + " tries");
-    } else {
-      JMetalLogger.logger.info("Algorithm runs finished. Number of tries: " + retryCounter);
-    }
-  }
+    @Override
+    public void run() {
+        JMetalLogger.logger.info("ExecuteAlgorithms: Preparing output directory");
+        prepareOutputDirectory();
 
-  public List<ExperimentAlgorithm<?, ?>> checkTaskStatus() {
-    List<ExperimentAlgorithm<?, ?>> unfinishedAlgorithmList = new LinkedList<>();
+        System.setProperty(
+                "java.util.concurrent.ForkJoinPool.common.parallelism",
+                "" + this.experiment.getNumberOfCores());
 
-    for (ExperimentAlgorithm<?, ?> algorithm : experiment.getAlgorithmList()) {
-      String resultFileName =
-          experiment.getExperimentBaseDirectory()
-              + "/data/"
-              + algorithm.getAlgorithmTag()
-              + "/"
-              + algorithm.getProblemTag()
-              + "/" + experiment.getOutputParetoFrontFileName()
-              + algorithm.getRunId()
-              + ".csv";
-      File file = new File(resultFileName);
-      if (!file.exists()) {
-        unfinishedAlgorithmList.add(algorithm);
-        System.out.println(resultFileName + ". Status: " + file.exists());
-      }
-    }
-    return unfinishedAlgorithmList;
-  }
+        int retryCounter = 0;
+        int maxRetries = 5;
+        boolean computationNotFinished = true;
 
-  public void runMissingExecutions(List<ExperimentAlgorithm<?, ?>> experimentAlgorithms) {
-    experimentAlgorithms.parallelStream().forEach(algorithm -> algorithm.runAlgorithm(experiment));
-  }
+        while (computationNotFinished && (retryCounter < maxRetries)) {
+            List<ExperimentAlgorithm<?, ?>> unfinishedAlgorithmList = checkTaskStatus();
+            if (unfinishedAlgorithmList.size() == 0) {
+                computationNotFinished = false;
+            } else {
+                JMetalLogger.logger.info(
+                        "ExecuteAlgorithms: there are " + unfinishedAlgorithmList.size() + " runs pending");
+                unfinishedAlgorithmList
+                        .parallelStream()
+                        .forEach(algorithm -> algorithm.runAlgorithm(experiment));
+                retryCounter++;
+            }
+        }
 
-  private void prepareOutputDirectory() {
-    if (experimentDirectoryDoesNotExist()) {
-      createExperimentDirectory();
-    }
-  }
-
-  private boolean experimentDirectoryDoesNotExist() {
-    boolean result;
-    File experimentDirectory;
-
-    experimentDirectory = new File(experiment.getExperimentBaseDirectory());
-    result = !experimentDirectory.exists() || !experimentDirectory.isDirectory();
-
-    return result;
-  }
-
-  private void createExperimentDirectory() {
-    File experimentDirectory;
-    experimentDirectory = new File(experiment.getExperimentBaseDirectory());
-
-    if (experimentDirectory.exists()) {
-      experimentDirectory.delete();
+        if (computationNotFinished) {
+            JMetalLogger.logger.severe("There are unfinished tasks after " + maxRetries + " tries");
+        } else {
+            JMetalLogger.logger.info("Algorithm runs finished. Number of tries: " + retryCounter);
+        }
     }
 
-    boolean result;
-    result = new File(experiment.getExperimentBaseDirectory()).mkdirs();
-    if (!result) {
-      throw new JMetalException(
-          "Error creating org.uma.jmetal.experiment directory: "
-              + experiment.getExperimentBaseDirectory());
+    public List<ExperimentAlgorithm<?, ?>> checkTaskStatus() {
+        List<ExperimentAlgorithm<?, ?>> unfinishedAlgorithmList = new LinkedList<>();
+
+        for (ExperimentAlgorithm<?, ?> algorithm : experiment.getAlgorithmList()) {
+            String resultFileName =
+                    experiment.getExperimentBaseDirectory()
+                            + "/data/"
+                            + algorithm.getAlgorithmTag()
+                            + "/"
+                            + algorithm.getProblemTag()
+                            + "/" + experiment.getOutputParetoFrontFileName()
+                            + algorithm.getRunId()
+                            + ".csv";
+            File file = new File(resultFileName);
+            if (!file.exists()) {
+                unfinishedAlgorithmList.add(algorithm);
+                System.out.println(resultFileName + ". Status: " + file.exists());
+            }
+        }
+        return unfinishedAlgorithmList;
     }
-  }
+
+    public void runMissingExecutions(List<ExperimentAlgorithm<?, ?>> experimentAlgorithms) {
+        experimentAlgorithms.parallelStream().forEach(algorithm -> algorithm.runAlgorithm(experiment));
+    }
+
+    private void prepareOutputDirectory() {
+        if (experimentDirectoryDoesNotExist()) {
+            createExperimentDirectory();
+        }
+    }
+
+    private boolean experimentDirectoryDoesNotExist() {
+        boolean result;
+        File experimentDirectory;
+
+        experimentDirectory = new File(experiment.getExperimentBaseDirectory());
+        result = !experimentDirectory.exists() || !experimentDirectory.isDirectory();
+
+        return result;
+    }
+
+    private void createExperimentDirectory() {
+        File experimentDirectory;
+        experimentDirectory = new File(experiment.getExperimentBaseDirectory());
+
+        if (experimentDirectory.exists()) {
+            experimentDirectory.delete();
+        }
+
+        boolean result;
+        result = new File(experiment.getExperimentBaseDirectory()).mkdirs();
+        if (!result) {
+            throw new JMetalException(
+                    "Error creating org.uma.jmetal.experiment directory: "
+                            + experiment.getExperimentBaseDirectory());
+        }
+    }
 }

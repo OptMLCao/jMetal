@@ -23,63 +23,63 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class ParallelGDE3Runner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws SecurityException Invoking command: java
-   *     org.uma.jmetal.runner.multiobjective.ParallelGDE3Runner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws FileNotFoundException {
-    DoubleProblem problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    DifferentialEvolutionSelection selection;
-    DifferentialEvolutionCrossover crossover;
+    /**
+     * @param args Command line arguments.
+     * @throws SecurityException Invoking command: java
+     *                           org.uma.jmetal.runner.multiobjective.ParallelGDE3Runner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws FileNotFoundException {
+        DoubleProblem problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        DifferentialEvolutionSelection selection;
+        DifferentialEvolutionCrossover crossover;
 
-    String referenceParetoFront = "";
+        String referenceParetoFront = "";
 
-    String problemName;
-    if (args.length == 1) {
-      problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0];
-      referenceParetoFront = args[1];
-    } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+        String problemName;
+        if (args.length == 1) {
+            problemName = args[0];
+        } else if (args.length == 2) {
+            problemName = args[0];
+            referenceParetoFront = args[1];
+        } else {
+            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+            referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+        }
+
+        problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
+
+        double cr = 0.5;
+        double f = 0.5;
+        crossover =
+                new DifferentialEvolutionCrossover(
+                        cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
+        selection = new DifferentialEvolutionSelection();
+
+        SolutionListEvaluator<DoubleSolution> evaluator =
+                new MultiThreadedSolutionListEvaluator<DoubleSolution>(0);
+
+        algorithm =
+                new GDE3Builder(problem)
+                        .setCrossover(crossover)
+                        .setSelection(selection)
+                        .setMaxEvaluations(25000)
+                        .setPopulationSize(100)
+                        .setSolutionSetEvaluator(evaluator)
+                        .build();
+
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+
+        List<DoubleSolution> population = ((GDE3) algorithm).getResult();
+        long computingTime = algorithmRunner.getComputingTime();
+
+        evaluator.shutdown();
+
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+
+        printFinalSolutionSet(population);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
-    double cr = 0.5;
-    double f = 0.5;
-    crossover =
-        new DifferentialEvolutionCrossover(
-            cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
-    selection = new DifferentialEvolutionSelection();
-
-    SolutionListEvaluator<DoubleSolution> evaluator =
-        new MultiThreadedSolutionListEvaluator<DoubleSolution>(0);
-
-    algorithm =
-        new GDE3Builder(problem)
-            .setCrossover(crossover)
-            .setSelection(selection)
-            .setMaxEvaluations(25000)
-            .setPopulationSize(100)
-            .setSolutionSetEvaluator(evaluator)
-            .build();
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
-    List<DoubleSolution> population = ((GDE3) algorithm).getResult();
-    long computingTime = algorithmRunner.getComputingTime();
-
-    evaluator.shutdown();
-
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront);
-    }
-  }
 }

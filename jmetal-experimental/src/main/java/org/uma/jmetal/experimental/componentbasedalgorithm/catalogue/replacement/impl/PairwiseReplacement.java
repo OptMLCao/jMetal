@@ -15,29 +15,29 @@ import java.util.List;
  * @param <S>
  */
 public class PairwiseReplacement<S extends Solution<?>> implements Replacement<S> {
-  protected Comparator<S> comparator;
+    protected Comparator<S> comparator;
 
-  public PairwiseReplacement(Comparator<S> comparator) {
-    this.comparator = comparator;
-  }
-
-  public List<S> replace(List<S> population, List<S> offspringPopulation) {
-    Check.that(
-        population.size() == offspringPopulation.size(),
-        "The sizes of both populations is not the same: "
-            + population.size()
-            + ", "
-            + offspringPopulation.size());
-
-    List<S> resultPopulation = new ArrayList<>();
-    for (int i = 0; i < population.size(); i++) {
-      if (comparator.compare(population.get(i), offspringPopulation.get(i)) < 0) {
-        resultPopulation.add(population.get(i)) ;
-      } else {
-        resultPopulation.add(offspringPopulation.get(i)) ;
-      }
+    public PairwiseReplacement(Comparator<S> comparator) {
+        this.comparator = comparator;
     }
 
-    return resultPopulation;
-  }
+    public List<S> replace(List<S> population, List<S> offspringPopulation) {
+        Check.that(
+                population.size() == offspringPopulation.size(),
+                "The sizes of both populations is not the same: "
+                        + population.size()
+                        + ", "
+                        + offspringPopulation.size());
+
+        List<S> resultPopulation = new ArrayList<>();
+        for (int i = 0; i < population.size(); i++) {
+            if (comparator.compare(population.get(i), offspringPopulation.get(i)) < 0) {
+                resultPopulation.add(population.get(i));
+            } else {
+                resultPopulation.add(offspringPopulation.get(i));
+            }
+        }
+
+        return resultPopulation;
+    }
 }

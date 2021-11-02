@@ -7,8 +7,8 @@ import org.uma.jmetal.algorithm.multiobjective.mosa.cooling.CoolingScheme;
  */
 public class Logarithmic implements CoolingScheme {
 
-  @Override
-  public double updateTemperature(double temperature, int iteration) {
-    return Math.log(iteration) / Math.log(iteration + 1) * temperature ;
-  }
+    @Override
+    public double updateTemperature(double temperature, int iteration) {
+        return Math.log(iteration) / Math.log(iteration + 1) * temperature;
+    }
 }

@@ -21,14 +21,14 @@ public class LSMOP1 extends AbstractLSMOP1_4 {
     /**
      * Creates a LSMOP1 problem instance
      *
-     * @param nk Number of subcomponents in each variable group
+     * @param nk                 Number of subcomponents in each variable group
      * @param numberOfVariables  Number of variables
      * @param numberOfObjectives Number of objective functions
      */
 
 
     public LSMOP1(int nk, int numberOfVariables, int numberOfObjectives) throws JMetalException {
-        super(nk,numberOfVariables,numberOfObjectives);
+        super(nk, numberOfVariables, numberOfObjectives);
         setName("LSMOP1");
 
     }

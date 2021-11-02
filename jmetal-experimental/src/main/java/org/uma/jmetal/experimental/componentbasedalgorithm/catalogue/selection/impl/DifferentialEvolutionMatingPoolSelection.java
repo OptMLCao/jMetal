@@ -10,39 +10,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DifferentialEvolutionMatingPoolSelection
-    implements MatingPoolSelection<DoubleSolution> {
-  private DifferentialEvolutionSelection selectionOperator;
-  private int matingPoolSize;
-  private SequenceGenerator<Integer> solutionIndexGenerator ;
+        implements MatingPoolSelection<DoubleSolution> {
+    private DifferentialEvolutionSelection selectionOperator;
+    private int matingPoolSize;
+    private SequenceGenerator<Integer> solutionIndexGenerator;
 
-  public DifferentialEvolutionMatingPoolSelection(
-      int matingPoolSize, int numberOfParentsToSelect, boolean takeCurrentIndividualAsParent, SequenceGenerator<Integer> solutionIndexGenerator) {
-    selectionOperator = new DifferentialEvolutionSelection(numberOfParentsToSelect, takeCurrentIndividualAsParent);
-    this.matingPoolSize = matingPoolSize;
-    this.solutionIndexGenerator = solutionIndexGenerator ;
-  }
-
-  public List<DoubleSolution> select(List<DoubleSolution> solutionList) {
-    List<DoubleSolution> matingPool = new ArrayList<>(matingPoolSize);
-
-    while (matingPool.size() < matingPoolSize) {
-      selectionOperator.setIndex(solutionIndexGenerator.getValue());
-      List<DoubleSolution> parents = selectionOperator.execute(solutionList) ;
-      for (DoubleSolution parent: parents)  {
-        matingPool.add(parent);
-        if (matingPool.size() == matingPoolSize) {
-          break ;
-        }
-      }
+    public DifferentialEvolutionMatingPoolSelection(
+            int matingPoolSize, int numberOfParentsToSelect, boolean takeCurrentIndividualAsParent, SequenceGenerator<Integer> solutionIndexGenerator) {
+        selectionOperator = new DifferentialEvolutionSelection(numberOfParentsToSelect, takeCurrentIndividualAsParent);
+        this.matingPoolSize = matingPoolSize;
+        this.solutionIndexGenerator = solutionIndexGenerator;
     }
 
-    Check.that(
-        matingPoolSize == matingPool.size(),
-        "The mating pool size "
-            + matingPool.size()
-            + " is not equal to the required size "
-            + matingPoolSize);
+    public List<DoubleSolution> select(List<DoubleSolution> solutionList) {
+        List<DoubleSolution> matingPool = new ArrayList<>(matingPoolSize);
 
-    return matingPool;
-  }
+        while (matingPool.size() < matingPoolSize) {
+            selectionOperator.setIndex(solutionIndexGenerator.getValue());
+            List<DoubleSolution> parents = selectionOperator.execute(solutionList);
+            for (DoubleSolution parent : parents) {
+                matingPool.add(parent);
+                if (matingPool.size() == matingPoolSize) {
+                    break;
+                }
+            }
+        }
+
+        Check.that(
+                matingPoolSize == matingPool.size(),
+                "The mating pool size "
+                        + matingPool.size()
+                        + " is not equal to the required size "
+                        + matingPoolSize);
+
+        return matingPool;
+    }
 }

@@ -25,62 +25,62 @@ import static org.mockito.Mockito.mock;
 @Deprecated
 public class TournamentSelectionTest {
 
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
-  @Test
-  public void shouldExecuteRaiseAnExceptionIfTheSolutionListIsNull() {
-    exception.expect(NullParameterException.class);
+    @Test
+    public void shouldExecuteRaiseAnExceptionIfTheSolutionListIsNull() {
+        exception.expect(NullParameterException.class);
 
-    TournamentSelection<Solution<?>> selection = new TournamentSelection<Solution<?>>(4) ;
-    selection.execute(null) ;
-  }
+        TournamentSelection<Solution<?>> selection = new TournamentSelection<Solution<?>>(4);
+        selection.execute(null);
+    }
 
-  @Test
-  public void shouldExecuteRaiseAnExceptionIfTheSolutionListIsEmpty() {
-    exception.expect(EmptyCollectionException.class);
+    @Test
+    public void shouldExecuteRaiseAnExceptionIfTheSolutionListIsEmpty() {
+        exception.expect(EmptyCollectionException.class);
 
-    TournamentSelection<DoubleSolution> selection = new TournamentSelection<DoubleSolution>(4) ;
-    List<DoubleSolution> list = new ArrayList<>() ;
+        TournamentSelection<DoubleSolution> selection = new TournamentSelection<DoubleSolution>(4);
+        List<DoubleSolution> list = new ArrayList<>();
 
-    selection.execute(list) ;
-  }
+        selection.execute(list);
+    }
 
-  @Test
-  public void shouldConstructorAssignTheCorrectValueToTheNumberOfTournaments() {
-    TournamentSelection<Solution<?>> selection = new TournamentSelection<Solution<?>>(5) ;
+    @Test
+    public void shouldConstructorAssignTheCorrectValueToTheNumberOfTournaments() {
+        TournamentSelection<Solution<?>> selection = new TournamentSelection<Solution<?>>(5);
 
-    int result = (int) ReflectionTestUtils.getField(selection, "n_arity");
-    int expectedResult = 5 ;
-    assertEquals(expectedResult, result) ;
-  }
+        int result = (int) ReflectionTestUtils.getField(selection, "n_arity");
+        int expectedResult = 5;
+        assertEquals(expectedResult, result);
+    }
 
-  @Test
-  public void shouldConstructorAssignTheCorrectValueSToTheNumberOfTournamentsAndTheComparator() {
-    @SuppressWarnings("unchecked")
-    Comparator<Solution<?>> comparator = mock(Comparator.class) ;
-    TournamentSelection<Solution<?>> selection = new TournamentSelection<Solution<?>>(comparator, 7) ;
+    @Test
+    public void shouldConstructorAssignTheCorrectValueSToTheNumberOfTournamentsAndTheComparator() {
+        @SuppressWarnings("unchecked")
+        Comparator<Solution<?>> comparator = mock(Comparator.class);
+        TournamentSelection<Solution<?>> selection = new TournamentSelection<Solution<?>>(comparator, 7);
 
-    int result = (int) ReflectionTestUtils.getField(selection, "n_arity");
-    Object comp = ReflectionTestUtils.getField(selection, "comparator");
+        int result = (int) ReflectionTestUtils.getField(selection, "n_arity");
+        Object comp = ReflectionTestUtils.getField(selection, "comparator");
 
-    int expectedResult = 7 ;
-    assertEquals(expectedResult, result) ;
-    assertSame(comp, comparator) ;
-  }
+        int expectedResult = 7;
+        assertEquals(expectedResult, result);
+        assertSame(comp, comparator);
+    }
 
-  @Test
-  public void shouldExecuteReturnAnElementIfTheListHasOneElement() {
-    List<Solution<?>> population = new ArrayList<>(1);
+    @Test
+    public void shouldExecuteReturnAnElementIfTheListHasOneElement() {
+        List<Solution<?>> population = new ArrayList<>(1);
 
-    @SuppressWarnings("unchecked")
-    Comparator<Solution<?>> comparator = mock(Comparator.class) ;
-    TournamentSelection<Solution<?>> selection = new TournamentSelection<Solution<?>>(comparator, 2) ;
+        @SuppressWarnings("unchecked")
+        Comparator<Solution<?>> comparator = mock(Comparator.class);
+        TournamentSelection<Solution<?>> selection = new TournamentSelection<Solution<?>>(comparator, 2);
 
-    BinarySolution solution = mock(BinarySolution.class) ;
-    population.add(solution) ;
+        BinarySolution solution = mock(BinarySolution.class);
+        population.add(solution);
 
-    assertSame(solution, selection.execute(population)) ;
-  }
+        assertSame(solution, selection.execute(population));
+    }
 
 }

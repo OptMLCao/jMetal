@@ -47,227 +47,229 @@ import java.util.stream.Collectors;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class GenerateReferenceParetoSetAndFrontFromDoubleSolutions implements ExperimentComponent {
-  private final Experiment<?, ?> experiment;
+    private final Experiment<?, ?> experiment;
 
-  public GenerateReferenceParetoSetAndFrontFromDoubleSolutions(
-      Experiment<?, ?> experimentConfiguration) {
-    this.experiment = experimentConfiguration;
-  }
-
-  /** The run() method creates de output directory and compute the fronts */
-  @Override
-  public void run() throws IOException {
-    String outputDirectoryName = experiment.getReferenceFrontDirectory();
-    createOutputDirectory(outputDirectoryName);
-
-    for (ExperimentProblem<?> problem : experiment.getProblemList()) {
-      List<DummyDoubleSolution> nonDominatedSolutions = getNonDominatedSolutions(problem);
-
-      writeReferenceFrontFile(outputDirectoryName, problem, nonDominatedSolutions);
-      writeReferenceSetFile(outputDirectoryName, problem, nonDominatedSolutions);
-
-      writeFilesWithTheSolutionsContributedByEachAlgorithm(
-          outputDirectoryName, problem, nonDominatedSolutions);
+    public GenerateReferenceParetoSetAndFrontFromDoubleSolutions(
+            Experiment<?, ?> experimentConfiguration) {
+        this.experiment = experimentConfiguration;
     }
-  }
 
-  private void writeFilesWithTheSolutionsContributedByEachAlgorithm(
-      String outputDirectoryName,
-      ExperimentProblem<?> problem,
-      List<DummyDoubleSolution> nonDominatedSolutions) {
-    GenericSolutionAttribute<DoubleSolution, String> solutionAttribute =
-        new GenericSolutionAttribute<DoubleSolution, String>();
+    /**
+     * The run() method creates de output directory and compute the fronts
+     */
+    @Override
+    public void run() throws IOException {
+        String outputDirectoryName = experiment.getReferenceFrontDirectory();
+        createOutputDirectory(outputDirectoryName);
 
-    for (ExperimentAlgorithm<?, ?> algorithm : experiment.getAlgorithmList()) {
-      List<DoubleSolution> solutionsPerAlgorithm = new ArrayList<>();
-      for (DoubleSolution solution : nonDominatedSolutions) {
-        if (algorithm.getAlgorithmTag().equals(solutionAttribute.getAttribute(solution))) {
-          solutionsPerAlgorithm.add(solution);
+        for (ExperimentProblem<?> problem : experiment.getProblemList()) {
+            List<DummyDoubleSolution> nonDominatedSolutions = getNonDominatedSolutions(problem);
+
+            writeReferenceFrontFile(outputDirectoryName, problem, nonDominatedSolutions);
+            writeReferenceSetFile(outputDirectoryName, problem, nonDominatedSolutions);
+
+            writeFilesWithTheSolutionsContributedByEachAlgorithm(
+                    outputDirectoryName, problem, nonDominatedSolutions);
         }
-      }
-
-      new SolutionListOutput(solutionsPerAlgorithm)
-          .printObjectivesToFile(
-              outputDirectoryName
-                  + "/"
-                  + problem.getTag()
-                  + "."
-                  + algorithm.getAlgorithmTag()
-                  + ".rf",
-              ",");
-      new SolutionListOutput(solutionsPerAlgorithm)
-          .printVariablesToFile(
-              outputDirectoryName
-                  + "/"
-                  + problem.getTag()
-                  + "."
-                  + algorithm.getAlgorithmTag()
-                  + ".rs",
-              ",");
-    }
-  }
-
-  private void writeReferenceFrontFile(
-      String outputDirectoryName,
-      ExperimentProblem<?> problem,
-      List<DummyDoubleSolution> nonDominatedSolutions) {
-    String referenceFrontFileName = outputDirectoryName + "/" + problem.getReferenceFront();
-
-    new SolutionListOutput(nonDominatedSolutions)
-        .printObjectivesToFile(referenceFrontFileName, ",");
-  }
-
-  private void writeReferenceSetFile(
-      String outputDirectoryName,
-      ExperimentProblem<?> problem,
-      List<DummyDoubleSolution> nonDominatedSolutions) {
-    String referenceSetFileName = outputDirectoryName + "/" + problem.getTag() + ".ps";
-    new SolutionListOutput(nonDominatedSolutions).printVariablesToFile(referenceSetFileName, ",");
-  }
-
-  /**
-   * Create a list of non dominated {@link DoubleSolution} solutions from the FUNx.tsv and VARx.tsv
-   * files that must have been previously obtained (probably by invoking the {@link
-   * ExecuteAlgorithms#run} method).
-   *
-   * @param problem
-   * @return
-   * @throws FileNotFoundException
-   */
-  private List<DummyDoubleSolution> getNonDominatedSolutions(ExperimentProblem<?> problem)
-      throws FileNotFoundException {
-    NonDominatedSolutionListArchive<DummyDoubleSolution> nonDominatedSolutionArchive =
-        new NonDominatedSolutionListArchive<>();
-
-    for (ExperimentAlgorithm<?, ?> algorithm :
-        experiment.getAlgorithmList().stream()
-            .filter(s -> s.getProblemTag().equals(problem.getTag()))
-            .collect(Collectors.toCollection(ArrayList::new))) {
-      String problemDirectory =
-          experiment.getExperimentBaseDirectory()
-              + "/data/"
-              + algorithm.getAlgorithmTag()
-              + "/"
-              + problem.getTag();
-
-      String frontFileName =
-          problemDirectory
-              + "/"
-              + experiment.getOutputParetoFrontFileName()
-              + algorithm.getRunId()
-              + ".csv";
-      String paretoSetFileName =
-          problemDirectory
-              + "/"
-              + experiment.getOutputParetoSetFileName()
-              + algorithm.getRunId()
-              + ".csv";
-
-      Front frontWithObjectiveValues = new ArrayFront(frontFileName, ",");
-      Front frontWithVariableValues = new ArrayFront(paretoSetFileName, ",");
-      List<DummyDoubleSolution> solutionList =
-          createSolutionListFrontFiles(
-              algorithm.getAlgorithmTag(), frontWithVariableValues, frontWithObjectiveValues);
-      for (DummyDoubleSolution solution : solutionList) {
-        nonDominatedSolutionArchive.add(solution);
-      }
     }
 
-    return nonDominatedSolutionArchive.getSolutionList();
-  }
+    private void writeFilesWithTheSolutionsContributedByEachAlgorithm(
+            String outputDirectoryName,
+            ExperimentProblem<?> problem,
+            List<DummyDoubleSolution> nonDominatedSolutions) {
+        GenericSolutionAttribute<DoubleSolution, String> solutionAttribute =
+                new GenericSolutionAttribute<DoubleSolution, String>();
 
-  /**
-   * Create the output directory where the result files will be stored
-   *
-   * @param outputDirectoryName
-   * @return
-   */
-  private File createOutputDirectory(String outputDirectoryName) {
-    File outputDirectory;
-    outputDirectory = new File(outputDirectoryName);
-    if (!outputDirectory.exists()) {
-      boolean result = new File(outputDirectoryName).mkdir();
-      JMetalLogger.logger.info("Creating " + outputDirectoryName + ". Status = " + result);
+        for (ExperimentAlgorithm<?, ?> algorithm : experiment.getAlgorithmList()) {
+            List<DoubleSolution> solutionsPerAlgorithm = new ArrayList<>();
+            for (DoubleSolution solution : nonDominatedSolutions) {
+                if (algorithm.getAlgorithmTag().equals(solutionAttribute.getAttribute(solution))) {
+                    solutionsPerAlgorithm.add(solution);
+                }
+            }
+
+            new SolutionListOutput(solutionsPerAlgorithm)
+                    .printObjectivesToFile(
+                            outputDirectoryName
+                                    + "/"
+                                    + problem.getTag()
+                                    + "."
+                                    + algorithm.getAlgorithmTag()
+                                    + ".rf",
+                            ",");
+            new SolutionListOutput(solutionsPerAlgorithm)
+                    .printVariablesToFile(
+                            outputDirectoryName
+                                    + "/"
+                                    + problem.getTag()
+                                    + "."
+                                    + algorithm.getAlgorithmTag()
+                                    + ".rs",
+                            ",");
+        }
     }
 
-    return outputDirectory;
-  }
+    private void writeReferenceFrontFile(
+            String outputDirectoryName,
+            ExperimentProblem<?> problem,
+            List<DummyDoubleSolution> nonDominatedSolutions) {
+        String referenceFrontFileName = outputDirectoryName + "/" + problem.getReferenceFront();
 
-  /**
-   * @param algorithmName
-   * @param frontWithVariableValues
-   * @param frontWithObjectiveValues
-   * @return
-   */
-  private List<DummyDoubleSolution> createSolutionListFrontFiles(
-      String algorithmName, Front frontWithVariableValues, Front frontWithObjectiveValues) {
-    if (frontWithVariableValues.getNumberOfPoints()
-        != frontWithObjectiveValues.getNumberOfPoints()) {
-      throw new JMetalException(
-          "The number of solutions in the variable and objective fronts are not equal");
-    } else if (frontWithObjectiveValues.getNumberOfPoints() == 0) {
-      throw new JMetalException("The front of solutions is empty");
+        new SolutionListOutput(nonDominatedSolutions)
+                .printObjectivesToFile(referenceFrontFileName, ",");
     }
 
-    GenericSolutionAttribute<DummyDoubleSolution, String> solutionAttribute =
-        new GenericSolutionAttribute<DummyDoubleSolution, String>();
-
-    int numberOfVariables = frontWithVariableValues.getPointDimensions();
-    int numberOfObjectives = frontWithObjectiveValues.getPointDimensions();
-
-    List<DummyDoubleSolution> solutionList = new ArrayList<>();
-    for (int i = 0; i < frontWithVariableValues.getNumberOfPoints(); i++) {
-      DummyDoubleSolution solution = new DummyDoubleSolution(numberOfVariables, numberOfObjectives);
-      for (int vars = 0; vars < numberOfVariables; vars++) {
-        solution.variables().set(vars, frontWithVariableValues.getPoint(i).getValues()[vars]);
-      }
-      for (int objs = 0; objs < numberOfObjectives; objs++) {
-        solution.objectives()[objs] = frontWithObjectiveValues.getPoint(i).getValues()[objs];
-      }
-
-      solutionAttribute.setAttribute(solution, algorithmName);
-      solutionList.add(solution);
+    private void writeReferenceSetFile(
+            String outputDirectoryName,
+            ExperimentProblem<?> problem,
+            List<DummyDoubleSolution> nonDominatedSolutions) {
+        String referenceSetFileName = outputDirectoryName + "/" + problem.getTag() + ".ps";
+        new SolutionListOutput(nonDominatedSolutions).printVariablesToFile(referenceSetFileName, ",");
     }
 
-    return solutionList;
-  }
+    /**
+     * Create a list of non dominated {@link DoubleSolution} solutions from the FUNx.tsv and VARx.tsv
+     * files that must have been previously obtained (probably by invoking the {@link
+     * ExecuteAlgorithms#run} method).
+     *
+     * @param problem
+     * @return
+     * @throws FileNotFoundException
+     */
+    private List<DummyDoubleSolution> getNonDominatedSolutions(ExperimentProblem<?> problem)
+            throws FileNotFoundException {
+        NonDominatedSolutionListArchive<DummyDoubleSolution> nonDominatedSolutionArchive =
+                new NonDominatedSolutionListArchive<>();
 
-  @SuppressWarnings("serial")
-  private static class DummyDoubleSolution extends AbstractSolution<Double>
-      implements DoubleSolution {
+        for (ExperimentAlgorithm<?, ?> algorithm :
+                experiment.getAlgorithmList().stream()
+                        .filter(s -> s.getProblemTag().equals(problem.getTag()))
+                        .collect(Collectors.toCollection(ArrayList::new))) {
+            String problemDirectory =
+                    experiment.getExperimentBaseDirectory()
+                            + "/data/"
+                            + algorithm.getAlgorithmTag()
+                            + "/"
+                            + problem.getTag();
 
-    public DummyDoubleSolution(int numberOfVariables, int numberOfObjectives) {
-      super(numberOfVariables, numberOfObjectives);
+            String frontFileName =
+                    problemDirectory
+                            + "/"
+                            + experiment.getOutputParetoFrontFileName()
+                            + algorithm.getRunId()
+                            + ".csv";
+            String paretoSetFileName =
+                    problemDirectory
+                            + "/"
+                            + experiment.getOutputParetoSetFileName()
+                            + algorithm.getRunId()
+                            + ".csv";
+
+            Front frontWithObjectiveValues = new ArrayFront(frontFileName, ",");
+            Front frontWithVariableValues = new ArrayFront(paretoSetFileName, ",");
+            List<DummyDoubleSolution> solutionList =
+                    createSolutionListFrontFiles(
+                            algorithm.getAlgorithmTag(), frontWithVariableValues, frontWithObjectiveValues);
+            for (DummyDoubleSolution solution : solutionList) {
+                nonDominatedSolutionArchive.add(solution);
+            }
+        }
+
+        return nonDominatedSolutionArchive.getSolutionList();
     }
 
-    @Override
-    public Solution<Double> copy() {
-      return null;
+    /**
+     * Create the output directory where the result files will be stored
+     *
+     * @param outputDirectoryName
+     * @return
+     */
+    private File createOutputDirectory(String outputDirectoryName) {
+        File outputDirectory;
+        outputDirectory = new File(outputDirectoryName);
+        if (!outputDirectory.exists()) {
+            boolean result = new File(outputDirectoryName).mkdir();
+            JMetalLogger.logger.info("Creating " + outputDirectoryName + ". Status = " + result);
+        }
+
+        return outputDirectory;
     }
 
-	/**
-	 * @deprecated Use {@link #getBounds(int)}{@link Bounds#getLowerBound()
-	 *             .getLowerBound()} instead.
-	 */
-	@Deprecated
-    @Override
-    public Double getLowerBound(int index) {
-      return null;
+    /**
+     * @param algorithmName
+     * @param frontWithVariableValues
+     * @param frontWithObjectiveValues
+     * @return
+     */
+    private List<DummyDoubleSolution> createSolutionListFrontFiles(
+            String algorithmName, Front frontWithVariableValues, Front frontWithObjectiveValues) {
+        if (frontWithVariableValues.getNumberOfPoints()
+                != frontWithObjectiveValues.getNumberOfPoints()) {
+            throw new JMetalException(
+                    "The number of solutions in the variable and objective fronts are not equal");
+        } else if (frontWithObjectiveValues.getNumberOfPoints() == 0) {
+            throw new JMetalException("The front of solutions is empty");
+        }
+
+        GenericSolutionAttribute<DummyDoubleSolution, String> solutionAttribute =
+                new GenericSolutionAttribute<DummyDoubleSolution, String>();
+
+        int numberOfVariables = frontWithVariableValues.getPointDimensions();
+        int numberOfObjectives = frontWithObjectiveValues.getPointDimensions();
+
+        List<DummyDoubleSolution> solutionList = new ArrayList<>();
+        for (int i = 0; i < frontWithVariableValues.getNumberOfPoints(); i++) {
+            DummyDoubleSolution solution = new DummyDoubleSolution(numberOfVariables, numberOfObjectives);
+            for (int vars = 0; vars < numberOfVariables; vars++) {
+                solution.variables().set(vars, frontWithVariableValues.getPoint(i).getValues()[vars]);
+            }
+            for (int objs = 0; objs < numberOfObjectives; objs++) {
+                solution.objectives()[objs] = frontWithObjectiveValues.getPoint(i).getValues()[objs];
+            }
+
+            solutionAttribute.setAttribute(solution, algorithmName);
+            solutionList.add(solution);
+        }
+
+        return solutionList;
     }
 
-	/**
-	 * @deprecated Use {@link #getBounds(int)}{@link Bounds#getUpperBound()
-	 *             .getUpperBound()} instead.
-	 */
-	@Deprecated
-    @Override
-    public Double getUpperBound(int index) {
-      return null;
+    @SuppressWarnings("serial")
+    private static class DummyDoubleSolution extends AbstractSolution<Double>
+            implements DoubleSolution {
+
+        public DummyDoubleSolution(int numberOfVariables, int numberOfObjectives) {
+            super(numberOfVariables, numberOfObjectives);
+        }
+
+        @Override
+        public Solution<Double> copy() {
+            return null;
+        }
+
+        /**
+         * @deprecated Use {@link #getBounds(int)}{@link Bounds#getLowerBound()
+         * .getLowerBound()} instead.
+         */
+        @Deprecated
+        @Override
+        public Double getLowerBound(int index) {
+            return null;
+        }
+
+        /**
+         * @deprecated Use {@link #getBounds(int)}{@link Bounds#getUpperBound()
+         * .getUpperBound()} instead.
+         */
+        @Deprecated
+        @Override
+        public Double getUpperBound(int index) {
+            return null;
+        }
+
+        @Override
+        public Bounds<Double> getBounds(int index) {
+            return null;
+        }
     }
-    
-    @Override
-    public Bounds<Double> getBounds(int index) {
-    	return null;
-    }
-  }
 }

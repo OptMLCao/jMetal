@@ -15,24 +15,23 @@ import java.util.stream.IntStream;
  * contains the remaining index values (so, its size would be higher than the size of the rest of
  * groups).
  *
- * @author Antonio J. Nebro
- *
  * @param <C>
+ * @author Antonio J. Nebro
  */
 public class ListOrderedGrouping<C extends Comparable<C>> extends ListGrouping<C> {
 
-  public ListOrderedGrouping(int numberOfGroups) {
-    super(numberOfGroups) ;
-  }
+    public ListOrderedGrouping(int numberOfGroups) {
+        super(numberOfGroups);
+    }
 
-  @Override
-  public void computeGroups(List<C> list) {
-    Check.notNull(list);
-    indices = new ArrayList<>(list.size());
-    IntStream.range(0, list.size()).forEach(i -> indices.add(i));
+    @Override
+    public void computeGroups(List<C> list) {
+        Check.notNull(list);
+        indices = new ArrayList<>(list.size());
+        IntStream.range(0, list.size()).forEach(i -> indices.add(i));
 
-    indices = indices.stream().sorted(Comparator.comparing(list::get)).collect(Collectors.toList());
+        indices = indices.stream().sorted(Comparator.comparing(list::get)).collect(Collectors.toList());
 
-    createGroups();
-  }
+        createGroups();
+    }
 }

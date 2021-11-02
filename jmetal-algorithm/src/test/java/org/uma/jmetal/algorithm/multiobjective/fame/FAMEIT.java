@@ -20,73 +20,73 @@ import static org.junit.Assert.assertTrue;
 
 public class FAMEIT {
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() {
-    Problem<DoubleSolution> problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+    @Test
+    public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() {
+        Problem<DoubleSolution> problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
-    problem = new ZDT1();
-    selection = new SpatialSpreadDeviationSelection<DoubleSolution>(5);
+        problem = new ZDT1();
+        selection = new SpatialSpreadDeviationSelection<DoubleSolution>(5);
 
-    int populationSize = 25;
-    int archiveSize = 100;
-    int maxEvaluations = 25000;
+        int populationSize = 25;
+        int archiveSize = 100;
+        int maxEvaluations = 25000;
 
-    algorithm =
-        new FAME<>(
-            problem,
-            populationSize,
-            archiveSize,
-            maxEvaluations,
-            selection,
-            new SequentialSolutionListEvaluator<>());
+        algorithm =
+                new FAME<>(
+                        problem,
+                        populationSize,
+                        archiveSize,
+                        maxEvaluations,
+                        selection,
+                        new SequentialSolutionListEvaluator<>());
 
-    algorithm.run();
+        algorithm.run();
 
     /*
     Rationale: the default problem is ZDT1, and FAME, configured with standard settings, should
     return 100 solutions
     */
-    assertTrue(algorithm.getResult().size() >= 99);
-    JMetalRandom.getInstance().setSeed(System.currentTimeMillis());
-  }
+        assertTrue(algorithm.getResult().size() >= 99);
+        JMetalRandom.getInstance().setSeed(System.currentTimeMillis());
+    }
 
-  @Test
-  public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
-    Problem<DoubleSolution> problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+    @Test
+    public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
+        Problem<DoubleSolution> problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
-    problem = new ZDT1();
-    selection = new SpatialSpreadDeviationSelection<DoubleSolution>(5);
+        problem = new ZDT1();
+        selection = new SpatialSpreadDeviationSelection<DoubleSolution>(5);
 
-    int populationSize = 25;
-    int archiveSize = 100;
-    int maxEvaluations = 25000;
+        int populationSize = 25;
+        int archiveSize = 100;
+        int maxEvaluations = 25000;
 
-    algorithm =
-        new FAME<>(
-            problem,
-            populationSize,
-            archiveSize,
-            maxEvaluations,
-            selection,
-            new SequentialSolutionListEvaluator<>());
+        algorithm =
+                new FAME<>(
+                        problem,
+                        populationSize,
+                        archiveSize,
+                        maxEvaluations,
+                        selection,
+                        new SequentialSolutionListEvaluator<>());
 
-    algorithm.run();
+        algorithm.run();
 
-    QualityIndicator hypervolume =
-            new PISAHypervolume(
-                    VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
+        QualityIndicator hypervolume =
+                new PISAHypervolume(
+                        VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
 
-    // Rationale: the default problem is ZDT1, and AbYSS, configured with standard settings,
-    // should return find a front with a hypervolume value higher than 0.22
+        // Rationale: the default problem is ZDT1, and AbYSS, configured with standard settings,
+        // should return find a front with a hypervolume value higher than 0.22
 
-    double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(algorithm.getResult()));
+        double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(algorithm.getResult()));
 
-    assertTrue(hv > 0.65);
+        assertTrue(hv > 0.65);
 
-    JMetalRandom.getInstance().setSeed(System.currentTimeMillis());
-  }
+        JMetalRandom.getInstance().setSeed(System.currentTimeMillis());
+    }
 }

@@ -7,71 +7,71 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class DifferentialEvolutionCrossoverTest {
-  private double EPSILON = 0.0000000001;
+    private double EPSILON = 0.0000000001;
 
-  @Test
-  public void shouldDefaultConstructorCreateADefaultOperator() {
-    DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
+    @Test
+    public void shouldDefaultConstructorCreateADefaultOperator() {
+        DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
 
-    assertNotNull(crossover);
-    assertEquals(0.5, crossover.getCr(), EPSILON);
-    assertEquals(0.5, crossover.getF(), EPSILON);
-    assertEquals(DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN, crossover.getVariant());
-  }
+        assertNotNull(crossover);
+        assertEquals(0.5, crossover.getCr(), EPSILON);
+        assertEquals(0.5, crossover.getF(), EPSILON);
+        assertEquals(DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN, crossover.getVariant());
+    }
 
-  @Test
-  public void shouldSetCrChangeTheCrParameter() {
-    DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
-    crossover.setCr(0.9);
+    @Test
+    public void shouldSetCrChangeTheCrParameter() {
+        DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
+        crossover.setCr(0.9);
 
-    assertEquals(0.9, crossover.getCr(), EPSILON);
-  }
+        assertEquals(0.9, crossover.getCr(), EPSILON);
+    }
 
-  @Test
-  public void shouldSetCrChangeTheFParameter() {
-    DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
-    crossover.setF(0.9);
+    @Test
+    public void shouldSetCrChangeTheFParameter() {
+        DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
+        crossover.setF(0.9);
 
-    assertEquals(0.9, crossover.getF(), EPSILON);
-  }
+        assertEquals(0.9, crossover.getF(), EPSILON);
+    }
 
-  @Test
-  public void shouldGetCrossoverProbabilityReturnOne() {
-    DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
-    assertEquals(1.0, crossover.getCrossoverProbability(), EPSILON);
-  }
+    @Test
+    public void shouldGetCrossoverProbabilityReturnOne() {
+        DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
+        assertEquals(1.0, crossover.getCrossoverProbability(), EPSILON);
+    }
 
-  @Test
-  public void shouldGetNumberOfGeneratedChildrenReturnOne() {
-    DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
-    assertEquals(1.0, crossover.getNumberOfGeneratedChildren(), EPSILON);
-  }
+    @Test
+    public void shouldGetNumberOfGeneratedChildrenReturnOne() {
+        DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
+        assertEquals(1.0, crossover.getNumberOfGeneratedChildren(), EPSILON);
+    }
 
-  @Test
-  public void shouldRAND_1_BINVariantBeCorrectlyParsed() {
-    DifferentialEvolutionCrossover crossover =
-        new DifferentialEvolutionCrossover(
-            0.1, 0.1, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
+    @Test
+    public void shouldRAND_1_BINVariantBeCorrectlyParsed() {
+        DifferentialEvolutionCrossover crossover =
+                new DifferentialEvolutionCrossover(
+                        0.1, 0.1, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    assertEquals(1, crossover.getNumberOfDifferenceVectors());
-    assertEquals(
-        DifferentialEvolutionCrossover.DE_CROSSOVER_TYPE.BIN, crossover.getCrossoverType());
-    assertEquals(DifferentialEvolutionCrossover.DE_MUTATION_TYPE.RAND, crossover.getMutationType());
-    assertEquals(DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN, crossover.getVariant());
-  }
+        assertEquals(1, crossover.getNumberOfDifferenceVectors());
+        assertEquals(
+                DifferentialEvolutionCrossover.DE_CROSSOVER_TYPE.BIN, crossover.getCrossoverType());
+        assertEquals(DifferentialEvolutionCrossover.DE_MUTATION_TYPE.RAND, crossover.getMutationType());
+        assertEquals(DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN, crossover.getVariant());
+    }
 
-  @Test
-  public void shouldRAND_1_EXPVariantBeCorrectlyParsed() {
-    DifferentialEvolutionCrossover crossover =
-        new DifferentialEvolutionCrossover(
-            0.1, 0.1, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_EXP);
+    @Test
+    public void shouldRAND_1_EXPVariantBeCorrectlyParsed() {
+        DifferentialEvolutionCrossover crossover =
+                new DifferentialEvolutionCrossover(
+                        0.1, 0.1, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_EXP);
 
-    assertEquals(1, crossover.getNumberOfDifferenceVectors());
-    assertEquals(
-        DifferentialEvolutionCrossover.DE_CROSSOVER_TYPE.EXP, crossover.getCrossoverType());
-    assertEquals(DifferentialEvolutionCrossover.DE_MUTATION_TYPE.RAND, crossover.getMutationType());
-    assertEquals(DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_EXP, crossover.getVariant());
-  }
+        assertEquals(1, crossover.getNumberOfDifferenceVectors());
+        assertEquals(
+                DifferentialEvolutionCrossover.DE_CROSSOVER_TYPE.EXP, crossover.getCrossoverType());
+        assertEquals(DifferentialEvolutionCrossover.DE_MUTATION_TYPE.RAND, crossover.getMutationType());
+        assertEquals(DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_EXP, crossover.getVariant());
+    }
 
     @Test
     public void shouldRAND_2_BINVariantBeCorrectlyParsed() {

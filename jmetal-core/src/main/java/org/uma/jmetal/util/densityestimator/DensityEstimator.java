@@ -9,8 +9,9 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public interface DensityEstimator<S> {
-  void compute(List<S> solutionSet) ;
+    void compute(List<S> solutionSet);
 
-  Double getValue(S solution) ;
-  Comparator<S> getComparator() ;
+    Double getValue(S solution);
+
+    Comparator<S> getComparator();
 }

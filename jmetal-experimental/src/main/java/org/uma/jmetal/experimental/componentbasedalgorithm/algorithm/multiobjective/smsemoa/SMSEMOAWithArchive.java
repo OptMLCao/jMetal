@@ -13,80 +13,84 @@ import org.uma.jmetal.util.termination.Termination;
 
 import java.util.List;
 
-/** @author Antonio J. Nebro <antonio@lcc.uma.es> */
+/**
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ */
 @SuppressWarnings("serial")
 public class SMSEMOAWithArchive<S extends Solution<?>> extends SMSEMOA<S> {
-  private Archive<S> archive;
+    private Archive<S> archive;
 
-  /** Constructor */
-  public SMSEMOAWithArchive(
-      Problem<S> problem,
-      int populationSize,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      Termination termination,
-      Hypervolume<S> hypervolume,
-      Ranking<S> ranking,
-      Archive<S> archive) {
-    super(
-        problem,
-        populationSize,
-        crossoverOperator,
-        mutationOperator,
-        termination,
-        hypervolume,
-        ranking);
-    this.archive = archive;
-  }
-
-  /**
-   * Constructor
-   *
-   * @param problem
-   * @param populationSize
-   * @param crossoverOperator
-   * @param mutationOperator
-   * @param termination
-   * @param archive
-   */
-  public SMSEMOAWithArchive(
-      Problem<S> problem,
-      int populationSize,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      Termination termination,
-      Archive<S> archive) {
-    this(
-        problem,
-        populationSize,
-        crossoverOperator,
-        mutationOperator,
-        termination,
-        new PISAHypervolume<>(),
-        new FastNonDominatedSortRanking<>(),
-        archive);
-  }
-
-  @Override
-  protected List<S> evaluatePopulation(List<S> solutionList) {
-    List<S> evaluatedSolutionList = super.evaluatePopulation(solutionList);
-    for (S solution : evaluatedSolutionList) {
-      archive.add(solution);
+    /**
+     * Constructor
+     */
+    public SMSEMOAWithArchive(
+            Problem<S> problem,
+            int populationSize,
+            CrossoverOperator<S> crossoverOperator,
+            MutationOperator<S> mutationOperator,
+            Termination termination,
+            Hypervolume<S> hypervolume,
+            Ranking<S> ranking,
+            Archive<S> archive) {
+        super(
+                problem,
+                populationSize,
+                crossoverOperator,
+                mutationOperator,
+                termination,
+                hypervolume,
+                ranking);
+        this.archive = archive;
     }
 
-    return evaluatedSolutionList;
-  }
+    /**
+     * Constructor
+     *
+     * @param problem
+     * @param populationSize
+     * @param crossoverOperator
+     * @param mutationOperator
+     * @param termination
+     * @param archive
+     */
+    public SMSEMOAWithArchive(
+            Problem<S> problem,
+            int populationSize,
+            CrossoverOperator<S> crossoverOperator,
+            MutationOperator<S> mutationOperator,
+            Termination termination,
+            Archive<S> archive) {
+        this(
+                problem,
+                populationSize,
+                crossoverOperator,
+                mutationOperator,
+                termination,
+                new PISAHypervolume<>(),
+                new FastNonDominatedSortRanking<>(),
+                archive);
+    }
 
-  @Override
-  public List<S> getResult() {
-    return archive.getSolutionList() ;
-  }
+    @Override
+    protected List<S> evaluatePopulation(List<S> solutionList) {
+        List<S> evaluatedSolutionList = super.evaluatePopulation(solutionList);
+        for (S solution : evaluatedSolutionList) {
+            archive.add(solution);
+        }
 
-  public Archive<S> getArchive() {
-    return archive;
-  }
+        return evaluatedSolutionList;
+    }
 
-  public List<S> getPopulation() {
-    return population ;
-  }
+    @Override
+    public List<S> getResult() {
+        return archive.getSolutionList();
+    }
+
+    public Archive<S> getArchive() {
+        return archive;
+    }
+
+    public List<S> getPopulation() {
+        return population;
+    }
 }

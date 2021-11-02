@@ -28,44 +28,44 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class NSGAIISolvingNMMin2Runner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws JMetalException
-   * @throws FileNotFoundException Invoking command: java
-   *     org.uma.jmetal.runner.multiobjective.nsgaii.NSGAIIRunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    Problem<IntegerDoubleSolution> problem;
-    Algorithm<List<IntegerDoubleSolution>> algorithm;
-    CrossoverOperator<IntegerDoubleSolution> crossover;
-    MutationOperator<IntegerDoubleSolution> mutation;
-    SelectionOperator<List<IntegerDoubleSolution>, IntegerDoubleSolution> selection;
+    /**
+     * @param args Command line arguments.
+     * @throws JMetalException
+     * @throws FileNotFoundException Invoking command: java
+     *                               org.uma.jmetal.runner.multiobjective.nsgaii.NSGAIIRunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        Problem<IntegerDoubleSolution> problem;
+        Algorithm<List<IntegerDoubleSolution>> algorithm;
+        CrossoverOperator<IntegerDoubleSolution> crossover;
+        MutationOperator<IntegerDoubleSolution> mutation;
+        SelectionOperator<List<IntegerDoubleSolution>, IntegerDoubleSolution> selection;
 
-    problem = new NMMin2();
+        problem = new NMMin2();
 
-    crossover =
-        new IntegerDoubleSBXCrossover(
-            new IntegerSBXCrossover(0.9, 20), new SBXCrossover(0.9, 20.0));
+        crossover =
+                new IntegerDoubleSBXCrossover(
+                        new IntegerSBXCrossover(0.9, 20), new SBXCrossover(0.9, 20.0));
 
-    mutation = new NullMutation<>();
+        mutation = new NullMutation<>();
 
-    selection =
-        new BinaryTournamentSelection<IntegerDoubleSolution>(
-            new RankingAndCrowdingDistanceComparator<IntegerDoubleSolution>());
+        selection =
+                new BinaryTournamentSelection<IntegerDoubleSolution>(
+                        new RankingAndCrowdingDistanceComparator<IntegerDoubleSolution>());
 
-    int populationSize = 100;
-    algorithm =
-        new NSGAIIBuilder<IntegerDoubleSolution>(problem, crossover, mutation, populationSize)
-            .setSelectionOperator(selection)
-            .setMaxEvaluations(25000)
-            .build();
+        int populationSize = 100;
+        algorithm =
+                new NSGAIIBuilder<IntegerDoubleSolution>(problem, crossover, mutation, populationSize)
+                        .setSelectionOperator(selection)
+                        .setMaxEvaluations(25000)
+                        .build();
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-    List<IntegerDoubleSolution> population = algorithm.getResult();
-    long computingTime = algorithmRunner.getComputingTime();
+        List<IntegerDoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    printFinalSolutionSet(population);
-  }
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        printFinalSolutionSet(population);
+    }
 }

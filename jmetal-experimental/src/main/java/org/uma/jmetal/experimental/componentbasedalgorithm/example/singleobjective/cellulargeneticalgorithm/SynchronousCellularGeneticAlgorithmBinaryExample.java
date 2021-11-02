@@ -26,50 +26,50 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class SynchronousCellularGeneticAlgorithmBinaryExample extends AbstractAlgorithmRunner {
-  public static void main(String[] args) throws JMetalException {
-    BinaryProblem problem;
-    SynchronousCellularGeneticAlgorithm<BinarySolution> algorithm;
-    CrossoverOperator<BinarySolution> crossover;
-    MutationOperator<BinarySolution> mutation;
-    
-    problem = new OneMax(512) ;
+    public static void main(String[] args) throws JMetalException {
+        BinaryProblem problem;
+        SynchronousCellularGeneticAlgorithm<BinarySolution> algorithm;
+        CrossoverOperator<BinarySolution> crossover;
+        MutationOperator<BinarySolution> mutation;
 
-    int rows = 10 ;
-    int columns = 10 ;
-    int populationSize = rows * columns ;
+        problem = new OneMax(512);
 
-    double crossoverProbability = 0.9;
-    crossover = new SinglePointCrossover(crossoverProbability) ;
+        int rows = 10;
+        int columns = 10;
+        int populationSize = rows * columns;
 
-    double mutationProbability = 1.0 / problem.getTotalNumberOfBits() ;
-    mutation = new BitFlipMutation(mutationProbability);
+        double crossoverProbability = 0.9;
+        crossover = new SinglePointCrossover(crossoverProbability);
 
-    Termination termination = new TerminationByEvaluations(30000);
+        double mutationProbability = 1.0 / problem.getTotalNumberOfBits();
+        mutation = new BitFlipMutation(mutationProbability);
 
-    algorithm =
-            new SynchronousCellularGeneticAlgorithm<>(
-                    problem,
-                    populationSize,
-                    new C9<>(rows, columns),
-                    crossover,
-                    mutation,
-                    termination);
+        Termination termination = new TerminationByEvaluations(30000);
 
-    algorithm.run();
+        algorithm =
+                new SynchronousCellularGeneticAlgorithm<>(
+                        problem,
+                        populationSize,
+                        new C9<>(rows, columns),
+                        crossover,
+                        mutation,
+                        termination);
 
-    List<BinarySolution> population = algorithm.getResult();
-    JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
+        algorithm.run();
 
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
+        List<BinarySolution> population = algorithm.getResult();
+        JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
+        JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+                .print();
 
-    JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]) ;
-  }
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+
+        JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]);
+    }
 }

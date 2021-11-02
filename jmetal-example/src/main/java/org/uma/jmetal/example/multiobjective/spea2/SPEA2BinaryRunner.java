@@ -26,55 +26,54 @@ import java.util.List;
  */
 
 public class SPEA2BinaryRunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws SecurityException
-   * Invoking command:
-  java org.uma.jmetal.runner.multiobjective.spea2.SPEA2BinaryRunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    BinaryProblem problem;
-    Algorithm<List<BinarySolution>> algorithm;
-    CrossoverOperator<BinarySolution> crossover;
-    MutationOperator<BinarySolution> mutation;
-    SelectionOperator<List<BinarySolution>, BinarySolution> selection;
+    /**
+     * @param args Command line arguments.
+     * @throws SecurityException Invoking command:
+     *                           java org.uma.jmetal.runner.multiobjective.spea2.SPEA2BinaryRunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        BinaryProblem problem;
+        Algorithm<List<BinarySolution>> algorithm;
+        CrossoverOperator<BinarySolution> crossover;
+        MutationOperator<BinarySolution> mutation;
+        SelectionOperator<List<BinarySolution>, BinarySolution> selection;
 
-    String referenceParetoFront = "" ;
+        String referenceParetoFront = "";
 
-    String problemName ;
-    if (args.length == 1) {
-      problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
-    } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.OneZeroMax";
-      referenceParetoFront = "" ;
+        String problemName;
+        if (args.length == 1) {
+            problemName = args[0];
+        } else if (args.length == 2) {
+            problemName = args[0];
+            referenceParetoFront = args[1];
+        } else {
+            problemName = "org.uma.jmetal.problem.multiobjective.OneZeroMax";
+            referenceParetoFront = "";
+        }
+
+        problem = (BinaryProblem) ProblemUtils.<BinarySolution>loadProblem(problemName);
+
+        double crossoverProbability = 0.9;
+        crossover = new SinglePointCrossover(crossoverProbability);
+
+        double mutationProbability = 1.0 / problem.getTotalNumberOfBits();
+        mutation = new BitFlipMutation(mutationProbability);
+
+        selection = new BinaryTournamentSelection<BinarySolution>(new RankingAndCrowdingDistanceComparator<BinarySolution>());
+
+        algorithm = new SPEA2Builder<>(problem, crossover, mutation)
+                .setSelectionOperator(selection)
+                .setMaxIterations(250)
+                .setPopulationSize(100)
+                .build();
+
+        new AlgorithmRunner.Executor(algorithm).execute();
+
+        List<BinarySolution> population = algorithm.getResult();
+
+        printFinalSolutionSet(population);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-
-    problem = (BinaryProblem)ProblemUtils.<BinarySolution> loadProblem(problemName);
-
-    double crossoverProbability = 0.9 ;
-    crossover = new SinglePointCrossover(crossoverProbability) ;
-
-    double mutationProbability = 1.0 / problem.getTotalNumberOfBits() ;
-    mutation = new BitFlipMutation(mutationProbability) ;
-
-    selection = new BinaryTournamentSelection<BinarySolution>(new RankingAndCrowdingDistanceComparator<BinarySolution>());
-
-    algorithm = new SPEA2Builder<>(problem, crossover, mutation)
-        .setSelectionOperator(selection)
-        .setMaxIterations(250)
-        .setPopulationSize(100)
-        .build() ;
-
-    new AlgorithmRunner.Executor(algorithm).execute() ;
-
-    List<BinarySolution> population = algorithm.getResult();
-
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
-    }
-  }
 }

@@ -33,177 +33,177 @@ import java.util.List;
  * @author Javier Pérez Abad
  */
 public class GenerateFriedmanHolmTestTables<Result extends List<? extends Solution<?>>>
-    implements ExperimentComponent {
-  private static final String DEFAULT_LATEX_DIRECTORY = "latex";
-  private static final String INDICATOR_SUMMARY_CSV = "QualityIndicatorSummary.csv";
-  // NAMES OF CSV COLUMNS
-  private static final String ALGORITHM = "Algorithm";
-  private static final String PROBLEM = "Problem";
-  private static final String INDICATOR_NAME = "IndicatorName";
+        implements ExperimentComponent {
+    private static final String DEFAULT_LATEX_DIRECTORY = "latex";
+    private static final String INDICATOR_SUMMARY_CSV = "QualityIndicatorSummary.csv";
+    // NAMES OF CSV COLUMNS
+    private static final String ALGORITHM = "Algorithm";
+    private static final String PROBLEM = "Problem";
+    private static final String INDICATOR_NAME = "IndicatorName";
 
-  private final Experiment<?, Result> experiment;
+    private final Experiment<?, Result> experiment;
 
-  private String latexDirectoryName;
-  private int numberOfAlgorithms;
-  private int numberOfProblems;
+    private String latexDirectoryName;
+    private int numberOfAlgorithms;
+    private int numberOfProblems;
 
-  public GenerateFriedmanHolmTestTables(Experiment<?, Result> experimentConfiguration) {
-    this.experiment = experimentConfiguration;
+    public GenerateFriedmanHolmTestTables(Experiment<?, Result> experimentConfiguration) {
+        this.experiment = experimentConfiguration;
 
-    numberOfAlgorithms = experiment.getAlgorithmList().size();
-    numberOfProblems = experiment.getProblemList().size();
+        numberOfAlgorithms = experiment.getAlgorithmList().size();
+        numberOfProblems = experiment.getProblemList().size();
 
-    experiment.removeDuplicatedAlgorithms();
-  }
-
-  @Override
-  public void run() throws IOException {
-    latexDirectoryName = experiment.getExperimentBaseDirectory() + "/" + DEFAULT_LATEX_DIRECTORY;
-
-    String path = experiment.getExperimentBaseDirectory();
-    Table table = Table.read().csv(path + "/" + INDICATOR_SUMMARY_CSV);
-    boolean minimizar = true;
-
-    for (QualityIndicator indicator : experiment.getIndicatorList()) {
-      Table tableFilteredByIndicator = filterTableByIndicator(table, indicator.getName());
-      if (indicator.getName().equals("HV")) minimizar = false;
-      Table results = computeFriedmanAndHolmTests(tableFilteredByIndicator, minimizar);
-      createLatexFile(results, indicator);
-    }
-  }
-
-  private Table computeFriedmanAndHolmTests(Table table, boolean minimizar) {
-    StringColumn algorithms = getUniquesValuesOfStringColumn(table, ALGORITHM);
-    StringColumn problems = getUniquesValuesOfStringColumn(table, PROBLEM);
-    FriedmanTest test = new FriedmanTest(minimizar, table, algorithms, problems, "IndicatorValue");
-    test.computeHolmTest();
-    return test.getResults();
-  }
-
-  private void createLatexFile(Table results, QualityIndicator indicator) {
-    String outputFile = latexDirectoryName + "/FriedmanTestWithHolm" + indicator.getName() + ".tex";
-
-    File latexOutput;
-    latexOutput = new File(latexDirectoryName);
-    if (!latexOutput.exists()) {
-      latexOutput.mkdirs();
+        experiment.removeDuplicatedAlgorithms();
     }
 
-    String fileContents = prepareFileOutputContents(results);
+    @Override
+    public void run() throws IOException {
+        latexDirectoryName = experiment.getExperimentBaseDirectory() + "/" + DEFAULT_LATEX_DIRECTORY;
 
-    try (DataOutputStream dataOutputStream =
-        new DataOutputStream(new FileOutputStream(outputFile))) {
-      dataOutputStream.writeBytes(fileContents);
-    } catch (IOException e) {
-      throw new JMetalException("Error writing data ", e);
-    }
-  }
+        String path = experiment.getExperimentBaseDirectory();
+        Table table = Table.read().csv(path + "/" + INDICATOR_SUMMARY_CSV);
+        boolean minimizar = true;
 
-  public String prepareFileOutputContents(Table results) {
-    String fileContents = writeLatexHeader();
-    fileContents = printTableHeader(fileContents);
-    fileContents = printTableLines(fileContents, results);
-    fileContents = printTableTail(fileContents);
-    fileContents =
-        printDocumentFooter(fileContents, results.doubleColumn("Ranking").asDoubleArray());
-    return fileContents;
-  }
-
-  private String writeLatexHeader() {
-
-    return ("\\documentclass{article}\n"
-        + "\\usepackage{graphicx}\n"
-        + "\\title{Results}\n"
-        + "\\author{}\n"
-        + "\\date{\\today}\n"
-        + "\\begin{document}\n"
-        + "\\oddsidemargin 0in \\topmargin 0in"
-        + "\\maketitle\n"
-        + "\n"
-        + "\\section{Tables}");
-  }
-
-  private String printTableHeader(String fileContents) {
-    return fileContents
-        + "\n"
-        + ("\\begin{table}[!htp]\n"
-            + "\\centering\n"
-            + "\\begin{tabular}{c|c|c|c|c}\n"
-            + "Algorithm&Ranking&p-value&Holm&Hypothesis\\\\\n\\hline");
-  }
-
-  private String printTableLines(String fileContents, Table results) {
-    StringBuilder sb = new StringBuilder(fileContents);
-    for (int i = 0; i < results.rowCount(); i++) {
-      sb.append("\n");
-      for (int j = 0; j < results.columnCount(); j++) {
-        if (j == results.columnIndex("Algorithm")) {
-          sb.append(results.stringColumn(0).get(i));
-        } else if (j == results.columnIndex("Hypothesis")) {
-          sb.append(results.stringColumn(j).get(i));
-        } else if (j == results.columnIndex("p-value")) {
-          DecimalFormat format = new DecimalFormat("0.###E0");
-          sb.append(format.format(results.doubleColumn(j).get(i)));
-        } else {
-          DecimalFormat format = new DecimalFormat("##.###");
-          sb.append(format.format(results.doubleColumn(j).get(i)));
+        for (QualityIndicator indicator : experiment.getIndicatorList()) {
+            Table tableFilteredByIndicator = filterTableByIndicator(table, indicator.getName());
+            if (indicator.getName().equals("HV")) minimizar = false;
+            Table results = computeFriedmanAndHolmTests(tableFilteredByIndicator, minimizar);
+            createLatexFile(results, indicator);
         }
-        if (j < results.columnCount() - 1) {
-          sb.append(" & ");
+    }
+
+    private Table computeFriedmanAndHolmTests(Table table, boolean minimizar) {
+        StringColumn algorithms = getUniquesValuesOfStringColumn(table, ALGORITHM);
+        StringColumn problems = getUniquesValuesOfStringColumn(table, PROBLEM);
+        FriedmanTest test = new FriedmanTest(minimizar, table, algorithms, problems, "IndicatorValue");
+        test.computeHolmTest();
+        return test.getResults();
+    }
+
+    private void createLatexFile(Table results, QualityIndicator indicator) {
+        String outputFile = latexDirectoryName + "/FriedmanTestWithHolm" + indicator.getName() + ".tex";
+
+        File latexOutput;
+        latexOutput = new File(latexDirectoryName);
+        if (!latexOutput.exists()) {
+            latexOutput.mkdirs();
         }
-      }
-      sb.append("\\\\");
+
+        String fileContents = prepareFileOutputContents(results);
+
+        try (DataOutputStream dataOutputStream =
+                     new DataOutputStream(new FileOutputStream(outputFile))) {
+            dataOutputStream.writeBytes(fileContents);
+        } catch (IOException e) {
+            throw new JMetalException("Error writing data ", e);
+        }
     }
-    return sb.toString();
-  }
 
-  private String printTableTail(String fileContents) {
-    return fileContents
-        + "\n"
-        + "\\end{tabular}\n"
-        + "\\caption{Average ranking of the algorithms}\n"
-        + "\\end{table}";
-  }
-
-  private String printDocumentFooter(String fileContents, double[] averageRanking) {
-    double term1 =
-        (12 * (double) numberOfProblems) / (numberOfAlgorithms * (numberOfAlgorithms + 1));
-    double term2 = numberOfAlgorithms * (numberOfAlgorithms + 1) * (numberOfAlgorithms + 1) / (4.0);
-    double sum = 0;
-    for (int i = 0; i < numberOfAlgorithms; i++) {
-      sum += averageRanking[i] * averageRanking[i];
+    public String prepareFileOutputContents(Table results) {
+        String fileContents = writeLatexHeader();
+        fileContents = printTableHeader(fileContents);
+        fileContents = printTableLines(fileContents, results);
+        fileContents = printTableTail(fileContents);
+        fileContents =
+                printDocumentFooter(fileContents, results.doubleColumn("Ranking").asDoubleArray());
+        return fileContents;
     }
-    double friedman = (sum - term2) * term1;
 
-    String output =
-        fileContents
-            + "\n"
-            + "\n\nFriedman statistic considering reduction performance (distributed according to "
-            + "chi-square with "
-            + (numberOfAlgorithms - 1)
-            + " degrees of freedom: "
-            + friedman
-            + ").\n\n";
-    output = output + "\n" + "\\end{document}";
+    private String writeLatexHeader() {
 
-    return output;
-  }
-
-  private StringColumn getUniquesValuesOfStringColumn(Table table, String columnName) {
-    return dropDuplicateRowsInColumn(table.stringColumn(columnName));
-  }
-
-  public StringColumn dropDuplicateRowsInColumn(StringColumn column) {
-    LinkedList<String> result = new LinkedList<String>();
-    for (int row = 0; row < column.size(); row++) {
-      if (!result.contains(column.get(row))) {
-        result.add(column.get(row));
-      }
+        return ("\\documentclass{article}\n"
+                + "\\usepackage{graphicx}\n"
+                + "\\title{Results}\n"
+                + "\\author{}\n"
+                + "\\date{\\today}\n"
+                + "\\begin{document}\n"
+                + "\\oddsidemargin 0in \\topmargin 0in"
+                + "\\maketitle\n"
+                + "\n"
+                + "\\section{Tables}");
     }
-    return StringColumn.create(column.name(), result);
-  }
 
-  private Table filterTableByIndicator(Table table, String indicator) {
-    return table.where(table.stringColumn(INDICATOR_NAME).isEqualTo(indicator));
-  }
+    private String printTableHeader(String fileContents) {
+        return fileContents
+                + "\n"
+                + ("\\begin{table}[!htp]\n"
+                + "\\centering\n"
+                + "\\begin{tabular}{c|c|c|c|c}\n"
+                + "Algorithm&Ranking&p-value&Holm&Hypothesis\\\\\n\\hline");
+    }
+
+    private String printTableLines(String fileContents, Table results) {
+        StringBuilder sb = new StringBuilder(fileContents);
+        for (int i = 0; i < results.rowCount(); i++) {
+            sb.append("\n");
+            for (int j = 0; j < results.columnCount(); j++) {
+                if (j == results.columnIndex("Algorithm")) {
+                    sb.append(results.stringColumn(0).get(i));
+                } else if (j == results.columnIndex("Hypothesis")) {
+                    sb.append(results.stringColumn(j).get(i));
+                } else if (j == results.columnIndex("p-value")) {
+                    DecimalFormat format = new DecimalFormat("0.###E0");
+                    sb.append(format.format(results.doubleColumn(j).get(i)));
+                } else {
+                    DecimalFormat format = new DecimalFormat("##.###");
+                    sb.append(format.format(results.doubleColumn(j).get(i)));
+                }
+                if (j < results.columnCount() - 1) {
+                    sb.append(" & ");
+                }
+            }
+            sb.append("\\\\");
+        }
+        return sb.toString();
+    }
+
+    private String printTableTail(String fileContents) {
+        return fileContents
+                + "\n"
+                + "\\end{tabular}\n"
+                + "\\caption{Average ranking of the algorithms}\n"
+                + "\\end{table}";
+    }
+
+    private String printDocumentFooter(String fileContents, double[] averageRanking) {
+        double term1 =
+                (12 * (double) numberOfProblems) / (numberOfAlgorithms * (numberOfAlgorithms + 1));
+        double term2 = numberOfAlgorithms * (numberOfAlgorithms + 1) * (numberOfAlgorithms + 1) / (4.0);
+        double sum = 0;
+        for (int i = 0; i < numberOfAlgorithms; i++) {
+            sum += averageRanking[i] * averageRanking[i];
+        }
+        double friedman = (sum - term2) * term1;
+
+        String output =
+                fileContents
+                        + "\n"
+                        + "\n\nFriedman statistic considering reduction performance (distributed according to "
+                        + "chi-square with "
+                        + (numberOfAlgorithms - 1)
+                        + " degrees of freedom: "
+                        + friedman
+                        + ").\n\n";
+        output = output + "\n" + "\\end{document}";
+
+        return output;
+    }
+
+    private StringColumn getUniquesValuesOfStringColumn(Table table, String columnName) {
+        return dropDuplicateRowsInColumn(table.stringColumn(columnName));
+    }
+
+    public StringColumn dropDuplicateRowsInColumn(StringColumn column) {
+        LinkedList<String> result = new LinkedList<String>();
+        for (int row = 0; row < column.size(); row++) {
+            if (!result.contains(column.get(row))) {
+                result.add(column.get(row));
+            }
+        }
+        return StringColumn.create(column.name(), result);
+    }
+
+    private Table filterTableByIndicator(Table table, String indicator) {
+        return table.where(table.stringColumn(INDICATOR_NAME).isEqualTo(indicator));
+    }
 }

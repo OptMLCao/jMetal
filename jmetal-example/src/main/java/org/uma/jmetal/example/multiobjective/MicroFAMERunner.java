@@ -38,55 +38,55 @@ import java.util.List;
  * @author Alejandro Santiago <aurelio.santiago@upalt.edu.mx>
  */
 public class MicroFAMERunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws JMetalException
-   * @throws FileNotFoundException
-   */
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    Problem<DoubleSolution> problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
-    String referenceParetoFront = "";
+    /**
+     * @param args Command line arguments.
+     * @throws JMetalException
+     * @throws FileNotFoundException
+     */
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        Problem<DoubleSolution> problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+        String referenceParetoFront = "";
 
-    int evaluations = 175000; //
-    int archiveSize = 100;
-    String problemName = null;
-    if (args.length == 0) {
-      // problemName = "org.uma.jmetal.problem.multiobjective.cec2009Competition.UF6";
-      // problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      // problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F6";
-      // problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1";
-      problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F2";
-      evaluations = 175000;
-      referenceParetoFront = "resources/referenceFrontsCSV/LZ09_F2.csv";
-    } else if (args.length == 1) {
-      problemName = args[0];
-    } else if (args.length == 3) {
-      problemName = args[0];
-      archiveSize = Integer.parseInt(args[1]);
-      evaluations = Integer.parseInt(args[2]);
+        int evaluations = 175000; //
+        int archiveSize = 100;
+        String problemName = null;
+        if (args.length == 0) {
+            // problemName = "org.uma.jmetal.problem.multiobjective.cec2009Competition.UF6";
+            // problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+            // problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F6";
+            // problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1";
+            problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F2";
+            evaluations = 175000;
+            referenceParetoFront = "resources/referenceFrontsCSV/LZ09_F2.csv";
+        } else if (args.length == 1) {
+            problemName = args[0];
+        } else if (args.length == 3) {
+            problemName = args[0];
+            archiveSize = Integer.parseInt(args[1]);
+            evaluations = Integer.parseInt(args[2]);
+        }
+
+        problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
+
+        crossover = new NullCrossover<>();
+        mutation = new NullMutation<>();
+        selection = new HVTournamentSelection(5);
+        algorithm = new MicroFAME<>(problem, evaluations, archiveSize, crossover, mutation, selection);
+
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
+
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+
+        printFinalSolutionSet(population);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-
-    problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
-    crossover = new NullCrossover<>();
-    mutation = new NullMutation<>();
-    selection = new HVTournamentSelection(5);
-    algorithm = new MicroFAME<>(problem, evaluations, archiveSize, crossover, mutation, selection);
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
-    List<DoubleSolution> population = algorithm.getResult();
-    long computingTime = algorithmRunner.getComputingTime();
-
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront);
-    }
-  }
 }

@@ -26,31 +26,31 @@ import java.util.Comparator;
  */
 @SuppressWarnings("serial")
 public class SpatialSpreadDeviationArchive<S extends Solution<?>> extends AbstractBoundedArchive<S> {
-  private Comparator<S> crowdingDistanceComparator;
-  private DensityEstimator<S> crowdingDistance ;
+    private Comparator<S> crowdingDistanceComparator;
+    private DensityEstimator<S> crowdingDistance;
 
-  public SpatialSpreadDeviationArchive(int maxSize) {
-    super(maxSize);
-    crowdingDistanceComparator = new SpatialSpreadDeviationComparator<S>() ;
-    crowdingDistance = new SpatialSpreadDeviation<S>() ;
-  }
-
-  @Override
-  public void prune() {
-    if (getSolutionList().size() > getMaxSize()) {
-      computeDensityEstimator();
-      S worst = new SolutionListUtils().findWorstSolution(getSolutionList(), crowdingDistanceComparator) ;
-      getSolutionList().remove(worst);
+    public SpatialSpreadDeviationArchive(int maxSize) {
+        super(maxSize);
+        crowdingDistanceComparator = new SpatialSpreadDeviationComparator<S>();
+        crowdingDistance = new SpatialSpreadDeviation<S>();
     }
-  }
 
-  @Override
-  public Comparator<S> getComparator() {
-    return crowdingDistanceComparator ;
-  }
+    @Override
+    public void prune() {
+        if (getSolutionList().size() > getMaxSize()) {
+            computeDensityEstimator();
+            S worst = new SolutionListUtils().findWorstSolution(getSolutionList(), crowdingDistanceComparator);
+            getSolutionList().remove(worst);
+        }
+    }
 
-  @Override
-  public void computeDensityEstimator() {
-    crowdingDistance.computeDensityEstimator(getSolutionList());
-  }
+    @Override
+    public Comparator<S> getComparator() {
+        return crowdingDistanceComparator;
+    }
+
+    @Override
+    public void computeDensityEstimator() {
+        crowdingDistance.computeDensityEstimator(getSolutionList());
+    }
 }

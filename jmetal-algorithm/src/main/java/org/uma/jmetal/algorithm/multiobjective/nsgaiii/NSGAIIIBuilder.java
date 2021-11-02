@@ -12,101 +12,107 @@ import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 import java.util.List;
 
 
-/** Builder class */
-public class NSGAIIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<NSGAIII<S>>{
-  // no access modifier means access from classes within the same package
-  private Problem<S> problem ;
-  private int maxIterations ;
-  private int populationSize ;
-  private int numberOfDivisions;
-  private CrossoverOperator<S> crossoverOperator ;
-  private MutationOperator<S> mutationOperator ;
-  private SelectionOperator<List<S>, S> selectionOperator ;
+/**
+ * Builder class
+ */
+public class NSGAIIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<NSGAIII<S>> {
+    // no access modifier means access from classes within the same package
+    private Problem<S> problem;
+    private int maxIterations;
+    private int populationSize;
+    private int numberOfDivisions;
+    private CrossoverOperator<S> crossoverOperator;
+    private MutationOperator<S> mutationOperator;
+    private SelectionOperator<List<S>, S> selectionOperator;
 
-  private SolutionListEvaluator<S> evaluator ;
-  
-  /** Builder constructor */
-  public NSGAIIIBuilder(Problem<S> problem) {
-    this.problem = problem ;
-    maxIterations = 250 ;
-    populationSize = 100 ;
-    numberOfDivisions = 12;
-    evaluator = new SequentialSolutionListEvaluator<S>() ;
-  }
+    private SolutionListEvaluator<S> evaluator;
 
-  public NSGAIIIBuilder<S> setMaxIterations(int maxIterations) {
-    this.maxIterations = maxIterations ;
+    /**
+     * Builder constructor
+     */
+    public NSGAIIIBuilder(Problem<S> problem) {
+        this.problem = problem;
+        maxIterations = 250;
+        populationSize = 100;
+        numberOfDivisions = 12;
+        evaluator = new SequentialSolutionListEvaluator<S>();
+    }
 
-    return this ;
-  }
+    public NSGAIIIBuilder<S> setMaxIterations(int maxIterations) {
+        this.maxIterations = maxIterations;
 
-  public NSGAIIIBuilder<S> setPopulationSize(int populationSize) {
-    this.populationSize = populationSize ;
+        return this;
+    }
 
-    return this ;
-  }
+    public NSGAIIIBuilder<S> setPopulationSize(int populationSize) {
+        this.populationSize = populationSize;
 
-  public NSGAIIIBuilder<S> setNumberOfDivisions(int numberOfDivisions){
-    this.numberOfDivisions = numberOfDivisions ;
+        return this;
+    }
 
-    return this ;
-  }
+    public NSGAIIIBuilder<S> setNumberOfDivisions(int numberOfDivisions) {
+        this.numberOfDivisions = numberOfDivisions;
 
-  public NSGAIIIBuilder<S> setCrossoverOperator(CrossoverOperator<S> crossoverOperator) {
-    this.crossoverOperator = crossoverOperator ;
+        return this;
+    }
 
-    return this ;
-  }
+    public NSGAIIIBuilder<S> setCrossoverOperator(CrossoverOperator<S> crossoverOperator) {
+        this.crossoverOperator = crossoverOperator;
 
-  public NSGAIIIBuilder<S> setMutationOperator(MutationOperator<S> mutationOperator) {
-    this.mutationOperator = mutationOperator ;
+        return this;
+    }
 
-    return this ;
-  }
+    public NSGAIIIBuilder<S> setMutationOperator(MutationOperator<S> mutationOperator) {
+        this.mutationOperator = mutationOperator;
 
-  public NSGAIIIBuilder<S> setSelectionOperator(SelectionOperator<List<S>, S> selectionOperator) {
-    this.selectionOperator = selectionOperator ;
+        return this;
+    }
 
-    return this ;
-  }
+    public NSGAIIIBuilder<S> setSelectionOperator(SelectionOperator<List<S>, S> selectionOperator) {
+        this.selectionOperator = selectionOperator;
 
-  public NSGAIIIBuilder<S> setSolutionListEvaluator(SolutionListEvaluator<S> evaluator) {
-    this.evaluator = evaluator ;
+        return this;
+    }
 
-    return this ;
-  }
+    public NSGAIIIBuilder<S> setSolutionListEvaluator(SolutionListEvaluator<S> evaluator) {
+        this.evaluator = evaluator;
 
-  public SolutionListEvaluator<S> getEvaluator() {
-    return evaluator;
-  }
+        return this;
+    }
 
-  public Problem<S> getProblem() {
-    return problem;
-  }
+    public SolutionListEvaluator<S> getEvaluator() {
+        return evaluator;
+    }
 
-  public int getMaxIterations() {
-    return maxIterations;
-  }
+    public Problem<S> getProblem() {
+        return problem;
+    }
 
-  public int getPopulationSize() {
-    return populationSize;
-  }
+    public int getMaxIterations() {
+        return maxIterations;
+    }
 
-  public int getNumberOfDivisions() { return numberOfDivisions; }
+    public int getPopulationSize() {
+        return populationSize;
+    }
 
-  public CrossoverOperator<S> getCrossoverOperator() {
-    return crossoverOperator;
-  }
+    public int getNumberOfDivisions() {
+        return numberOfDivisions;
+    }
 
-  public MutationOperator<S> getMutationOperator() {
-    return mutationOperator;
-  }
+    public CrossoverOperator<S> getCrossoverOperator() {
+        return crossoverOperator;
+    }
 
-  public SelectionOperator<List<S>, S> getSelectionOperator() {
-    return selectionOperator;
-  }
+    public MutationOperator<S> getMutationOperator() {
+        return mutationOperator;
+    }
 
-  public NSGAIII<S> build() {
-    return new NSGAIII<>(this) ;
-  }
+    public SelectionOperator<List<S>, S> getSelectionOperator() {
+        return selectionOperator;
+    }
+
+    public NSGAIII<S> build() {
+        return new NSGAIII<>(this);
+    }
 }

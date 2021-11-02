@@ -13,22 +13,22 @@ import java.util.Comparator;
 @SuppressWarnings("serial")
 public class DirScoreComparator<S extends Solution<?>> implements Comparator<S>, Serializable {
 
-  @Override
-  public int compare(S o1, S o2) {
-    double score1 = Double.MAX_VALUE;
-    double score2 = Double.MAX_VALUE;
+    @Override
+    public int compare(S o1, S o2) {
+        double score1 = Double.MAX_VALUE;
+        double score2 = Double.MAX_VALUE;
 
-    Object scoreObj1 = o1.attributes().get("dir-score");
-    Object scoreObj2 = o2.attributes().get("dir-score");
+        Object scoreObj1 = o1.attributes().get("dir-score");
+        Object scoreObj2 = o2.attributes().get("dir-score");
 
-    if (scoreObj1 != null) {
-      score1 = (double) scoreObj1;
+        if (scoreObj1 != null) {
+            score1 = (double) scoreObj1;
+        }
+
+        if (scoreObj2 != null) {
+            score2 = (double) scoreObj2;
+        }
+
+        return Double.compare(score1, score2);
     }
-
-    if (scoreObj2 != null) {
-      score2 = (double) scoreObj2;
-    }
-
-    return Double.compare(score1, score2);
-  }
 }

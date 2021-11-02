@@ -6,48 +6,56 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import java.util.Arrays;
 import java.util.List;
 
-/** Class representing problem Binh2 */
+/**
+ * Class representing problem Binh2
+ */
 @SuppressWarnings("serial")
 public class Binh2 extends AbstractDoubleProblem {
 
-  /** Constructor Creates a default instance of the Binh2 problem */
-  public Binh2() {
-    setNumberOfVariables(2);
-    setNumberOfObjectives(2);
-    setNumberOfConstraints(2);
-    setName("Binh2");
+    /**
+     * Constructor Creates a default instance of the Binh2 problem
+     */
+    public Binh2() {
+        setNumberOfVariables(2);
+        setNumberOfObjectives(2);
+        setNumberOfConstraints(2);
+        setName("Binh2");
 
-    List<Double> lowerLimit = Arrays.asList(0.0, 0.0);
-    List<Double> upperLimit = Arrays.asList(5.0, 3.0);
+        List<Double> lowerLimit = Arrays.asList(0.0, 0.0);
+        List<Double> upperLimit = Arrays.asList(5.0, 3.0);
 
-    setVariableBounds(lowerLimit, upperLimit);
-  }
-
-  /** Evaluate() method */
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    double[] fx = new double[solution.objectives().length];
-    double[] x = new double[getNumberOfVariables()];
-    for (int i = 0; i < getNumberOfVariables(); i++) {
-      x[i] = solution.variables().get(i);
+        setVariableBounds(lowerLimit, upperLimit);
     }
 
-    fx[0] = 4.0 * x[0] * x[0] + 4 * x[1] * x[1];
-    fx[1] = (x[0] - 5.0) * (x[0] - 5.0) + (x[1] - 5.0) * (x[1] - 5.0);
+    /**
+     * Evaluate() method
+     */
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        double[] fx = new double[solution.objectives().length];
+        double[] x = new double[getNumberOfVariables()];
+        for (int i = 0; i < getNumberOfVariables(); i++) {
+            x[i] = solution.variables().get(i);
+        }
 
-    solution.objectives()[0] = fx[0];
-    solution.objectives()[1] =  fx[1];
+        fx[0] = 4.0 * x[0] * x[0] + 4 * x[1] * x[1];
+        fx[1] = (x[0] - 5.0) * (x[0] - 5.0) + (x[1] - 5.0) * (x[1] - 5.0);
 
-    this.evaluateConstraints(solution);
-    return solution;
-  }
+        solution.objectives()[0] = fx[0];
+        solution.objectives()[1] = fx[1];
 
-  /** EvaluateConstraints() method */
-  public void evaluateConstraints(DoubleSolution solution) {
-    double x0 = solution.variables().get(0);
-    double x1 = solution.variables().get(1);
+        this.evaluateConstraints(solution);
+        return solution;
+    }
 
-    solution.constraints()[0] = -1.0 * (x0 - 5) * (x0 - 5) - x1 * x1 + 25.0;
-    solution.constraints()[1] = (x0 - 8) * (x0 - 8) + (x1 + 3) * (x1 + 3) - 7.7;
-  }
+    /**
+     * EvaluateConstraints() method
+     */
+    public void evaluateConstraints(DoubleSolution solution) {
+        double x0 = solution.variables().get(0);
+        double x1 = solution.variables().get(1);
+
+        solution.constraints()[0] = -1.0 * (x0 - 5) * (x0 - 5) - x1 * x1 + 25.0;
+        solution.constraints()[1] = (x0 - 8) * (x0 - 8) + (x1 + 3) * (x1 + 3) - 7.7;
+    }
 }

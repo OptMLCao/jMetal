@@ -11,26 +11,26 @@ import static org.junit.Assert.assertEquals;
  * @version 1.0
  */
 public class RepairDoubleSolutionWithBoundValueTest {
-  private static final double EPSILON = 0.0000000000001 ;
-  private RepairDoubleSolution repair ;
+    private static final double EPSILON = 0.0000000000001;
+    private RepairDoubleSolution repair;
 
-  @Before
-  public void setup() {
-    repair = new RepairDoubleSolutionWithBoundValue() ;
-  }
+    @Before
+    public void setup() {
+        repair = new RepairDoubleSolutionWithBoundValue();
+    }
 
-  @Test (expected = RuntimeException.class)
-  public void shouldRepairDoubleSolutionAtBoundsRaiseAnExceptionIfTheBoundsAreIncorrect() {
-    repair.repairSolutionVariableValue(0.0, 1.0, -1.0) ;
-  }
+    @Test(expected = RuntimeException.class)
+    public void shouldRepairDoubleSolutionAtBoundsRaiseAnExceptionIfTheBoundsAreIncorrect() {
+        repair.repairSolutionVariableValue(0.0, 1.0, -1.0);
+    }
 
-  @Test
-  public void shouldRepairDoubleSolutionAtBoundsAssignTheLowerBoundIfValueIsLessThanIt() {
-    assertEquals(-1.0, repair.repairSolutionVariableValue(-3, -1.0, 1.0), EPSILON) ;
-  }
+    @Test
+    public void shouldRepairDoubleSolutionAtBoundsAssignTheLowerBoundIfValueIsLessThanIt() {
+        assertEquals(-1.0, repair.repairSolutionVariableValue(-3, -1.0, 1.0), EPSILON);
+    }
 
-  @Test
-  public void shouldRepairDoubleSolutionAtBoundsAssignTheUpperBoundIfValueIsGreaterThanIt() {
-    assertEquals(1.0, repair.repairSolutionVariableValue(4, -1.0, 1.0), EPSILON) ;
-  }
+    @Test
+    public void shouldRepairDoubleSolutionAtBoundsAssignTheUpperBoundIfValueIsGreaterThanIt() {
+        assertEquals(1.0, repair.repairSolutionVariableValue(4, -1.0, 1.0), EPSILON);
+    }
 }

@@ -25,28 +25,28 @@ import java.nio.file.Paths;
  */
 public class ExtractParetoDominatingSolutionsFromFile {
 
-  public static void main(String[] args) throws IOException {
-    Check.that(args.length == 3,
-          "Wrong number of arguments: "
-              + args.length
-              + "\nThis program should be called with three arguments:"
-              + "\nThe first argument is the name of the file containing the input solutions."
-              + "\nThe second argument is the name of the file containing the computed output."
-              + "\nThe third argument is the number of objectives of the problem whose front is to be extracted.");
+    public static void main(String[] args) throws IOException {
+        Check.that(args.length == 3,
+                "Wrong number of arguments: "
+                        + args.length
+                        + "\nThis program should be called with three arguments:"
+                        + "\nThe first argument is the name of the file containing the input solutions."
+                        + "\nThe second argument is the name of the file containing the computed output."
+                        + "\nThe third argument is the number of objectives of the problem whose front is to be extracted.");
 
-    String inputFileName = args[0];
-    String outputFileName = args[1];
-    int numberOfObjectives = Integer.parseInt(args[2]);
+        String inputFileName = args[0];
+        String outputFileName = args[1];
+        int numberOfObjectives = Integer.parseInt(args[2]);
 
-    NonDominatedSolutionListArchive<PointSolution> archive =
-        new NonDominatedSolutionListArchive<>();
+        NonDominatedSolutionListArchive<PointSolution> archive =
+                new NonDominatedSolutionListArchive<>();
 
-    if (Files.isRegularFile(Paths.get(inputFileName))) {
-      archive.addAll(StoredSolutionsUtils.readSolutionsFromFile(inputFileName, numberOfObjectives));
-    } else {
-      throw new JMetalException("Error opening file " + inputFileName);
+        if (Files.isRegularFile(Paths.get(inputFileName))) {
+            archive.addAll(StoredSolutionsUtils.readSolutionsFromFile(inputFileName, numberOfObjectives));
+        } else {
+            throw new JMetalException("Error opening file " + inputFileName);
+        }
+
+        StoredSolutionsUtils.writeToOutput(archive, new DefaultFileOutputContext(outputFileName));
     }
-
-    StoredSolutionsUtils.writeToOutput(archive, new DefaultFileOutputContext(outputFileName));
-  }
 }

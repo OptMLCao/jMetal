@@ -26,75 +26,77 @@ import java.util.HashMap;
  * class.
  *
  * @author Antonio J. Nebro
- * */
+ */
 @SuppressWarnings("serial")
 public class GeneticAlgorithm<S extends Solution<?>> extends ComponentBasedEvolutionaryAlgorithm<S> {
 
-  /**
-   * Constructor
-   *
-   * @param evaluation
-   * @param initialPopulationCreation
-   * @param termination
-   * @param selection
-   * @param variation
-   * @param replacement
-   */
-  public GeneticAlgorithm (
-      Evaluation<S> evaluation,
-      SolutionsCreation<S> initialPopulationCreation,
-      Termination termination,
-      MatingPoolSelection<S> selection,
-      CrossoverAndMutationVariation<S> variation,
-      Replacement<S> replacement) {
-    super(
-        "Genetic algorithm",
-        evaluation,
-        initialPopulationCreation,
-        termination,
-        selection,
-        variation,
-        replacement);
-  }
+    /**
+     * Constructor
+     *
+     * @param evaluation
+     * @param initialPopulationCreation
+     * @param termination
+     * @param selection
+     * @param variation
+     * @param replacement
+     */
+    public GeneticAlgorithm(
+            Evaluation<S> evaluation,
+            SolutionsCreation<S> initialPopulationCreation,
+            Termination termination,
+            MatingPoolSelection<S> selection,
+            CrossoverAndMutationVariation<S> variation,
+            Replacement<S> replacement) {
+        super(
+                "Genetic algorithm",
+                evaluation,
+                initialPopulationCreation,
+                termination,
+                selection,
+                variation,
+                replacement);
+    }
 
-  /** Constructor */
-  public GeneticAlgorithm(
-      Problem<S> problem,
-      int populationSize,
-      int offspringPopulationSize,
-      NaryTournamentSelection<S> selectionOperator,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      Termination termination) {
-    this.name = "Genetic algorithm";
-    this.problem = problem;
-    this.observable = new DefaultObservable<>(name);
-    this.attributes = new HashMap<>();
+    /**
+     * Constructor
+     */
+    public GeneticAlgorithm(
+            Problem<S> problem,
+            int populationSize,
+            int offspringPopulationSize,
+            NaryTournamentSelection<S> selectionOperator,
+            CrossoverOperator<S> crossoverOperator,
+            MutationOperator<S> mutationOperator,
+            Termination termination) {
+        this.name = "Genetic algorithm";
+        this.problem = problem;
+        this.observable = new DefaultObservable<>(name);
+        this.attributes = new HashMap<>();
 
-    this.createInitialPopulation = new RandomSolutionsCreation<>(problem, populationSize);
+        this.createInitialPopulation = new RandomSolutionsCreation<>(problem, populationSize);
 
-    this.replacement =
-        new MuPlusLambdaReplacement<>(new ObjectiveComparator<>(0)) ;
+        this.replacement =
+                new MuPlusLambdaReplacement<>(new ObjectiveComparator<>(0));
 
-    this.variation =
-        new CrossoverAndMutationVariation<>(
-            offspringPopulationSize, crossoverOperator, mutationOperator);
+        this.variation =
+                new CrossoverAndMutationVariation<>(
+                        offspringPopulationSize, crossoverOperator, mutationOperator);
 
-    this.selection = new NaryTournamentMatingPoolSelection<>(selectionOperator, variation.getMatingPoolSize()) ;
+        this.selection = new NaryTournamentMatingPoolSelection<>(selectionOperator, variation.getMatingPoolSize());
 
-    this.termination = termination;
+        this.termination = termination;
 
-    this.evaluation = new SequentialEvaluation<>(problem);
+        this.evaluation = new SequentialEvaluation<>(problem);
 
-    this.archive = null;
-  }
+        this.archive = null;
+    }
 
-  @Override
-  protected void updateProgress() {
-    S bestFitnessSolution = population.stream().min(new ObjectiveComparator<>(0)).get() ;
-    attributes.put("BEST_SOLUTION", bestFitnessSolution);
+    @Override
+    protected void updateProgress() {
+        S bestFitnessSolution = population.stream().min(new ObjectiveComparator<>(0)).get();
+        attributes.put("BEST_SOLUTION", bestFitnessSolution);
 
-    super.updateProgress();
-  }
+        super.updateProgress();
+    }
 
 }

@@ -26,35 +26,35 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class RandomSearchSingleObjectiveBinaryEncodingExample extends AbstractAlgorithmRunner {
-  public static void main(String[] args) throws JMetalException {
-    BinaryProblem problem = new OneMax(512) ;
-    Termination termination = new TerminationByEvaluations(50000);
-    Evaluation<BinarySolution> evaluation = new SequentialEvaluation<>(problem) ;
-    SolutionsCreation<BinarySolution> solutionsCreation = new RandomSolutionsCreation<>(problem, 1) ;
+    public static void main(String[] args) throws JMetalException {
+        BinaryProblem problem = new OneMax(512);
+        Termination termination = new TerminationByEvaluations(50000);
+        Evaluation<BinarySolution> evaluation = new SequentialEvaluation<>(problem);
+        SolutionsCreation<BinarySolution> solutionsCreation = new RandomSolutionsCreation<>(problem, 1);
 
-    var algorithm =
-            new ComponentBasedRandomSearchAlgorithm<>(
-          "Random Search", solutionsCreation, evaluation,
-                    termination);
+        var algorithm =
+                new ComponentBasedRandomSearchAlgorithm<>(
+                        "Random Search", solutionsCreation, evaluation,
+                        termination);
 
-    EvaluationObserver evaluationObserver = new EvaluationObserver(1000) ;
-    algorithm.getObservable().register(evaluationObserver);
+        EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
+        algorithm.getObservable().register(evaluationObserver);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<BinarySolution> population = algorithm.getResult();
-    JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
+        List<BinarySolution> population = algorithm.getResult();
+        JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
+        JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
 
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+                .print();
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
 
-    JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]) ;
-  }
+        JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]);
+    }
 }

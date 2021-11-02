@@ -17,48 +17,48 @@ import java.util.List;
  */
 public class HypervolumeContributionDensityEstimator<S extends Solution<?>> implements DensityEstimator<S> {
 
-  private String attributeId = getClass().getName();
-  private Hypervolume<S> hypervolume ;
+    private String attributeId = getClass().getName();
+    private Hypervolume<S> hypervolume;
 
-  public HypervolumeContributionDensityEstimator(List<S> referenceFront) {
-    hypervolume = new PISAHypervolume<>(new ArrayFront(referenceFront)) ;
-  }
-
-  public HypervolumeContributionDensityEstimator(double[] referencePoint) {
-    hypervolume = new PISAHypervolume<>(referencePoint) ;
-  }
-
-  /**
-   * Assigns the hv contribution to all population in a <code>SolutionSet</code>.
-   *
-   * @param solutionList The <code>SolutionSet</code>.
-   */
-
-  @Override
-  public void compute(List<S> solutionList) {
-    int size = solutionList.size();
-
-    if (size == 0) {
-      return;
+    public HypervolumeContributionDensityEstimator(List<S> referenceFront) {
+        hypervolume = new PISAHypervolume<>(new ArrayFront(referenceFront));
     }
 
-    hypervolume.computeHypervolumeContribution(solutionList) ;
-  }
-
-  @Override
-  public Double getValue(S solution) {
-    Check.notNull(solution);
-
-    Double result = 0.0 ;
-    if (solution.attributes().get(attributeId) != null) {
-      result = (Double) solution.attributes().get(attributeId) ;
+    public HypervolumeContributionDensityEstimator(double[] referencePoint) {
+        hypervolume = new PISAHypervolume<>(referencePoint);
     }
-    return result ;
-  }
 
-  @Override
-  public Comparator<S> getComparator() {
-    return Comparator.comparing(this::getValue) ;
-  }
+    /**
+     * Assigns the hv contribution to all population in a <code>SolutionSet</code>.
+     *
+     * @param solutionList The <code>SolutionSet</code>.
+     */
+
+    @Override
+    public void compute(List<S> solutionList) {
+        int size = solutionList.size();
+
+        if (size == 0) {
+            return;
+        }
+
+        hypervolume.computeHypervolumeContribution(solutionList);
+    }
+
+    @Override
+    public Double getValue(S solution) {
+        Check.notNull(solution);
+
+        Double result = 0.0;
+        if (solution.attributes().get(attributeId) != null) {
+            result = (Double) solution.attributes().get(attributeId);
+        }
+        return result;
+    }
+
+    @Override
+    public Comparator<S> getComparator() {
+        return Comparator.comparing(this::getValue);
+    }
 }
 

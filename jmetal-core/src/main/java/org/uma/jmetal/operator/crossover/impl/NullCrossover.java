@@ -13,33 +13,36 @@ import java.util.List;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-@SuppressWarnings({ "unchecked", "serial" })
+@SuppressWarnings({"unchecked", "serial"})
 public class NullCrossover<S extends Solution<?>>
-    implements CrossoverOperator<S> {
+        implements CrossoverOperator<S> {
 
-  /** Execute() method */
-  @Override public List<S> execute(List<S> source) {
-    Check.notNull(source);
-    Check.that(source.size() == 2, "There must be two parents instead of " + source.size());
+    /**
+     * Execute() method
+     */
+    @Override
+    public List<S> execute(List<S> source) {
+        Check.notNull(source);
+        Check.that(source.size() == 2, "There must be two parents instead of " + source.size());
 
-    List<S> list = new ArrayList<>() ;
-    list.add((S) source.get(0).copy()) ;
-    list.add((S) source.get(1).copy()) ;
+        List<S> list = new ArrayList<>();
+        list.add((S) source.get(0).copy());
+        list.add((S) source.get(1).copy());
 
-    return list ;
-  }
+        return list;
+    }
 
-  public int getNumberOfRequiredParents() {
-    return 2 ;
-  }
+    public int getNumberOfRequiredParents() {
+        return 2;
+    }
 
-  @Override
-  public int getNumberOfGeneratedChildren() {
-    return 2;
-  }
+    @Override
+    public int getNumberOfGeneratedChildren() {
+        return 2;
+    }
 
-  @Override
-  public double getCrossoverProbability() {
-    return 1.0;
-  }
+    @Override
+    public double getCrossoverProbability() {
+        return 1.0;
+    }
 }

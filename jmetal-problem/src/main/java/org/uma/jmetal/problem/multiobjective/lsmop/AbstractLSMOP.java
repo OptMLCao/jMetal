@@ -17,15 +17,15 @@ public abstract class AbstractLSMOP extends AbstractDoubleProblem {
         setNumberOfVariables(numberOfVariables);
         setNumberOfObjectives(numberOfObjectives);
 
-        List<Double> lowerLimit = new ArrayList<Double>(getNumberOfVariables()) ;
-        List<Double> upperLimit = new ArrayList<Double>(getNumberOfVariables()) ;
+        List<Double> lowerLimit = new ArrayList<Double>(getNumberOfVariables());
+        List<Double> upperLimit = new ArrayList<Double>(getNumberOfVariables());
 
-        for (int i = 0; i < getNumberOfObjectives()-1; i++) {
+        for (int i = 0; i < getNumberOfObjectives() - 1; i++) {
             lowerLimit.add(0.0);
             upperLimit.add(1.0);
         }
 
-        for (int i = getNumberOfObjectives()-1; i < getNumberOfVariables(); i++) {
+        for (int i = getNumberOfObjectives() - 1; i < getNumberOfVariables(); i++) {
             lowerLimit.add(0.0);
             upperLimit.add(10.0);
         }
@@ -34,36 +34,37 @@ public abstract class AbstractLSMOP extends AbstractDoubleProblem {
 
 
         this.nk = nk;
-        double c =  3.8*0.1*(1-0.1);
+        double c = 3.8 * 0.1 * (1 - 0.1);
         double sum = c;
 
         List<Double> c_list = new ArrayList<>(getNumberOfObjectives());
         c_list.add(c);
-        for (int i = 0; i < getNumberOfObjectives()-1;i++) {
+        for (int i = 0; i < getNumberOfObjectives() - 1; i++) {
             c = 3.8 * c * (1.0 - c);
             c_list.add(c);
             sum += c;
         }
 
         this.subLen = new ArrayList<>(getNumberOfObjectives());
-        for (int i = 0; i < getNumberOfObjectives(); i++)
-        {
-            int aux = (int) Math.floor(c_list.get(i) / sum * (getNumberOfVariables()-getNumberOfObjectives()+1)/this.nk);
+        for (int i = 0; i < getNumberOfObjectives(); i++) {
+            int aux = (int) Math.floor(c_list.get(i) / sum * (getNumberOfVariables() - getNumberOfObjectives() + 1) / this.nk);
             subLen.add(aux);
         }
 
-        len = new ArrayList<>(subLen.size()+1);
+        len = new ArrayList<>(subLen.size() + 1);
         len.add(0);
         int cum = 0;
-        for (int i = 0; i < getNumberOfObjectives();i++) {
-            cum += subLen.get(i)* this.nk;
+        for (int i = 0; i < getNumberOfObjectives(); i++) {
+            cum += subLen.get(i) * this.nk;
             this.len.add(cum);
         }
 
     }
 
     protected abstract Function getOddFunction();
+
     protected abstract Function getEvenFunction();
+
     protected abstract List<Double> evaluate(List<Double> variables);
 
     @java.lang.Override

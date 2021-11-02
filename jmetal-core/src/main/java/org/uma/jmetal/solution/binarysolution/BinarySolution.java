@@ -9,6 +9,7 @@ import org.uma.jmetal.util.binarySet.BinarySet;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public interface BinarySolution extends Solution<BinarySet> {
-  int getNumberOfBits(int index) ;
-  int getTotalNumberOfBits() ;
+    int getNumberOfBits(int index);
+
+    int getTotalNumberOfBits();
 }

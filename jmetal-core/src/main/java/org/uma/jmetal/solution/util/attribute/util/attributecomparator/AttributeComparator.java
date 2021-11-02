@@ -11,20 +11,22 @@ import java.util.Comparator;
  * @author Antonio J. Nebro
  */
 public abstract class AttributeComparator<S extends Solution<?>> implements Comparator<S> {
-  public enum Ordering {
-    DESCENDING,
-    ASCENDING
-  };
+    public enum Ordering {
+        DESCENDING,
+        ASCENDING
+    }
 
-  protected final String attributeName;
-  protected Ordering ordering;
+    ;
 
-  public AttributeComparator(String name, Ordering ordering) {
-    this.attributeName = name;
-    this.ordering = ordering;
-  }
+    protected final String attributeName;
+    protected Ordering ordering;
 
-  public AttributeComparator(String name) {
-    this(name, Ordering.DESCENDING);
-  }
+    public AttributeComparator(String name, Ordering ordering) {
+        this.attributeName = name;
+        this.ordering = ordering;
+    }
+
+    public AttributeComparator(String name) {
+        this(name, Ordering.DESCENDING);
+    }
 }

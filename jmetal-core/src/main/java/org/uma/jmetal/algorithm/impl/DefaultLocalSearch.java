@@ -18,62 +18,62 @@ import java.util.Comparator;
  */
 @SuppressWarnings("serial")
 public class DefaultLocalSearch<S extends Solution<?>> implements Algorithm<S> {
-  private Problem<S> problem;
-  private int maxEvaluations;
+    private Problem<S> problem;
+    private int maxEvaluations;
 
-  public Problem<S> getProblem() {
-    return problem;
-  }
+    public Problem<S> getProblem() {
+        return problem;
+    }
 
-  private MutationOperator<S> mutationOperator;
+    private MutationOperator<S> mutationOperator;
 
-  public MutationOperator<S> getMutationOperator() {
-    return mutationOperator;
-  }
+    public MutationOperator<S> getMutationOperator() {
+        return mutationOperator;
+    }
 
-  private Comparator<S> comparator;
+    private Comparator<S> comparator;
 
-  public Comparator<S> getComparator() {
-    return comparator;
-  }
+    public Comparator<S> getComparator() {
+        return comparator;
+    }
 
-  private S bestSolution;
+    private S bestSolution;
 
-  public DefaultLocalSearch(
-      int maxEvaluations,
-      Problem<S> problem,
-      MutationOperator<S> mutationOperator,
-      Comparator<S> comparator) {
-    this.problem = problem;
-    this.mutationOperator = mutationOperator;
-    this.comparator = comparator;
-    this.maxEvaluations = maxEvaluations;
-  }
+    public DefaultLocalSearch(
+            int maxEvaluations,
+            Problem<S> problem,
+            MutationOperator<S> mutationOperator,
+            Comparator<S> comparator) {
+        this.problem = problem;
+        this.mutationOperator = mutationOperator;
+        this.comparator = comparator;
+        this.maxEvaluations = maxEvaluations;
+    }
 
-  @Override
-  public S getResult() {
-    return bestSolution;
-  }
+    @Override
+    public S getResult() {
+        return bestSolution;
+    }
 
-  @Override
-  public void run() {
-    bestSolution = problem.createSolution();
-    problem.evaluate(bestSolution);
+    @Override
+    public void run() {
+        bestSolution = problem.createSolution();
+        problem.evaluate(bestSolution);
 
-    LocalSearchOperator<S> localSearch =
-        new BasicLocalSearch<S>(
-            maxEvaluations, mutationOperator, new DominanceComparator<S>(), problem);
+        LocalSearchOperator<S> localSearch =
+                new BasicLocalSearch<S>(
+                        maxEvaluations, mutationOperator, new DominanceComparator<S>(), problem);
 
-    bestSolution = localSearch.execute(bestSolution);
-  }
+        bestSolution = localSearch.execute(bestSolution);
+    }
 
-  @Override
-  public String getName() {
-    return "Default local search";
-  }
+    @Override
+    public String getName() {
+        return "Default local search";
+    }
 
-  @Override
-  public String getDescription() {
-    return "Default local search";
-  }
+    @Override
+    public String getDescription() {
+        return "Default local search";
+    }
 }

@@ -19,76 +19,76 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 public class SMPSOIT {
-  Algorithm<List<DoubleSolution>> algorithm;
+    Algorithm<List<DoubleSolution>> algorithm;
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
-      throws Exception {
-    DoubleProblem problem = new ZDT4();
+    @Test
+    public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
+            throws Exception {
+        DoubleProblem problem = new ZDT4();
 
-    algorithm = new SMPSOBuilder(problem, new CrowdingDistanceArchive<DoubleSolution>(100)).build();
+        algorithm = new SMPSOBuilder(problem, new CrowdingDistanceArchive<DoubleSolution>(100)).build();
 
-    JMetalRandom.getInstance().setSeed(1);
+        JMetalRandom.getInstance().setSeed(1);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
     /*
     Rationale: the default problem is ZDT4, and SMPSO, configured with standard settings, should
     return 100 solutions
     */
-    assertTrue(population.size() >= 98);
-  }
+        assertTrue(population.size() >= 98);
+    }
 
-  @Test
-  public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
-    DoubleProblem problem = new ZDT4();
+    @Test
+    public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
+        DoubleProblem problem = new ZDT4();
 
-    algorithm = new SMPSOBuilder(problem, new CrowdingDistanceArchive<>(100)).build();
-    algorithm.run();
+        algorithm = new SMPSOBuilder(problem, new CrowdingDistanceArchive<>(100)).build();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
-    QualityIndicator hypervolume =
-            new PISAHypervolume(
-                    VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT4.csv", ","));
+        QualityIndicator hypervolume =
+                new PISAHypervolume(
+                        VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT4.csv", ","));
 
-    // Rationale: the default problem is ZDT4, and SMPSO, configured with standard settings, should
-    // return find a front with a hypervolume value higher than 0.64
+        // Rationale: the default problem is ZDT4, and SMPSO, configured with standard settings, should
+        // return find a front with a hypervolume value higher than 0.64
 
-    double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
+        double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
 
-    assertTrue(hv > 0.64);
-  }
+        assertTrue(hv > 0.64);
+    }
 
-  @Test
-  public void shouldTheAlgorithmReturnAGoodQualityFrontWhenSolvingAConstrainedProblem()
-      throws Exception {
-    ConstrEx problem = new ConstrEx();
+    @Test
+    public void shouldTheAlgorithmReturnAGoodQualityFrontWhenSolvingAConstrainedProblem()
+            throws Exception {
+        ConstrEx problem = new ConstrEx();
 
-    algorithm = new SMPSOBuilder(problem, new CrowdingDistanceArchive<DoubleSolution>(100)).build();
+        algorithm = new SMPSOBuilder(problem, new CrowdingDistanceArchive<DoubleSolution>(100)).build();
 
-    algorithm.run();
-    List<DoubleSolution> population = algorithm.getResult() ;
+        algorithm.run();
+        List<DoubleSolution> population = algorithm.getResult();
 
-    String referenceFrontFileName = "../resources/referenceFrontsCSV/ConstrEx.csv" ;
+        String referenceFrontFileName = "../resources/referenceFrontsCSV/ConstrEx.csv";
 
-    double[][] referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",") ;
-    QualityIndicator hypervolume = new PISAHypervolume(referenceFront);
+        double[][] referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
+        QualityIndicator hypervolume = new PISAHypervolume(referenceFront);
 
-    // Rationale: the default problem is ConstrEx, and PESA-II, configured with standard settings, should
-    // return find a front with a hypervolume value higher than 0.7
+        // Rationale: the default problem is ConstrEx, and PESA-II, configured with standard settings, should
+        // return find a front with a hypervolume value higher than 0.7
 
-    double[][] normalizedFront =
-            NormalizeUtils.normalize(
-                    SolutionListUtils.getMatrixWithObjectiveValues(population),
-                    NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
-                    NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
+        double[][] normalizedFront =
+                NormalizeUtils.normalize(
+                        SolutionListUtils.getMatrixWithObjectiveValues(population),
+                        NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
+                        NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-    double hv = hypervolume.compute(normalizedFront);
+        double hv = hypervolume.compute(normalizedFront);
 
-    assertTrue(population.size() >= 98);
-    assertTrue(hv > 0.77);
-  }
+        assertTrue(population.size() >= 98);
+        assertTrue(hv > 0.77);
+    }
 }

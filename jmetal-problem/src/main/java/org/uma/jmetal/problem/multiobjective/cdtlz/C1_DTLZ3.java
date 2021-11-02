@@ -16,45 +16,46 @@ import java.util.Map;
  */
 @SuppressWarnings("serial")
 public class C1_DTLZ3 extends DTLZ3 {
-  private static Map<Integer, Double> rValue;
+    private static Map<Integer, Double> rValue;
 
-  static {
-    rValue = new HashMap<Integer, Double>() ;
-    rValue.put(3, 9.0) ;
-    rValue.put(5, 12.5) ;
-    rValue.put(8, 12.5) ;
-    rValue.put(10, 15.0) ;
-    rValue.put(15, 15.0) ;
-  }
-
-  /**
-   * Constructor
-   * @param numberOfVariables
-   * @param numberOfObjectives
-   */
-  public C1_DTLZ3(int numberOfVariables, int numberOfObjectives) {
-    super(numberOfVariables, numberOfObjectives) ;
-
-    setNumberOfConstraints(1);
-  }
-
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    super.evaluate(solution);
-    this.evaluateConstraints(solution);
-
-    return solution ;
-  }
-
-  public void evaluateConstraints(DoubleSolution solution) {
-    double sum1 = 0 ;
-    double sum2 = 0 ;
-    for (int i = 0; i < solution.objectives().length; i++) {
-      double v = Math.pow(solution.objectives()[i], 2) ;
-      sum1 += v - 16.0 ;
-      sum2 += v - Math.pow(rValue.get(solution.objectives().length), 2.0) ;
+    static {
+        rValue = new HashMap<Integer, Double>();
+        rValue.put(3, 9.0);
+        rValue.put(5, 12.5);
+        rValue.put(8, 12.5);
+        rValue.put(10, 15.0);
+        rValue.put(15, 15.0);
     }
 
-    solution.constraints()[0] = sum1 * sum2 ;
-  }
+    /**
+     * Constructor
+     *
+     * @param numberOfVariables
+     * @param numberOfObjectives
+     */
+    public C1_DTLZ3(int numberOfVariables, int numberOfObjectives) {
+        super(numberOfVariables, numberOfObjectives);
+
+        setNumberOfConstraints(1);
+    }
+
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        super.evaluate(solution);
+        this.evaluateConstraints(solution);
+
+        return solution;
+    }
+
+    public void evaluateConstraints(DoubleSolution solution) {
+        double sum1 = 0;
+        double sum2 = 0;
+        for (int i = 0; i < solution.objectives().length; i++) {
+            double v = Math.pow(solution.objectives()[i], 2);
+            sum1 += v - 16.0;
+            sum2 += v - Math.pow(rValue.get(solution.objectives().length), 2.0);
+        }
+
+        solution.constraints()[0] = sum1 * sum2;
+    }
 }

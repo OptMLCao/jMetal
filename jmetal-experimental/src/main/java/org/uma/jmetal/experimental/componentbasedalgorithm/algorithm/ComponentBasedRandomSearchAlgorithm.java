@@ -23,139 +23,139 @@ import java.util.Map;
  */
 @SuppressWarnings("serial")
 public class ComponentBasedRandomSearchAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
-  protected Termination termination;
-  protected SolutionsCreation<S> solutionsCreation;
-  protected Evaluation<S> evaluation;
+    protected Termination termination;
+    protected SolutionsCreation<S> solutionsCreation;
+    protected Evaluation<S> evaluation;
 
-  protected Map<String, Object> attributes;
+    protected Map<String, Object> attributes;
 
-  protected long initTime;
-  protected long totalComputingTime;
-  protected int evaluations;
+    protected long initTime;
+    protected long totalComputingTime;
+    protected int evaluations;
 
-  protected Observable<Map<String, Object>> observable;
+    protected Observable<Map<String, Object>> observable;
 
-  protected String name;
-  protected NonDominatedSolutionListArchive<S> archive;
+    protected String name;
+    protected NonDominatedSolutionListArchive<S> archive;
 
-  private int evaluatedSolutions ;
+    private int evaluatedSolutions;
 
-  /**
-   * Constructor
-   *
-   * @param name
-   * @param termination
-   */
-  public ComponentBasedRandomSearchAlgorithm(
-      String name,
-      SolutionsCreation<S> solutionsCreation,
-      Evaluation<S> evaluation,
-      Termination termination) {
-    this.name = name;
+    /**
+     * Constructor
+     *
+     * @param name
+     * @param termination
+     */
+    public ComponentBasedRandomSearchAlgorithm(
+            String name,
+            SolutionsCreation<S> solutionsCreation,
+            Evaluation<S> evaluation,
+            Termination termination) {
+        this.name = name;
 
-    this.termination = termination;
-    this.solutionsCreation = solutionsCreation;
-    this.evaluation = evaluation ;
+        this.termination = termination;
+        this.solutionsCreation = solutionsCreation;
+        this.evaluation = evaluation;
 
-    this.observable = new DefaultObservable<>(name);
-    this.attributes = new HashMap<>();
+        this.observable = new DefaultObservable<>(name);
+        this.attributes = new HashMap<>();
 
-    this.archive = new NonDominatedSolutionListArchive<>();
-  }
-
-  @Override
-  public void run() {
-    initTime = System.currentTimeMillis();
-    initProgress() ;
-    while (!termination.isMet(attributes)) {
-      List<S> solutions = solutionsCreation.create();
-      evaluation.evaluate(solutions);
-      evaluatedSolutions = solutions.size() ;
-      updateBestFoundSolutions(solutions) ;
-      updateProgress();
+        this.archive = new NonDominatedSolutionListArchive<>();
     }
 
-    totalComputingTime = System.currentTimeMillis() - initTime;
-  }
+    @Override
+    public void run() {
+        initTime = System.currentTimeMillis();
+        initProgress();
+        while (!termination.isMet(attributes)) {
+            List<S> solutions = solutionsCreation.create();
+            evaluation.evaluate(solutions);
+            evaluatedSolutions = solutions.size();
+            updateBestFoundSolutions(solutions);
+            updateProgress();
+        }
 
-  protected void initProgress() {
-    evaluations = 0 ;
+        totalComputingTime = System.currentTimeMillis() - initTime;
+    }
 
-    attributes.put("EVALUATIONS", evaluations);
-    attributes.put("COMPUTING_TIME", getCurrentComputingTime());
-    attributes.put("BEST_SOLUTIONS", archive.getSolutionList());
+    protected void initProgress() {
+        evaluations = 0;
 
-    observable.setChanged();
-    observable.notifyObservers(attributes);
-  }
+        attributes.put("EVALUATIONS", evaluations);
+        attributes.put("COMPUTING_TIME", getCurrentComputingTime());
+        attributes.put("BEST_SOLUTIONS", archive.getSolutionList());
 
-  protected void updateProgress() {
-    evaluations += evaluatedSolutions;
+        observable.setChanged();
+        observable.notifyObservers(attributes);
+    }
 
-    attributes.put("EVALUATIONS", evaluations);
-    attributes.put("COMPUTING_TIME", getCurrentComputingTime());
-    attributes.put("BEST_SOLUTIONS", archive.getSolutionList());
+    protected void updateProgress() {
+        evaluations += evaluatedSolutions;
 
-    observable.setChanged();
-    observable.notifyObservers(attributes);
-  }
+        attributes.put("EVALUATIONS", evaluations);
+        attributes.put("COMPUTING_TIME", getCurrentComputingTime());
+        attributes.put("BEST_SOLUTIONS", archive.getSolutionList());
 
-  protected void updateBestFoundSolutions(List<S> solutions) {
-    solutions.forEach(solution -> archive.add(solution));
-  }
+        observable.setChanged();
+        observable.notifyObservers(attributes);
+    }
 
-  protected List<S> getBestSolutions() {
-    return archive.getSolutionList() ;
-  }
+    protected void updateBestFoundSolutions(List<S> solutions) {
+        solutions.forEach(solution -> archive.add(solution));
+    }
 
-  @Override
-  public List<S> getResult() {
-    return archive.getSolutionList();
-  }
+    protected List<S> getBestSolutions() {
+        return archive.getSolutionList();
+    }
 
-  @Override
-  public String getName() {
-    return name;
-  }
+    @Override
+    public List<S> getResult() {
+        return archive.getSolutionList();
+    }
 
-  @Override
-  public String getDescription() {
-    return name;
-  }
+    @Override
+    public String getName() {
+        return name;
+    }
 
-  public int getEvaluations() {
-    return evaluations;
-  }
+    @Override
+    public String getDescription() {
+        return name;
+    }
 
-  public Archive<S> getArchive() {
-    return archive;
-  }
+    public int getEvaluations() {
+        return evaluations;
+    }
 
-  public ComponentBasedRandomSearchAlgorithm<S> withTermination(Termination termination) {
-    this.termination = termination;
+    public Archive<S> getArchive() {
+        return archive;
+    }
 
-    return this;
-  }
+    public ComponentBasedRandomSearchAlgorithm<S> withTermination(Termination termination) {
+        this.termination = termination;
 
-  public ComponentBasedRandomSearchAlgorithm<S> withName(String newName) {
-    this.name = newName;
+        return this;
+    }
 
-    return this;
-  }
+    public ComponentBasedRandomSearchAlgorithm<S> withName(String newName) {
+        this.name = newName;
 
-  public Observable<Map<String, Object>> getObservable() {
-    return observable;
-  }
+        return this;
+    }
 
-  public Map<String, Object> getAttributes() {
-    return attributes;
-  }
+    public Observable<Map<String, Object>> getObservable() {
+        return observable;
+    }
 
-  public long getTotalComputingTime() {
-    return totalComputingTime;
-  }
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
-  public long getCurrentComputingTime() {
-    return System.currentTimeMillis() - initTime;
-  }
+    public long getTotalComputingTime() {
+        return totalComputingTime;
+    }
+
+    public long getCurrentComputingTime() {
+        return System.currentTimeMillis() - initTime;
+    }
 }

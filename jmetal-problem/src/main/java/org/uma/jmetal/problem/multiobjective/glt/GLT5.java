@@ -18,60 +18,61 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class GLT5 extends AbstractDoubleProblem {
 
-  /**
-   * Default constructor
-   */
-  public GLT5() {
-    this(10) ;
-  }
-
-  /**
-   * Constructor
-   * @param numberOfVariables
-   */
-  public GLT5(int numberOfVariables) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(3);
-    setName("GLT5");
-
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
-
-    lowerLimit.add(0.0) ;
-    upperLimit.add(1.0) ;
-    lowerLimit.add(0.0) ;
-    upperLimit.add(1.0) ;
-    for (int i = 2; i < getNumberOfVariables(); i++) {
-      lowerLimit.add(-1.0);
-      upperLimit.add(1.0);
+    /**
+     * Default constructor
+     */
+    public GLT5() {
+        this(10);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
-  }
+    /**
+     * Constructor
+     *
+     * @param numberOfVariables
+     */
+    public GLT5(int numberOfVariables) {
+        setNumberOfVariables(numberOfVariables);
+        setNumberOfObjectives(3);
+        setName("GLT5");
 
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    solution.objectives()[0] = (1.0 + g(solution))*
-        (1.0 - Math.cos(solution.variables().get(0)*Math.PI/2.0))*
-        (1.0 - Math.cos(solution.variables().get(1)*Math.PI/2.0));
-    solution.objectives()[1] = (1.0 + g(solution))*
-        (1.0 - Math.cos(solution.variables().get(0)*Math.PI/2.0))*
-        (1.0 - Math.sin(solution.variables().get(1)*Math.PI/2.0));
-    solution.objectives()[2] = (1.0 + g(solution))*
-        (1.0 - Math.sin(solution.variables().get(0)*Math.PI/2.0));
-    return solution ;
-  }
+        List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
+        List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
 
-  private double g(DoubleSolution solution) {
-    double result = 0.0 ;
+        lowerLimit.add(0.0);
+        upperLimit.add(1.0);
+        lowerLimit.add(0.0);
+        upperLimit.add(1.0);
+        for (int i = 2; i < getNumberOfVariables(); i++) {
+            lowerLimit.add(-1.0);
+            upperLimit.add(1.0);
+        }
 
-    for (int i = 2; i < solution.variables().size(); i++) {
-      double value =solution.variables().get(i)
-          - Math.sin(2*Math.PI*solution.variables().get(0)+i*Math.PI/solution.variables().size()) ;
-
-      result += value * value ;
+        setVariableBounds(lowerLimit, upperLimit);
     }
 
-    return result ;
-  }
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        solution.objectives()[0] = (1.0 + g(solution)) *
+                (1.0 - Math.cos(solution.variables().get(0) * Math.PI / 2.0)) *
+                (1.0 - Math.cos(solution.variables().get(1) * Math.PI / 2.0));
+        solution.objectives()[1] = (1.0 + g(solution)) *
+                (1.0 - Math.cos(solution.variables().get(0) * Math.PI / 2.0)) *
+                (1.0 - Math.sin(solution.variables().get(1) * Math.PI / 2.0));
+        solution.objectives()[2] = (1.0 + g(solution)) *
+                (1.0 - Math.sin(solution.variables().get(0) * Math.PI / 2.0));
+        return solution;
+    }
+
+    private double g(DoubleSolution solution) {
+        double result = 0.0;
+
+        for (int i = 2; i < solution.variables().size(); i++) {
+            double value = solution.variables().get(i)
+                    - Math.sin(2 * Math.PI * solution.variables().get(0) + i * Math.PI / solution.variables().size());
+
+            result += value * value;
+        }
+
+        return result;
+    }
 }

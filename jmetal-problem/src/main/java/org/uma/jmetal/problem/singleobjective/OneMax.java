@@ -15,56 +15,62 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class OneMax extends AbstractBinaryProblem {
-  private int bits;
+    private int bits;
 
-  /** Constructor */
-  public OneMax() {
-    this(256);
-  }
-
-  /** Constructor */
-  public OneMax(Integer numberOfBits) {
-    setNumberOfVariables(1);
-    setNumberOfObjectives(1);
-    setName("OneMax");
-
-    bits = numberOfBits;
-  }
-
-  @Override
-  public int getBitsFromVariable(int index) {
-    Check.that(index == 0, "Problem OneMax has only a variable. Index =" + index) ;
-    return bits;
-  }
-
-  @Override
-  public List<Integer> getListOfBitsPerVariable() {
-    return Arrays.asList(bits);
-  }
-
-  @Override
-  public BinarySolution createSolution() {
-    return new DefaultBinarySolution(getListOfBitsPerVariable(), getNumberOfObjectives());
-  }
-
-  /** Evaluate() method */
-  @Override
-  public BinarySolution evaluate(BinarySolution solution) {
-    int counterOnes;
-
-    counterOnes = 0;
-
-    BitSet bitset = solution.variables().get(0);
-
-    for (int i = 0; i < bitset.length(); i++) {
-      if (bitset.get(i)) {
-        counterOnes++;
-      }
+    /**
+     * Constructor
+     */
+    public OneMax() {
+        this(256);
     }
 
-    // OneMax is a maximization problem: multiply by -1 to minimize
-    solution.objectives()[0] = -1.0 * counterOnes;
+    /**
+     * Constructor
+     */
+    public OneMax(Integer numberOfBits) {
+        setNumberOfVariables(1);
+        setNumberOfObjectives(1);
+        setName("OneMax");
 
-    return solution;
-  }
+        bits = numberOfBits;
+    }
+
+    @Override
+    public int getBitsFromVariable(int index) {
+        Check.that(index == 0, "Problem OneMax has only a variable. Index =" + index);
+        return bits;
+    }
+
+    @Override
+    public List<Integer> getListOfBitsPerVariable() {
+        return Arrays.asList(bits);
+    }
+
+    @Override
+    public BinarySolution createSolution() {
+        return new DefaultBinarySolution(getListOfBitsPerVariable(), getNumberOfObjectives());
+    }
+
+    /**
+     * Evaluate() method
+     */
+    @Override
+    public BinarySolution evaluate(BinarySolution solution) {
+        int counterOnes;
+
+        counterOnes = 0;
+
+        BitSet bitset = solution.variables().get(0);
+
+        for (int i = 0; i < bitset.length(); i++) {
+            if (bitset.get(i)) {
+                counterOnes++;
+            }
+        }
+
+        // OneMax is a maximization problem: multiply by -1 to minimize
+        solution.objectives()[0] = -1.0 * counterOnes;
+
+        return solution;
+    }
 }

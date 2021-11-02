@@ -10,28 +10,32 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 @SuppressWarnings("serial")
 public class LIRCMOP2 extends LIRCMOP1 {
 
-  /** Constructor */
-  public LIRCMOP2() {
-    super();
-    setName("LIRCMOP2");
-  }
-
-  /** Evaluate() method */
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    double[] fx = new double[solution.objectives().length];
-    double[] x = new double[getNumberOfVariables()];
-    for (int i = 0; i < getNumberOfVariables(); i++) {
-      x[i] = solution.variables().get(i);
+    /**
+     * Constructor
+     */
+    public LIRCMOP2() {
+        super();
+        setName("LIRCMOP2");
     }
 
-    fx[0] = x[0] + g1(x);
-    fx[1] = 1 - Math.sqrt(x[0]) + g2(x);
+    /**
+     * Evaluate() method
+     */
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        double[] fx = new double[solution.objectives().length];
+        double[] x = new double[getNumberOfVariables()];
+        for (int i = 0; i < getNumberOfVariables(); i++) {
+            x[i] = solution.variables().get(i);
+        }
 
-    solution.objectives()[0] = fx[0];
-    solution.objectives()[1] = fx[1];
+        fx[0] = x[0] + g1(x);
+        fx[1] = 1 - Math.sqrt(x[0]) + g2(x);
 
-    evaluateConstraints(solution);
-    return solution ;
-  }
+        solution.objectives()[0] = fx[0];
+        solution.objectives()[1] = fx[1];
+
+        evaluateConstraints(solution);
+        return solution;
+    }
 }

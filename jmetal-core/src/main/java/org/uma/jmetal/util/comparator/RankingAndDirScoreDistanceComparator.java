@@ -11,29 +11,29 @@ import java.util.Comparator;
  * created at 10:29 pm, 2019/1/28 Comparator combining dominance-ranking comparator and DIR-score
  * comparator
  *
- * @see DirScoreComparator
  * @author sunhaoran <nuaa_sunhr@yeah.net>
+ * @see DirScoreComparator
  */
 public class RankingAndDirScoreDistanceComparator<S extends Solution<?>>
-    implements Comparator<S>, Serializable {
-  private final Comparator<S> rankComparator;
-  private final Comparator<S> dirScoreComparator;
+        implements Comparator<S>, Serializable {
+    private final Comparator<S> rankComparator;
+    private final Comparator<S> dirScoreComparator;
 
-  public RankingAndDirScoreDistanceComparator() {
-    this(new FastNonDominatedSortRanking<>());
-  }
-
-  public RankingAndDirScoreDistanceComparator(Ranking<S> ranking) {
-    rankComparator = Comparator.comparing(ranking::getRank);
-    dirScoreComparator = new DirScoreComparator<>();
-  }
-
-  @Override
-  public int compare(S o1, S o2) {
-    int result = rankComparator.compare(o1, o2);
-    if (result == 0) {
-      return dirScoreComparator.compare(o1, o2);
+    public RankingAndDirScoreDistanceComparator() {
+        this(new FastNonDominatedSortRanking<>());
     }
-    return result;
-  }
+
+    public RankingAndDirScoreDistanceComparator(Ranking<S> ranking) {
+        rankComparator = Comparator.comparing(ranking::getRank);
+        dirScoreComparator = new DirScoreComparator<>();
+    }
+
+    @Override
+    public int compare(S o1, S o2) {
+        int result = rankComparator.compare(o1, o2);
+        if (result == 0) {
+            return dirScoreComparator.compare(o1, o2);
+        }
+        return result;
+    }
 }

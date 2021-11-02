@@ -10,19 +10,19 @@ import org.uma.jmetal.util.errorchecking.Check;
  */
 public class DominanceDistanceBetweenVectors implements Distance<double[], double[]> {
 
-  @Override
-  public double compute(double[] vector1, double[] vector2) {
-    Check.notNull(vector1);
-    Check.notNull(vector2);
-    Check.that(vector1.length == vector2.length, "The vectors have different" +
-            "dimension: " + vector1.length + " and " + vector2.length);
+    @Override
+    public double compute(double[] vector1, double[] vector2) {
+        Check.notNull(vector1);
+        Check.notNull(vector2);
+        Check.that(vector1.length == vector2.length, "The vectors have different" +
+                "dimension: " + vector1.length + " and " + vector2.length);
 
-    double distance = 0.0;
+        double distance = 0.0;
 
-    for (int i = 0; i < vector1.length; i++) {
-      double max = Math.max(vector2[i] - vector1[i], 0.0) ;
-      distance += Math.pow(max, 2);
+        for (int i = 0; i < vector1.length; i++) {
+            double max = Math.max(vector2[i] - vector1[i], 0.0);
+            distance += Math.pow(max, 2);
+        }
+        return Math.sqrt(distance);
     }
-    return Math.sqrt(distance);
-  }
 }

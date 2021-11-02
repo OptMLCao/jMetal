@@ -11,5 +11,5 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface SolutionsCreation<S extends Solution<?>> {
-  List<S> create() ;
+    List<S> create();
 }

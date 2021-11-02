@@ -9,5 +9,5 @@ import java.util.Map;
  */
 @FunctionalInterface
 public interface Termination {
-  boolean isMet(Map<String, Object> algorithmStatusData) ;
+    boolean isMet(Map<String, Object> algorithmStatusData);
 }

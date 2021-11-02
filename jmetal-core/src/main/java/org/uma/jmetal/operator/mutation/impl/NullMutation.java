@@ -11,14 +11,16 @@ import org.uma.jmetal.operator.mutation.MutationOperator;
 @SuppressWarnings("serial")
 public class NullMutation<S> implements MutationOperator<S> {
 
-  /** Execute() method */
-  @Override
-  public S execute(S source) {
-    return source;
-  }
+    /**
+     * Execute() method
+     */
+    @Override
+    public S execute(S source) {
+        return source;
+    }
 
-  @Override
-  public double getMutationProbability() {
-    return 1.0;
-  }
+    @Override
+    public double getMutationProbability() {
+        return 1.0;
+    }
 }

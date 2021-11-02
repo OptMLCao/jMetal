@@ -5,10 +5,9 @@ import org.uma.jmetal.operator.Operator;
 /**
  * Interface representing mutation operators
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
- *
  * @param <Source> The solution class of the solution to be mutated
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public interface MutationOperator<Source> extends Operator<Source, Source> {
-  double getMutationProbability() ;
+    double getMutationProbability();
 }

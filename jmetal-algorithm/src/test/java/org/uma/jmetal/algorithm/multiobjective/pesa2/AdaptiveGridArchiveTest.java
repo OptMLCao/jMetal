@@ -10,32 +10,32 @@ import static org.junit.Assert.assertEquals;
  * Created by ajnebro on 16/11/16.
  */
 public class AdaptiveGridArchiveTest {
-  @Test
-  public void shouldConstructorCreateAnArchiveWithTheRightCapacity() {
-    AdaptiveGridArchive<IntegerSolution> archive ;
+    @Test
+    public void shouldConstructorCreateAnArchiveWithTheRightCapacity() {
+        AdaptiveGridArchive<IntegerSolution> archive;
 
-    int capacity = 100 ;
-    archive = new AdaptiveGridArchive<>(100, 2, 2) ;
+        int capacity = 100;
+        archive = new AdaptiveGridArchive<>(100, 2, 2);
 
-    assertEquals(capacity, archive.getMaxSize()) ;
-  }
+        assertEquals(capacity, archive.getMaxSize());
+    }
 
-  @Test
-  public void shouldConstructorCreateAnEmptyArchive() {
-    AdaptiveGridArchive<IntegerSolution> archive ;
+    @Test
+    public void shouldConstructorCreateAnEmptyArchive() {
+        AdaptiveGridArchive<IntegerSolution> archive;
 
-    archive = new AdaptiveGridArchive<>(100, 2, 2) ;
+        archive = new AdaptiveGridArchive<>(100, 2, 2);
 
-    assertEquals(0, archive.size()) ;
-  }
+        assertEquals(0, archive.size());
+    }
 
-  @Test
-  public void shouldProneDoNothingIfTheArchiveIsEmpty() {
-    AdaptiveGridArchive<IntegerSolution> archive ;
+    @Test
+    public void shouldProneDoNothingIfTheArchiveIsEmpty() {
+        AdaptiveGridArchive<IntegerSolution> archive;
 
-    archive = new AdaptiveGridArchive<>(4, 2, 2) ;
-    archive.prune();
+        archive = new AdaptiveGridArchive<>(4, 2, 2);
+        archive.prune();
 
-    assertEquals(0, archive.size()) ;
-  }
+        assertEquals(0, archive.size());
+    }
 }

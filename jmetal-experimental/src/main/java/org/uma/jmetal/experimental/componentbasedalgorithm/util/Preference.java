@@ -14,71 +14,73 @@ import java.util.List;
  * @author Antonio J. Nebro
  */
 public class Preference<S> {
-  private Ranking<S> ranking;
-  private DensityEstimator<S> densityEstimator;
-  private Preference<S> relatedPreference;
-  private boolean preferenceHasBeenComputedFirstTime = false;
+    private Ranking<S> ranking;
+    private DensityEstimator<S> densityEstimator;
+    private Preference<S> relatedPreference;
+    private boolean preferenceHasBeenComputedFirstTime = false;
 
-  public Preference(Ranking<S> ranking, DensityEstimator<S> densityEstimator) {
-    this(ranking, densityEstimator, null);
-  }
-
-  /** Constructor */
-  public Preference(
-          Ranking<S> ranking, DensityEstimator<S> densityEstimator, Preference<S> relatedPreference) {
-    this.ranking = ranking;
-    this.densityEstimator = densityEstimator;
-    this.relatedPreference = relatedPreference;
-  }
-
-  /**
-   * Recomputes the ranking and density estimators on a solution list if they are different of the
-   * ones of the related preference.
-   */
-  public void recompute(List<S> solutionList) {
-    if (!preferenceHasBeenComputedFirstTime) {
-      recomputeRanking(solutionList);
-      recomputeDensityEstimator();
-      preferenceHasBeenComputedFirstTime = true;
-    } else if (relatedPreference != null) {
-      if (rankingsAreDifferent()) {
-        recomputeRanking(solutionList);
-        recomputeDensityEstimator();
-      } else if (densityEstimatorsAreDifferent()) {
-        recomputeDensityEstimator();
-      }
+    public Preference(Ranking<S> ranking, DensityEstimator<S> densityEstimator) {
+        this(ranking, densityEstimator, null);
     }
-  }
 
-  private boolean densityEstimatorsAreDifferent() {
-    return densityEstimator.getClass() != relatedPreference.getDensityEstimator().getClass() ;
-  }
-
-  private void recomputeDensityEstimator() {
-    for (int i = 0; i < ranking.getNumberOfSubFronts(); i++) {
-      densityEstimator.compute(ranking.getSubFront(i));
+    /**
+     * Constructor
+     */
+    public Preference(
+            Ranking<S> ranking, DensityEstimator<S> densityEstimator, Preference<S> relatedPreference) {
+        this.ranking = ranking;
+        this.densityEstimator = densityEstimator;
+        this.relatedPreference = relatedPreference;
     }
-  }
 
-  private void recomputeRanking(List<S> solutionList) {
-    ranking.compute(solutionList);
-  }
+    /**
+     * Recomputes the ranking and density estimators on a solution list if they are different of the
+     * ones of the related preference.
+     */
+    public void recompute(List<S> solutionList) {
+        if (!preferenceHasBeenComputedFirstTime) {
+            recomputeRanking(solutionList);
+            recomputeDensityEstimator();
+            preferenceHasBeenComputedFirstTime = true;
+        } else if (relatedPreference != null) {
+            if (rankingsAreDifferent()) {
+                recomputeRanking(solutionList);
+                recomputeDensityEstimator();
+            } else if (densityEstimatorsAreDifferent()) {
+                recomputeDensityEstimator();
+            }
+        }
+    }
 
-  private boolean rankingsAreDifferent() {
-    return !ranking.getClass().equals(relatedPreference.getRanking().getClass());
-  }
+    private boolean densityEstimatorsAreDifferent() {
+        return densityEstimator.getClass() != relatedPreference.getDensityEstimator().getClass();
+    }
 
-  public Ranking<S> getRanking() {
-    return ranking;
-  }
+    private void recomputeDensityEstimator() {
+        for (int i = 0; i < ranking.getNumberOfSubFronts(); i++) {
+            densityEstimator.compute(ranking.getSubFront(i));
+        }
+    }
 
-  public DensityEstimator<S> getDensityEstimator() {
-    return densityEstimator;
-  }
+    private void recomputeRanking(List<S> solutionList) {
+        ranking.compute(solutionList);
+    }
 
-  public Comparator<S> getComparator() {
-    return new MultiComparator<>(
-        List.of(
-            Comparator.comparing(getRanking()::getRank), Comparator.comparing(getDensityEstimator()::getValue).reversed()));
-  }
+    private boolean rankingsAreDifferent() {
+        return !ranking.getClass().equals(relatedPreference.getRanking().getClass());
+    }
+
+    public Ranking<S> getRanking() {
+        return ranking;
+    }
+
+    public DensityEstimator<S> getDensityEstimator() {
+        return densityEstimator;
+    }
+
+    public Comparator<S> getComparator() {
+        return new MultiComparator<>(
+                List.of(
+                        Comparator.comparing(getRanking()::getRank), Comparator.comparing(getDensityEstimator()::getValue).reversed()));
+    }
 }

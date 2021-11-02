@@ -19,81 +19,81 @@ import static org.junit.Assert.assertTrue;
 
 public class ConstraintMOEADIT {
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() {
-    Algorithm<List<DoubleSolution>> algorithm;
-    DoubleProblem problem = new Srinivas();
+    @Test
+    public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() {
+        Algorithm<List<DoubleSolution>> algorithm;
+        DoubleProblem problem = new Srinivas();
 
-    double cr = 1.0;
-    double f = 0.5;
-    CrossoverOperator<DoubleSolution> crossover = new DifferentialEvolutionCrossover(cr, f,
-            DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
+        double cr = 1.0;
+        double f = 0.5;
+        CrossoverOperator<DoubleSolution> crossover = new DifferentialEvolutionCrossover(cr, f,
+                DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability,
-        mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability,
+                mutationDistributionIndex);
 
-    algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.ConstraintMOEAD)
-        .setCrossover(crossover)
-        .setMutation(mutation)
-        .setMaxEvaluations(50000)
-        .setPopulationSize(300)
-        .setResultPopulationSize(100)
-        .setNeighborhoodSelectionProbability(0.9)
-        .setMaximumNumberOfReplacedSolutions(2)
-        .setNeighborSize(20)
-        .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
-        .setDataDirectory("../../resources/weightVectorFiles/moead")
-        .build();
+        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.ConstraintMOEAD)
+                .setCrossover(crossover)
+                .setMutation(mutation)
+                .setMaxEvaluations(50000)
+                .setPopulationSize(300)
+                .setResultPopulationSize(100)
+                .setNeighborhoodSelectionProbability(0.9)
+                .setMaximumNumberOfReplacedSolutions(2)
+                .setNeighborSize(20)
+                .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
+                .setDataDirectory("../../resources/weightVectorFiles/moead")
+                .build();
 
-    algorithm.run() ;
-    List<DoubleSolution> population = algorithm.getResult();
+        algorithm.run();
+        List<DoubleSolution> population = algorithm.getResult();
 
-    assertTrue(population.size() == 100);
-  }
+        assertTrue(population.size() == 100);
+    }
 
-  @Test
-  public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
-    Algorithm<List<DoubleSolution>> algorithm;
-    DoubleProblem problem = new Tanaka();
+    @Test
+    public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
+        Algorithm<List<DoubleSolution>> algorithm;
+        DoubleProblem problem = new Tanaka();
 
-    double cr = 1.0;
-    double f = 0.5;
-    CrossoverOperator<DoubleSolution> crossover = new DifferentialEvolutionCrossover(cr, f,
-            DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
+        double cr = 1.0;
+        double f = 0.5;
+        CrossoverOperator<DoubleSolution> crossover = new DifferentialEvolutionCrossover(cr, f,
+                DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability,
-        mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability,
+                mutationDistributionIndex);
 
-    algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.ConstraintMOEAD)
-        .setCrossover(crossover)
-        .setMutation(mutation)
-        .setMaxEvaluations(50000)
-        .setPopulationSize(300)
-        .setResultPopulationSize(100)
-        .setNeighborhoodSelectionProbability(0.9)
-        .setMaximumNumberOfReplacedSolutions(2)
-        .setNeighborSize(20)
-        .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
-        .setDataDirectory(
-            "../resources/weightVectorFiles/moead")
-        .build();
+        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.ConstraintMOEAD)
+                .setCrossover(crossover)
+                .setMutation(mutation)
+                .setMaxEvaluations(50000)
+                .setPopulationSize(300)
+                .setResultPopulationSize(100)
+                .setNeighborhoodSelectionProbability(0.9)
+                .setMaximumNumberOfReplacedSolutions(2)
+                .setNeighborSize(20)
+                .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
+                .setDataDirectory(
+                        "../resources/weightVectorFiles/moead")
+                .build();
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
-    QualityIndicator<List<DoubleSolution>, Double> hypervolume =
-        new PISAHypervolume<>("../resources/referenceFrontsCSV/Tanaka.csv");
+        QualityIndicator<List<DoubleSolution>, Double> hypervolume =
+                new PISAHypervolume<>("../resources/referenceFrontsCSV/Tanaka.csv");
 
-    // Rationale: the default problem is Tanaka", and the constraint MOEA/D algoritm,
-    // configured with standard settings, should return find a front with a hypervolume value higher
-    // than 0.22
-    double hv = hypervolume.evaluate(population);
+        // Rationale: the default problem is Tanaka", and the constraint MOEA/D algoritm,
+        // configured with standard settings, should return find a front with a hypervolume value higher
+        // than 0.22
+        double hv = hypervolume.evaluate(population);
 
-    assertTrue(hv > 0.22);
-  }
+        assertTrue(hv > 0.22);
+    }
 }

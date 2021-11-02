@@ -7,54 +7,54 @@ import org.uma.jmetal.util.archive.BoundedArchive;
 import java.util.List;
 
 /**
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
  * @param <S>
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 @SuppressWarnings("serial")
 public abstract class AbstractBoundedArchive<S extends Solution<?>> implements BoundedArchive<S> {
-  protected NonDominatedSolutionListArchive<S> archive;
-  protected int maxSize;
+    protected NonDominatedSolutionListArchive<S> archive;
+    protected int maxSize;
 
-  public AbstractBoundedArchive(int maxSize) {
-    this.maxSize = maxSize;
-    this.archive = new NonDominatedSolutionListArchive<>();
-  }
-
-  @Override
-  public boolean add(S solution) {
-    boolean success = archive.add(solution);
-    if (success) {
-      prune();
+    public AbstractBoundedArchive(int maxSize) {
+        this.maxSize = maxSize;
+        this.archive = new NonDominatedSolutionListArchive<>();
     }
 
-    return success;
-  }
+    @Override
+    public boolean add(S solution) {
+        boolean success = archive.add(solution);
+        if (success) {
+            prune();
+        }
 
-  @Override
-  public S get(int index) {
-    return getSolutionList().get(index);
-  }
+        return success;
+    }
 
-  @Override
-  public List<S> getSolutionList() {
-    return archive.getSolutionList();
-  }
+    @Override
+    public S get(int index) {
+        return getSolutionList().get(index);
+    }
 
-  @Override
-  public int size() {
-    return archive.size();
-  }
+    @Override
+    public List<S> getSolutionList() {
+        return archive.getSolutionList();
+    }
 
-  @Override
-  public int getMaxSize() {
-    return maxSize;
-  }
+    @Override
+    public int size() {
+        return archive.size();
+    }
 
-  public abstract void prune();
+    @Override
+    public int getMaxSize() {
+        return maxSize;
+    }
 
-  public Archive<S> join(Archive<S> archive) {
-    archive.getSolutionList().forEach(this::add);
+    public abstract void prune();
 
-    return archive;
-  }
+    public Archive<S> join(Archive<S> archive) {
+        archive.getSolutionList().forEach(this::add);
+
+        return archive;
+    }
 }

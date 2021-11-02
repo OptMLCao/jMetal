@@ -19,50 +19,50 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 public class SMPSOhvIT {
-  private Algorithm<List<DoubleSolution>> algorithm;
-  private BoundedArchive<DoubleSolution> archive;
+    private Algorithm<List<DoubleSolution>> algorithm;
+    private BoundedArchive<DoubleSolution> archive;
 
-  @Before
-  public void setup() {
-    archive = new HypervolumeArchive<DoubleSolution>(100, new PISAHypervolume<DoubleSolution>());
-  }
+    @Before
+    public void setup() {
+        archive = new HypervolumeArchive<DoubleSolution>(100, new PISAHypervolume<DoubleSolution>());
+    }
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
-      throws Exception {
-    DoubleProblem problem = new ZDT4();
+    @Test
+    public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
+            throws Exception {
+        DoubleProblem problem = new ZDT4();
 
-    algorithm = new SMPSOBuilder(problem, archive).build();
+        algorithm = new SMPSOBuilder(problem, archive).build();
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
     /*
     Rationale: the default problem is ZDT4, and SMPSO, configured with standard settings, should
     return 100 solutions
     */
-    assertTrue(population.size() >= 98);
-  }
+        assertTrue(population.size() >= 98);
+    }
 
-  @Test
-  public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
-    DoubleProblem problem = new ZDT4();
+    @Test
+    public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
+        DoubleProblem problem = new ZDT4();
 
-    algorithm = new SMPSOBuilder(problem, new CrowdingDistanceArchive<>(100)).build();
-    algorithm.run();
+        algorithm = new SMPSOBuilder(problem, new CrowdingDistanceArchive<>(100)).build();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
-    QualityIndicator hypervolume =
-            new org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume(
-                    VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT4.csv", ","));
+        QualityIndicator hypervolume =
+                new org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume(
+                        VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT4.csv", ","));
 
-    // Rationale: the default problem is ZDT4, and SMPSO, configured with standard settings, should
-    // return find a front with a hypervolume value higher than 0.64
+        // Rationale: the default problem is ZDT4, and SMPSO, configured with standard settings, should
+        // return find a front with a hypervolume value higher than 0.64
 
-    double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
+        double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
 
-    assertTrue(hv > 0.64);
-  }
+        assertTrue(hv > 0.64);
+    }
 }

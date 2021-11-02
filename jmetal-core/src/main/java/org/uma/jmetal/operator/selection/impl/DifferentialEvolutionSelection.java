@@ -23,70 +23,78 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("serial")
 public class DifferentialEvolutionSelection
-    implements SelectionOperator<List<DoubleSolution>, List<DoubleSolution>> {
-  private int currentSolutionIndex = Integer.MIN_VALUE;
-  private BoundedRandomGenerator<Integer> randomGenerator;
-  private int numberOfSolutionsToSelect;
-  private boolean selectCurrentSolution;
+        implements SelectionOperator<List<DoubleSolution>, List<DoubleSolution>> {
+    private int currentSolutionIndex = Integer.MIN_VALUE;
+    private BoundedRandomGenerator<Integer> randomGenerator;
+    private int numberOfSolutionsToSelect;
+    private boolean selectCurrentSolution;
 
-  /** Constructor */
-  public DifferentialEvolutionSelection() {
-    this((a, b) -> JMetalRandom.getInstance().nextInt(a, b), 3, false);
-  }
-
-  /** Constructor */
-  public DifferentialEvolutionSelection(
-      int numberOfSolutionsToSelect, boolean selectCurrentSolution) {
-    this(
-        (a, b) -> JMetalRandom.getInstance().nextInt(a, b),
-        numberOfSolutionsToSelect,
-        selectCurrentSolution);
-  }
-
-  /** Constructor */
-  public DifferentialEvolutionSelection(
-      BoundedRandomGenerator<Integer> randomGenerator,
-      int numberOfSolutionsToSelect,
-      boolean selectCurrentSolution) {
-    this.randomGenerator = randomGenerator;
-    this.numberOfSolutionsToSelect = numberOfSolutionsToSelect;
-    this.selectCurrentSolution = selectCurrentSolution;
-  }
-
-  public void setIndex(int index) {
-    this.currentSolutionIndex = index;
-  }
-
-  /** Execute() method */
-  @Override
-  public List<DoubleSolution> execute(List<DoubleSolution> solutionList) {
-    Check.notNull(solutionList);
-    Check.that(
-        (currentSolutionIndex >= 0) && (currentSolutionIndex <= solutionList.size()),
-        "Index value invalid: " + currentSolutionIndex);
-    Check.that(
-        solutionList.size() >= numberOfSolutionsToSelect,
-        "The population has less than "
-            + numberOfSolutionsToSelect
-            + " solutions: "
-            + solutionList.size());
-
-    List<Integer> indexList = new ArrayList<>();
-
-    int solutionsToSelect =
-        selectCurrentSolution ? numberOfSolutionsToSelect - 1 : numberOfSolutionsToSelect;
-
-    do {
-      int index = randomGenerator.getRandomValue(0, solutionList.size() - 1);
-      if (index != currentSolutionIndex && !indexList.contains(index)) {
-        indexList.add(index);
-      }
-    } while (indexList.size() < solutionsToSelect);
-
-    if (selectCurrentSolution) {
-      indexList.add(currentSolutionIndex);
+    /**
+     * Constructor
+     */
+    public DifferentialEvolutionSelection() {
+        this((a, b) -> JMetalRandom.getInstance().nextInt(a, b), 3, false);
     }
 
-    return indexList.stream().map(index -> solutionList.get(index)).collect(Collectors.toList());
-  }
+    /**
+     * Constructor
+     */
+    public DifferentialEvolutionSelection(
+            int numberOfSolutionsToSelect, boolean selectCurrentSolution) {
+        this(
+                (a, b) -> JMetalRandom.getInstance().nextInt(a, b),
+                numberOfSolutionsToSelect,
+                selectCurrentSolution);
+    }
+
+    /**
+     * Constructor
+     */
+    public DifferentialEvolutionSelection(
+            BoundedRandomGenerator<Integer> randomGenerator,
+            int numberOfSolutionsToSelect,
+            boolean selectCurrentSolution) {
+        this.randomGenerator = randomGenerator;
+        this.numberOfSolutionsToSelect = numberOfSolutionsToSelect;
+        this.selectCurrentSolution = selectCurrentSolution;
+    }
+
+    public void setIndex(int index) {
+        this.currentSolutionIndex = index;
+    }
+
+    /**
+     * Execute() method
+     */
+    @Override
+    public List<DoubleSolution> execute(List<DoubleSolution> solutionList) {
+        Check.notNull(solutionList);
+        Check.that(
+                (currentSolutionIndex >= 0) && (currentSolutionIndex <= solutionList.size()),
+                "Index value invalid: " + currentSolutionIndex);
+        Check.that(
+                solutionList.size() >= numberOfSolutionsToSelect,
+                "The population has less than "
+                        + numberOfSolutionsToSelect
+                        + " solutions: "
+                        + solutionList.size());
+
+        List<Integer> indexList = new ArrayList<>();
+
+        int solutionsToSelect =
+                selectCurrentSolution ? numberOfSolutionsToSelect - 1 : numberOfSolutionsToSelect;
+
+        do {
+            int index = randomGenerator.getRandomValue(0, solutionList.size() - 1);
+            if (index != currentSolutionIndex && !indexList.contains(index)) {
+                indexList.add(index);
+            }
+        } while (indexList.size() < solutionsToSelect);
+
+        if (selectCurrentSolution) {
+            indexList.add(currentSolutionIndex);
+        }
+
+        return indexList.stream().map(index -> solutionList.get(index)).collect(Collectors.toList());
+    }
 }

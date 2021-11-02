@@ -15,51 +15,55 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class IntegerPermutationSolution extends AbstractSolution<Integer>
-    implements PermutationSolution<Integer> {
+        implements PermutationSolution<Integer> {
 
-  /** Constructor */
-  public IntegerPermutationSolution(int permutationLength, int numberOfObjectives) {
-    super(permutationLength, numberOfObjectives);
+    /**
+     * Constructor
+     */
+    public IntegerPermutationSolution(int permutationLength, int numberOfObjectives) {
+        super(permutationLength, numberOfObjectives);
 
-    List<Integer> randomSequence = new ArrayList<>(permutationLength);
+        List<Integer> randomSequence = new ArrayList<>(permutationLength);
 
-    for (int j = 0; j < permutationLength; j++) {
-      randomSequence.add(j);
+        for (int j = 0; j < permutationLength; j++) {
+            randomSequence.add(j);
+        }
+
+        java.util.Collections.shuffle(randomSequence);
+
+        for (int i = 0; i < permutationLength; i++) {
+            variables().set(i, randomSequence.get(i));
+        }
     }
 
-    java.util.Collections.shuffle(randomSequence);
+    /**
+     * Copy Constructor
+     */
+    public IntegerPermutationSolution(IntegerPermutationSolution solution) {
+        super(solution.getLength(), solution.objectives().length);
 
-    for (int i = 0; i < permutationLength; i++) {
-      variables().set(i, randomSequence.get(i));
-    }
-  }
+        for (int i = 0; i < objectives().length; i++) {
+            objectives()[i] = solution.objectives()[i];
+        }
 
-  /** Copy Constructor */
-  public IntegerPermutationSolution(IntegerPermutationSolution solution) {
-    super(solution.getLength(), solution.objectives().length);
+        for (int i = 0; i < variables().size(); i++) {
+            variables().set(i, solution.variables().get(i));
+        }
 
-    for (int i = 0; i < objectives().length; i++) {
-      objectives()[i] = solution.objectives()[i];
-    }
+        for (int i = 0; i < constraints().length; i++) {
+            constraints()[i] = solution.constraints()[i];
+        }
 
-    for (int i = 0; i < variables().size(); i++) {
-      variables().set(i, solution.variables().get(i));
-    }
-
-    for (int i = 0; i < constraints().length; i++) {
-      constraints()[i] =  solution.constraints()[i];
+        attributes = new HashMap<Object, Object>(solution.attributes);
     }
 
-    attributes = new HashMap<Object, Object>(solution.attributes);
-  }
+    @Override
+    public IntegerPermutationSolution copy() {
+        return new IntegerPermutationSolution(this);
+    }
 
-  @Override
-  public IntegerPermutationSolution copy() {
-    return new IntegerPermutationSolution(this);
-  }
-
-  @Override
-  public int getLength() {
-    return variables().size();
-  }
+    @Override
+    public int getLength() {
+        return variables().size();
+    }
 }

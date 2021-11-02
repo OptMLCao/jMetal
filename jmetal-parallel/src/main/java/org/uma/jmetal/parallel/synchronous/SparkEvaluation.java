@@ -13,30 +13,30 @@ import java.util.List;
  * Class implementing an {@link Evaluation} based on Apache Spark.
  * Reference: C. Barba-González, J. García-Nieto, Antonio J. Nebro, J.F.Aldana-Montes: Multi-objective Big
  * Data Optimization with jMetal and Spark. EMO 2017". DOI: http://dx.doi.org/10.1007/978-3-319-54157-0_2
- * @param <S>
  *
+ * @param <S>
  * @author Antonio J. Nebro
  */
 public class SparkEvaluation<S extends Solution<?>> implements Evaluation<S>, Serializable {
-  private int numberOfComputedEvaluations ;
-  private Problem<S> problem ;
-  static private JavaSparkContext sparkContext ;
+    private int numberOfComputedEvaluations;
+    private Problem<S> problem;
+    static private JavaSparkContext sparkContext;
 
-  public SparkEvaluation(JavaSparkContext sparkContext, Problem<S> problem) {
-    this.numberOfComputedEvaluations = 0 ;
-    this.problem = problem ;
-    this.sparkContext = sparkContext ;
-  }
+    public SparkEvaluation(JavaSparkContext sparkContext, Problem<S> problem) {
+        this.numberOfComputedEvaluations = 0;
+        this.problem = problem;
+        this.sparkContext = sparkContext;
+    }
 
-  @Override
-  public List<S> evaluate(List<S> solutionList) {
-    JavaRDD<S> solutionsToEvaluate = sparkContext.parallelize(solutionList);
-    JavaRDD<S> evaluatedSolutions = solutionsToEvaluate.map(problem::evaluate);
+    @Override
+    public List<S> evaluate(List<S> solutionList) {
+        JavaRDD<S> solutionsToEvaluate = sparkContext.parallelize(solutionList);
+        JavaRDD<S> evaluatedSolutions = solutionsToEvaluate.map(problem::evaluate);
 
-    return evaluatedSolutions.collect() ;
-  }
+        return evaluatedSolutions.collect();
+    }
 
-  public int getComputedEvaluations() {
-    return numberOfComputedEvaluations ;
-  }
+    public int getComputedEvaluations() {
+        return numberOfComputedEvaluations;
+    }
 }

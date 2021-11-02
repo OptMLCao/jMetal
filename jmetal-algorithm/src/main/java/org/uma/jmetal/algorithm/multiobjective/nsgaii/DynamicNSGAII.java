@@ -20,121 +20,122 @@ import java.util.Map;
 
 @SuppressWarnings("serial")
 public class DynamicNSGAII<S extends Solution<?>> extends NSGAII<S>
-    implements DynamicAlgorithm<List<S>> {
+        implements DynamicAlgorithm<List<S>> {
 
-  private RestartStrategy<S> restartStrategy;
-  private DynamicProblem<S, Integer> problem;
-  private Observable<Map<String, Object>> observable;
-  private int completedIterations;
-  private CoverageFront coverageFront;
-  private List<S> lastReceivedFront;
-  /**
-   * Constructor
-   *
-   * @param problem
-   * @param maxEvaluations
-   * @param populationSize
-   * @param matingPoolSize
-   * @param offspringPopulationSize
-   * @param crossoverOperator
-   * @param mutationOperator
-   * @param selectionOperator
-   * @param evaluator
-   * @param restartStrategy
-   * @param observable
-   */
-  public DynamicNSGAII(
-      DynamicProblem<S, Integer> problem,
-      int maxEvaluations,
-      int populationSize,
-      int matingPoolSize,
-      int offspringPopulationSize,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      SelectionOperator<List<S>, S> selectionOperator,
-      SolutionListEvaluator<S> evaluator,
-      RestartStrategy<S> restartStrategy,
-      Observable<Map<String, Object>> observable,
-      CoverageFront coverageFront) {
-    super(
-        problem,
-        maxEvaluations,
-        populationSize,
-        matingPoolSize,
-        offspringPopulationSize,
-        crossoverOperator,
-        mutationOperator,
-        selectionOperator,
-        evaluator);
-    this.restartStrategy = restartStrategy;
-    this.problem = problem;
-    this.observable = observable;
-    this.completedIterations = 0;
-    this.coverageFront = coverageFront;
-    this.lastReceivedFront = null;
-  }
+    private RestartStrategy<S> restartStrategy;
+    private DynamicProblem<S, Integer> problem;
+    private Observable<Map<String, Object>> observable;
+    private int completedIterations;
+    private CoverageFront coverageFront;
+    private List<S> lastReceivedFront;
 
-  @Override
-  protected boolean isStoppingConditionReached() {
-    if (evaluations >= maxEvaluations) {
-
-      boolean coverage = false;
-      if (lastReceivedFront != null) {
-        coverageFront.updateFront(SolutionListUtils.getMatrixWithObjectiveValues(lastReceivedFront));
-        List<PointSolution> pointSolutionList = new ArrayList<>();
-        List<S> list = getPopulation();
-        for (S s : list) {
-          PointSolution pointSolution = new PointSolution(s);
-          pointSolutionList.add(pointSolution);
-        }
-        coverage = coverageFront.isCoverageWithLast(pointSolutionList);
-      }
-
-      if (coverage) {
-        observable.setChanged();
-
-        Map<String, Object> algorithmData = new HashMap<>();
-
-        algorithmData.put("EVALUATIONS", completedIterations);
-        algorithmData.put("POPULATION", getPopulation());
-
-        observable.notifyObservers(algorithmData);
-        observable.clearChanged();
-      }
-      lastReceivedFront = getPopulation();
-      completedIterations++;
-      problem.update(completedIterations);
-
-      restart();
-      evaluator.evaluate(getPopulation(), getDynamicProblem());
-
-      initProgress();
+    /**
+     * Constructor
+     *
+     * @param problem
+     * @param maxEvaluations
+     * @param populationSize
+     * @param matingPoolSize
+     * @param offspringPopulationSize
+     * @param crossoverOperator
+     * @param mutationOperator
+     * @param selectionOperator
+     * @param evaluator
+     * @param restartStrategy
+     * @param observable
+     */
+    public DynamicNSGAII(
+            DynamicProblem<S, Integer> problem,
+            int maxEvaluations,
+            int populationSize,
+            int matingPoolSize,
+            int offspringPopulationSize,
+            CrossoverOperator<S> crossoverOperator,
+            MutationOperator<S> mutationOperator,
+            SelectionOperator<List<S>, S> selectionOperator,
+            SolutionListEvaluator<S> evaluator,
+            RestartStrategy<S> restartStrategy,
+            Observable<Map<String, Object>> observable,
+            CoverageFront coverageFront) {
+        super(
+                problem,
+                maxEvaluations,
+                populationSize,
+                matingPoolSize,
+                offspringPopulationSize,
+                crossoverOperator,
+                mutationOperator,
+                selectionOperator,
+                evaluator);
+        this.restartStrategy = restartStrategy;
+        this.problem = problem;
+        this.observable = observable;
+        this.completedIterations = 0;
+        this.coverageFront = coverageFront;
+        this.lastReceivedFront = null;
     }
-    return false;
-  }
 
-  @Override
-  protected void updateProgress() {
-    super.updateProgress();
-  }
+    @Override
+    protected boolean isStoppingConditionReached() {
+        if (evaluations >= maxEvaluations) {
 
-  @Override
-  public DynamicProblem<S, ?> getDynamicProblem() {
-    return problem;
-  }
+            boolean coverage = false;
+            if (lastReceivedFront != null) {
+                coverageFront.updateFront(SolutionListUtils.getMatrixWithObjectiveValues(lastReceivedFront));
+                List<PointSolution> pointSolutionList = new ArrayList<>();
+                List<S> list = getPopulation();
+                for (S s : list) {
+                    PointSolution pointSolution = new PointSolution(s);
+                    pointSolutionList.add(pointSolution);
+                }
+                coverage = coverageFront.isCoverageWithLast(pointSolutionList);
+            }
 
-  @Override
-  public void restart() {
-    this.restartStrategy.restart(getPopulation(), (DynamicProblem<S, ?>) getProblem());
-  }
+            if (coverage) {
+                observable.setChanged();
 
-  @Override
-  public RestartStrategy<?> getRestartStrategy() {
-    return restartStrategy;
-  }
+                Map<String, Object> algorithmData = new HashMap<>();
 
-  @Override
-  public Observable<Map<String, Object>> getObservable() {
-    return observable;
-  }
+                algorithmData.put("EVALUATIONS", completedIterations);
+                algorithmData.put("POPULATION", getPopulation());
+
+                observable.notifyObservers(algorithmData);
+                observable.clearChanged();
+            }
+            lastReceivedFront = getPopulation();
+            completedIterations++;
+            problem.update(completedIterations);
+
+            restart();
+            evaluator.evaluate(getPopulation(), getDynamicProblem());
+
+            initProgress();
+        }
+        return false;
+    }
+
+    @Override
+    protected void updateProgress() {
+        super.updateProgress();
+    }
+
+    @Override
+    public DynamicProblem<S, ?> getDynamicProblem() {
+        return problem;
+    }
+
+    @Override
+    public void restart() {
+        this.restartStrategy.restart(getPopulation(), (DynamicProblem<S, ?>) getProblem());
+    }
+
+    @Override
+    public RestartStrategy<?> getRestartStrategy() {
+        return restartStrategy;
+    }
+
+    @Override
+    public Observable<Map<String, Object>> getObservable() {
+        return observable;
+    }
 }

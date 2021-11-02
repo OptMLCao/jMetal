@@ -13,50 +13,56 @@ import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 import org.uma.jmetal.util.termination.Termination;
 
-/** @author Antonio J. Nebro <antonio@lcc.uma.es> */
+/**
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ */
 @SuppressWarnings("serial")
 public class SMSEMOA<S extends Solution<?>> extends NSGAII<S> {
 
-  /** Constructor */
-  public SMSEMOA(
-      Problem<S> problem,
-      int populationSize,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      Termination termination,
-      Hypervolume<S> hypervolume,
-      Ranking<S> ranking) {
-    super(problem, populationSize, 1, crossoverOperator, mutationOperator, termination, ranking);
+    /**
+     * Constructor
+     */
+    public SMSEMOA(
+            Problem<S> problem,
+            int populationSize,
+            CrossoverOperator<S> crossoverOperator,
+            MutationOperator<S> mutationOperator,
+            Termination termination,
+            Hypervolume<S> hypervolume,
+            Ranking<S> ranking) {
+        super(problem, populationSize, 1, crossoverOperator, mutationOperator, termination, ranking);
 
-    this.replacement = new SMSEMOAReplacement<>(ranking, hypervolume);
+        this.replacement = new SMSEMOAReplacement<>(ranking, hypervolume);
 
-    this.selection = new RandomMatingPoolSelection<>(variation.getMatingPoolSize());
-  }
+        this.selection = new RandomMatingPoolSelection<>(variation.getMatingPoolSize());
+    }
 
-  /** Constructor */
-  public SMSEMOA(
-      Problem<S> problem,
-      int populationSize,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      Termination termination) {
-    this(
-        problem,
-        populationSize,
-        crossoverOperator,
-        mutationOperator,
-        termination,
-        new PISAHypervolume<>(),
-        new FastNonDominatedSortRanking<>());
-  }
+    /**
+     * Constructor
+     */
+    public SMSEMOA(
+            Problem<S> problem,
+            int populationSize,
+            CrossoverOperator<S> crossoverOperator,
+            MutationOperator<S> mutationOperator,
+            Termination termination) {
+        this(
+                problem,
+                populationSize,
+                crossoverOperator,
+                mutationOperator,
+                termination,
+                new PISAHypervolume<>(),
+                new FastNonDominatedSortRanking<>());
+    }
 
-  @Override
-  public String getName() {
-    return "SMS-EMOA";
-  }
+    @Override
+    public String getName() {
+        return "SMS-EMOA";
+    }
 
-  @Override
-  public String getDescription() {
-    return "SMS-EMOA";
-  }
+    @Override
+    public String getDescription() {
+        return "SMS-EMOA";
+    }
 }

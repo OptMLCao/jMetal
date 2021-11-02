@@ -7,11 +7,11 @@ import org.uma.jmetal.solution.permutationsolution.impl.IntegerPermutationSoluti
 
 @SuppressWarnings("serial")
 public abstract class AbstractIntegerPermutationProblem
-    extends AbstractGenericProblem<PermutationSolution<Integer>> implements
-    PermutationProblem<PermutationSolution<Integer>> {
+        extends AbstractGenericProblem<PermutationSolution<Integer>> implements
+        PermutationProblem<PermutationSolution<Integer>> {
 
-  @Override
-  public PermutationSolution<Integer> createSolution() {
-    return new IntegerPermutationSolution(getLength(), getNumberOfObjectives()) ;
-  }
+    @Override
+    public PermutationSolution<Integer> createSolution() {
+        return new IntegerPermutationSolution(getLength(), getNumberOfObjectives());
+    }
 }

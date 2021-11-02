@@ -15,49 +15,51 @@ import java.util.Map;
  */
 public class PrintObjectivesObserver implements Observer<Map<String, Object>> {
 
-  private Integer frequency ;
-  /**
-   * Constructor
-   * value.
-   */
+    private Integer frequency;
 
-  public PrintObjectivesObserver(Integer frequency) {
-    this.frequency = frequency ;
-  }
+    /**
+     * Constructor
+     * value.
+     */
 
-  public PrintObjectivesObserver() {
-    this(1) ;
-  }
-
-  /**
-   * This method gets the evaluation number from the dada map and prints it in the screen.
-   * @param data Map of pairs (key, value)
-   */
-  @Override
-  public void update(Observable<Map<String, Object>> observable, Map<String, Object> data) {
-    Solution<?> solution = (Solution<?>)data.get("BEST_SOLUTION") ;
-    Integer evaluations = (Integer)data.get("EVALUATIONS") ;
-
-    if (solution!=null && evaluations != null) {
-      if (evaluations % frequency == 0) {
-        StringBuilder objectiveValues = new StringBuilder();
-        for (Double objective: solution.objectives()) {
-          objectiveValues.append(objective).append(" ");
-        }
-        System.out.println("Evaluations: " + evaluations + ". Fitness: " + objectiveValues);
-      }
-    } else {
-      JMetalLogger.logger.warning(getClass().getName()+
-          ": The algorithm has not registered yet any info related to the EVALUATIONS and BEST_SOLUTION keys");
+    public PrintObjectivesObserver(Integer frequency) {
+        this.frequency = frequency;
     }
-  }
 
-  public String getName() {
-    return "Print objectives observer";
-  }
+    public PrintObjectivesObserver() {
+        this(1);
+    }
 
-  @Override
-  public String toString() {
-    return getName() ;
-  }
+    /**
+     * This method gets the evaluation number from the dada map and prints it in the screen.
+     *
+     * @param data Map of pairs (key, value)
+     */
+    @Override
+    public void update(Observable<Map<String, Object>> observable, Map<String, Object> data) {
+        Solution<?> solution = (Solution<?>) data.get("BEST_SOLUTION");
+        Integer evaluations = (Integer) data.get("EVALUATIONS");
+
+        if (solution != null && evaluations != null) {
+            if (evaluations % frequency == 0) {
+                StringBuilder objectiveValues = new StringBuilder();
+                for (Double objective : solution.objectives()) {
+                    objectiveValues.append(objective).append(" ");
+                }
+                System.out.println("Evaluations: " + evaluations + ". Fitness: " + objectiveValues);
+            }
+        } else {
+            JMetalLogger.logger.warning(getClass().getName() +
+                    ": The algorithm has not registered yet any info related to the EVALUATIONS and BEST_SOLUTION keys");
+        }
+    }
+
+    public String getName() {
+        return "Print objectives observer";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

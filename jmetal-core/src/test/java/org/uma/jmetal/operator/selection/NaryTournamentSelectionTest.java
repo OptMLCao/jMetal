@@ -26,70 +26,70 @@ import static org.mockito.Mockito.mock;
  */
 public class NaryTournamentSelectionTest {
 
-  private static final int POPULATION_SIZE = 20 ;
+    private static final int POPULATION_SIZE = 20;
 
-  @Test
-  public void shouldDefaultConstructorSetTheNumberOfSolutionsToBeReturnedEqualsToTwo() {
-    NaryTournamentSelection<IntegerSolution> selection = new NaryTournamentSelection<>() ;
+    @Test
+    public void shouldDefaultConstructorSetTheNumberOfSolutionsToBeReturnedEqualsToTwo() {
+        NaryTournamentSelection<IntegerSolution> selection = new NaryTournamentSelection<>();
 
-    assertEquals(2, selection.getTournamentSize());
-  }
-
-  @Test
-  public void shouldExecuteRaiseAnExceptionIfTheListOfSolutionsIsNull() {
-    NaryTournamentSelection<IntegerSolution> selection = new NaryTournamentSelection<>() ;
-    List<IntegerSolution> population ;
-    population = null ;
-
-    assertThrows(NullParameterException.class, () -> selection.execute(population)) ;
-  }
-
-  @Test
-  public void shouldExecuteRaiseAnExceptionIfTheListOfSolutionsIsEmpty() {
-    NaryTournamentSelection<IntegerSolution> selection = new NaryTournamentSelection<>() ;
-
-    List<IntegerSolution> population = new ArrayList<>(0) ;
-
-    assertThrows(EmptyCollectionException.class, () -> selection.execute(population)) ;
-  }
-
-  @Test
-  public void shouldExecuteReturnAValidSolutionIsWithCorrectParameters() {
-    DoubleProblem problem = new DummyDoubleProblem(2, 2, 0) ;
-
-    List<DoubleSolution> population = new ArrayList<>(POPULATION_SIZE) ;
-    for (int i = 0 ; i < POPULATION_SIZE; i++) {
-      population.add(problem.createSolution());
+        assertEquals(2, selection.getTournamentSize());
     }
-    NaryTournamentSelection<DoubleSolution> selection = new NaryTournamentSelection<>() ;
 
-    assertNotNull(selection.execute(population));
-  }
+    @Test
+    public void shouldExecuteRaiseAnExceptionIfTheListOfSolutionsIsNull() {
+        NaryTournamentSelection<IntegerSolution> selection = new NaryTournamentSelection<>();
+        List<IntegerSolution> population;
+        population = null;
 
-  @Test
-  public void shouldExecuteReturnTheSameSolutionIfTheListContainsOneSolution() {
-    @SuppressWarnings("unchecked")
-    NaryTournamentSelection<DoubleSolution>selection =
-        new NaryTournamentSelection<DoubleSolution>(1, mock(Comparator.class)) ;
-    DoubleSolution solution = mock(DoubleSolution.class) ;
+        assertThrows(NullParameterException.class, () -> selection.execute(population));
+    }
 
-    List<DoubleSolution> population = new ArrayList<>(1) ;
-    population.add(solution) ;
-    assertSame(solution, selection.execute(population));
-  }
+    @Test
+    public void shouldExecuteRaiseAnExceptionIfTheListOfSolutionsIsEmpty() {
+        NaryTournamentSelection<IntegerSolution> selection = new NaryTournamentSelection<>();
 
-  @Test
-  public void shouldExecuteRaiseAnExceptionIfTheListSizeIsOneAndTwoSolutionsAreRequested() {
-    @SuppressWarnings("unchecked")
-    NaryTournamentSelection<IntegerSolution> selection =
-        new NaryTournamentSelection<>(4, mock(Comparator.class)) ;
-    List<IntegerSolution> list = new ArrayList<>(1) ;
-    list.add(mock(IntegerSolution.class)) ;
+        List<IntegerSolution> population = new ArrayList<>(0);
 
-    Executable executable = () -> selection.execute(list);
-    
-    InvalidConditionException cause = assertThrows(InvalidConditionException.class, executable) ;
-    assertThat(cause.getMessage(), containsString("The solution list size (1) is less than " +
-        "the number of requested solutions (4)"));
-  }
+        assertThrows(EmptyCollectionException.class, () -> selection.execute(population));
+    }
+
+    @Test
+    public void shouldExecuteReturnAValidSolutionIsWithCorrectParameters() {
+        DoubleProblem problem = new DummyDoubleProblem(2, 2, 0);
+
+        List<DoubleSolution> population = new ArrayList<>(POPULATION_SIZE);
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            population.add(problem.createSolution());
+        }
+        NaryTournamentSelection<DoubleSolution> selection = new NaryTournamentSelection<>();
+
+        assertNotNull(selection.execute(population));
+    }
+
+    @Test
+    public void shouldExecuteReturnTheSameSolutionIfTheListContainsOneSolution() {
+        @SuppressWarnings("unchecked")
+        NaryTournamentSelection<DoubleSolution> selection =
+                new NaryTournamentSelection<DoubleSolution>(1, mock(Comparator.class));
+        DoubleSolution solution = mock(DoubleSolution.class);
+
+        List<DoubleSolution> population = new ArrayList<>(1);
+        population.add(solution);
+        assertSame(solution, selection.execute(population));
+    }
+
+    @Test
+    public void shouldExecuteRaiseAnExceptionIfTheListSizeIsOneAndTwoSolutionsAreRequested() {
+        @SuppressWarnings("unchecked")
+        NaryTournamentSelection<IntegerSolution> selection =
+                new NaryTournamentSelection<>(4, mock(Comparator.class));
+        List<IntegerSolution> list = new ArrayList<>(1);
+        list.add(mock(IntegerSolution.class));
+
+        Executable executable = () -> selection.execute(list);
+
+        InvalidConditionException cause = assertThrows(InvalidConditionException.class, executable);
+        assertThat(cause.getMessage(), containsString("The solution list size (1) is less than " +
+                "the number of requested solutions (4)"));
+    }
 }

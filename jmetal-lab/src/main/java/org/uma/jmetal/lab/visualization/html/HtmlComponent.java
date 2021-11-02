@@ -6,6 +6,7 @@ package org.uma.jmetal.lab.visualization.html;
  * @author Javier Pérez Abad
  */
 public interface HtmlComponent {
-  String getHtml();
-  String getCSS();
+    String getHtml();
+
+    String getCSS();
 }

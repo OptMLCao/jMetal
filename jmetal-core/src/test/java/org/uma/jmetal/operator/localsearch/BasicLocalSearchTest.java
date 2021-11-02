@@ -4,9 +4,9 @@ import org.junit.Test;
 
 public class BasicLocalSearchTest {
 
-	@Test
-	public void testJMetalRandomGeneratorNotUsedWhenCustomRandomGeneratorProvided() {
-		// TODO. The tested class are to be replaced by another different
+    @Test
+    public void testJMetalRandomGeneratorNotUsedWhenCustomRandomGeneratorProvided() {
+        // TODO. The tested class are to be replaced by another different
 		/*
 		// Configuration
 		@SuppressWarnings("serial")
@@ -39,5 +39,5 @@ public class BasicLocalSearchTest {
 		assertTrue("Default random generator used", defaultUses[0] == 0);
 		assertTrue("No use of the custom generator", customUses[0] > 0);
 		*/
-	}
+    }
 }

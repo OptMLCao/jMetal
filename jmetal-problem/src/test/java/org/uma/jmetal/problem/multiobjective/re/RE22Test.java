@@ -8,24 +8,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RE22Test {
 
-  @Test
-  public void shouldConstructorCreateAProblemWithTheRightProperties() {
-    DoubleProblem problem = new RE22();
+    @Test
+    public void shouldConstructorCreateAProblemWithTheRightProperties() {
+        DoubleProblem problem = new RE22();
 
-    assertEquals(3, problem.getNumberOfVariables());
-    assertEquals(2, problem.getNumberOfObjectives());
-    assertEquals(0, problem.getNumberOfConstraints());
-    assertEquals("RE22", problem.getName());
-  }
+        assertEquals(3, problem.getNumberOfVariables());
+        assertEquals(2, problem.getNumberOfObjectives());
+        assertEquals(0, problem.getNumberOfConstraints());
+        assertEquals("RE22", problem.getName());
+    }
 
-  @Test
-  public void shouldEvaluateWorkProperly() {
-    DoubleProblem problem = new RE22();
-    DoubleSolution solution = problem.createSolution();
-    problem.evaluate(solution);
+    @Test
+    public void shouldEvaluateWorkProperly() {
+        DoubleProblem problem = new RE22();
+        DoubleSolution solution = problem.createSolution();
+        problem.evaluate(solution);
 
-    assertEquals(3, solution.variables().size());
-    assertEquals(2, solution.objectives().length);
-    assertEquals(0, solution.constraints().length);
-  }
+        assertEquals(3, solution.variables().size());
+        assertEquals(2, solution.objectives().length);
+        assertEquals(0, solution.constraints().length);
+    }
 }

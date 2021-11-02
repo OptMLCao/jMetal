@@ -16,77 +16,81 @@ import java.util.List;
  * DefaultIntegerDoubleSolution )}, e.g., a solution composed of an integer solution and a double
  * solution. It is assumed that the lower and upper bounds of the variables of both solutions are
  * the same.
- *
+ * <p>
  * Objective 1: minimizing the sum of the distances of every variable to value N
  * Objective 2: minimizing the sum of the distances of every variable to value M
  */
 @SuppressWarnings("serial")
 @Deprecated
 public class NMMin2 extends AbstractGenericProblem<IntegerDoubleSolution> {
-  private int valueN;
-  private int valueM;
-  private List<Pair<Integer, Integer>> integerBounds;
-  private List<Pair<Double, Double>> doubleBounds;
+    private int valueN;
+    private int valueM;
+    private List<Pair<Integer, Integer>> integerBounds;
+    private List<Pair<Double, Double>> doubleBounds;
 
-  public NMMin2() {
-    this(10, 10, 100, -100, -1000, +1000);
-  }
-
-  /** Constructor */
-  public NMMin2(
-      int numberOfIntegerVariables,
-      int numberOfDoubleVariables,
-      int n,
-      int m,
-      int lowerBound,
-      int upperBound) {
-    valueN = n;
-    valueM = m;
-    setNumberOfVariables(2);
-    setNumberOfObjectives(2);
-    setName("NMMin2");
-
-    integerBounds = new ArrayList<>(numberOfIntegerVariables);
-    doubleBounds = new ArrayList<>(numberOfDoubleVariables);
-
-    for (int i = 0; i < numberOfIntegerVariables; i++) {
-      integerBounds.add(new ImmutablePair<>(lowerBound, upperBound));
+    public NMMin2() {
+        this(10, 10, 100, -100, -1000, +1000);
     }
 
-    for (int i = 0; i < numberOfDoubleVariables; i++) {
-      doubleBounds.add(new ImmutablePair<>((double) lowerBound, (double) upperBound));
+    /**
+     * Constructor
+     */
+    public NMMin2(
+            int numberOfIntegerVariables,
+            int numberOfDoubleVariables,
+            int n,
+            int m,
+            int lowerBound,
+            int upperBound) {
+        valueN = n;
+        valueM = m;
+        setNumberOfVariables(2);
+        setNumberOfObjectives(2);
+        setName("NMMin2");
+
+        integerBounds = new ArrayList<>(numberOfIntegerVariables);
+        doubleBounds = new ArrayList<>(numberOfDoubleVariables);
+
+        for (int i = 0; i < numberOfIntegerVariables; i++) {
+            integerBounds.add(new ImmutablePair<>(lowerBound, upperBound));
+        }
+
+        for (int i = 0; i < numberOfDoubleVariables; i++) {
+            doubleBounds.add(new ImmutablePair<>((double) lowerBound, (double) upperBound));
+        }
     }
-  }
 
-  /** Evaluate() method */
-  @Override
-  public IntegerDoubleSolution evaluate(IntegerDoubleSolution solution) {
-    int approximationToN;
-    int approximationToM;
+    /**
+     * Evaluate() method
+     */
+    @Override
+    public IntegerDoubleSolution evaluate(IntegerDoubleSolution solution) {
+        int approximationToN;
+        int approximationToM;
 
-    approximationToN = 0;
-    approximationToM = 0;
+        approximationToN = 0;
+        approximationToM = 0;
 
-    List<Integer> integerVariables = ((IntegerSolution) solution.variables().get(0)).variables();
-    for (int i = 0; i < integerVariables.size(); i++) {
-      approximationToN += Math.abs(valueN - integerVariables.get(i));
-      approximationToM += Math.abs(valueM - integerVariables.get(i));
+        List<Integer> integerVariables = ((IntegerSolution) solution.variables().get(0)).variables();
+        for (int i = 0; i < integerVariables.size(); i++) {
+            approximationToN += Math.abs(valueN - integerVariables.get(i));
+            approximationToM += Math.abs(valueM - integerVariables.get(i));
+        }
+
+        List<Double> doubleVariables = ((DoubleSolution) solution.variables().get(1)).variables();
+        for (int i = 0; i < integerVariables.size(); i++) {
+            approximationToN += Math.abs(valueN - doubleVariables.get(i));
+            approximationToM += Math.abs(valueM - doubleVariables.get(i));
+        }
+
+        solution.objectives()[0] = approximationToN;
+        solution.objectives()[1] = approximationToM;
+
+        return solution;
     }
 
-    List<Double> doubleVariables = ((DoubleSolution) solution.variables().get(1)).variables();
-    for (int i = 0; i < integerVariables.size(); i++) {
-      approximationToN += Math.abs(valueN - doubleVariables.get(i));
-      approximationToM += Math.abs(valueM - doubleVariables.get(i));
+    @Override
+    public IntegerDoubleSolution createSolution() {
+        return new DefaultIntegerDoubleSolution(integerBounds, doubleBounds, 2);
     }
-
-    solution.objectives()[0] = approximationToN ;
-    solution.objectives()[1] = approximationToM ;
-
-    return solution ;
-  }
-
-  @Override
-  public IntegerDoubleSolution createSolution() {
-    return new DefaultIntegerDoubleSolution(integerBounds, doubleBounds, 2);
-  }
 }

@@ -17,49 +17,53 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class NaryTournamentSelection<S extends Solution<?>>
-    implements SelectionOperator<List<S>, S> {
-  private Comparator<S> comparator;
-  private int tournamentSize;
+        implements SelectionOperator<List<S>, S> {
+    private Comparator<S> comparator;
+    private int tournamentSize;
 
-  /** Constructor */
-  public NaryTournamentSelection() {
-    this(2, new DominanceComparator<S>());
-  }
-
-  /** Constructor */
-  public NaryTournamentSelection(int tournamentSize, Comparator<S> comparator) {
-    this.tournamentSize = tournamentSize;
-    this.comparator = comparator;
-  }
-
-  @Override
-  /** Execute() method */
-  public S execute(List<S> solutionList) {
-    Check.notNull(solutionList);
-    Check.collectionIsNotEmpty(solutionList);
-    Check.that(
-        solutionList.size() >= tournamentSize,
-        "The solution list size ("
-            + solutionList.size()
-            + ") is less than "
-            + "the number of requested solutions ("
-            + tournamentSize
-            + ")");
-
-    S result;
-    if (solutionList.size() == 1) {
-      result = solutionList.get(0);
-    } else {
-      List<S> selectedSolutions =
-          SolutionListUtils.selectNRandomDifferentSolutions(
-                  tournamentSize, solutionList);
-      result = SolutionListUtils.findBestSolution(selectedSolutions, comparator);
+    /**
+     * Constructor
+     */
+    public NaryTournamentSelection() {
+        this(2, new DominanceComparator<S>());
     }
 
-    return result;
-  }
+    /**
+     * Constructor
+     */
+    public NaryTournamentSelection(int tournamentSize, Comparator<S> comparator) {
+        this.tournamentSize = tournamentSize;
+        this.comparator = comparator;
+    }
 
-  public int getTournamentSize() {
-    return tournamentSize ;
-  }
+    @Override
+    /** Execute() method */
+    public S execute(List<S> solutionList) {
+        Check.notNull(solutionList);
+        Check.collectionIsNotEmpty(solutionList);
+        Check.that(
+                solutionList.size() >= tournamentSize,
+                "The solution list size ("
+                        + solutionList.size()
+                        + ") is less than "
+                        + "the number of requested solutions ("
+                        + tournamentSize
+                        + ")");
+
+        S result;
+        if (solutionList.size() == 1) {
+            result = solutionList.get(0);
+        } else {
+            List<S> selectedSolutions =
+                    SolutionListUtils.selectNRandomDifferentSolutions(
+                            tournamentSize, solutionList);
+            result = SolutionListUtils.findBestSolution(selectedSolutions, comparator);
+        }
+
+        return result;
+    }
+
+    public int getTournamentSize() {
+        return tournamentSize;
+    }
 }

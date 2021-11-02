@@ -21,142 +21,152 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("serial")
 public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, List<S>> {
-  protected final int maxEvaluations;
+    protected final int maxEvaluations;
 
-  protected final SolutionListEvaluator<S> evaluator;
+    protected final SolutionListEvaluator<S> evaluator;
 
-  protected int evaluations;
-  protected Comparator<S> dominanceComparator ;
+    protected int evaluations;
+    protected Comparator<S> dominanceComparator;
 
-  protected int matingPoolSize;
-  protected int offspringPopulationSize ;
+    protected int matingPoolSize;
+    protected int offspringPopulationSize;
 
-  /**
-   * Constructor
-   */
-  public NSGAII(Problem<S> problem, int maxEvaluations, int populationSize,
-                int matingPoolSize, int offspringPopulationSize,
-                CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-                SelectionOperator<List<S>, S> selectionOperator, SolutionListEvaluator<S> evaluator) {
-    this(problem, maxEvaluations, populationSize, matingPoolSize, offspringPopulationSize,
-            crossoverOperator, mutationOperator, selectionOperator, new DominanceComparator<S>(), evaluator);
-  }
-  /**
-   * Constructor
-   */
-  public NSGAII(Problem<S> problem, int maxEvaluations, int populationSize,
-                int matingPoolSize, int offspringPopulationSize,
-                CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-      SelectionOperator<List<S>, S> selectionOperator, Comparator<S> dominanceComparator,
-                SolutionListEvaluator<S> evaluator) {
-    super(problem);
-    this.maxEvaluations = maxEvaluations;
-    setMaxPopulationSize(populationSize); ;
-
-    this.crossoverOperator = crossoverOperator;
-    this.mutationOperator = mutationOperator;
-    this.selectionOperator = selectionOperator;
-
-    this.evaluator = evaluator;
-    this.dominanceComparator = dominanceComparator ;
-
-    this.matingPoolSize = matingPoolSize ;
-    this.offspringPopulationSize = offspringPopulationSize ;
-  }
-
-  @Override protected void initProgress() {
-    evaluations = getMaxPopulationSize();
-  }
-
-  @Override protected void updateProgress() {
-    evaluations += offspringPopulationSize ;
-  }
-
-  @Override protected boolean isStoppingConditionReached() {
-    return evaluations >= maxEvaluations;
-  }
-
-  @Override protected List<S> evaluatePopulation(List<S> population) {
-    population = evaluator.evaluate(population, getProblem());
-
-    return population;
-  }
-
-  /**
-   * This method iteratively applies a {@link SelectionOperator} to the population to fill the mating pool population.
-   *
-   * @param population
-   * @return The mating pool population
-   */
-  @Override
-  protected List<S> selection(List<S> population) {
-    List<S> matingPopulation = new ArrayList<>(population.size());
-    for (int i = 0; i < matingPoolSize; i++) {
-      S solution = selectionOperator.execute(population);
-      matingPopulation.add(solution);
+    /**
+     * Constructor
+     */
+    public NSGAII(Problem<S> problem, int maxEvaluations, int populationSize,
+                  int matingPoolSize, int offspringPopulationSize,
+                  CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
+                  SelectionOperator<List<S>, S> selectionOperator, SolutionListEvaluator<S> evaluator) {
+        this(problem, maxEvaluations, populationSize, matingPoolSize, offspringPopulationSize,
+                crossoverOperator, mutationOperator, selectionOperator, new DominanceComparator<S>(), evaluator);
     }
 
-    List<S> newList = population.stream().map(solution -> (S)solution.copy()).collect(Collectors.toList());
+    /**
+     * Constructor
+     */
+    public NSGAII(Problem<S> problem, int maxEvaluations, int populationSize,
+                  int matingPoolSize, int offspringPopulationSize,
+                  CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
+                  SelectionOperator<List<S>, S> selectionOperator, Comparator<S> dominanceComparator,
+                  SolutionListEvaluator<S> evaluator) {
+        super(problem);
+        this.maxEvaluations = maxEvaluations;
+        setMaxPopulationSize(populationSize);
+        ;
 
-    return matingPopulation;
-  }
+        this.crossoverOperator = crossoverOperator;
+        this.mutationOperator = mutationOperator;
+        this.selectionOperator = selectionOperator;
 
-  /**
-   * This methods iteratively applies a {@link CrossoverOperator} a  {@link MutationOperator} to the population to
-   * create the offspring population. The population size must be divisible by the number of parents required
-   * by the {@link CrossoverOperator}; this way, the needed parents are taken sequentially from the population.
-   *
-   * The number of solutions returned by the {@link CrossoverOperator} must be equal to the offspringPopulationSize
-   * state variable
-   *
-   * @param matingPool
-   * @return The new created offspring population
-   */
-  @Override
-  protected List<S> reproduction(List<S> matingPool) {
-    int numberOfParents = crossoverOperator.getNumberOfRequiredParents() ;
+        this.evaluator = evaluator;
+        this.dominanceComparator = dominanceComparator;
 
-    checkNumberOfParents(matingPool, numberOfParents);
-
-    List<S> offspringPopulation = new ArrayList<>(offspringPopulationSize);
-    for (int i = 0; i < matingPool.size(); i += numberOfParents) {
-      List<S> parents = new ArrayList<>(numberOfParents);
-      for (int j = 0; j < numberOfParents; j++) {
-        parents.add(matingPool.get(i+j));
-      }
-
-      List<S> offspring = crossoverOperator.execute(parents);
-
-      for(S s: offspring){
-        mutationOperator.execute(s);
-        offspringPopulation.add(s);
-        if (offspringPopulation.size() >= offspringPopulationSize)
-          break;
-      }
+        this.matingPoolSize = matingPoolSize;
+        this.offspringPopulationSize = offspringPopulationSize;
     }
-    return offspringPopulation;
-  }
 
-  @Override protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
-    List<S> jointPopulation = new ArrayList<>();
-    jointPopulation.addAll(population);
-    jointPopulation.addAll(offspringPopulation);
+    @Override
+    protected void initProgress() {
+        evaluations = getMaxPopulationSize();
+    }
 
-    RankingAndCrowdingSelection<S> rankingAndCrowdingSelection ;
-    rankingAndCrowdingSelection = new RankingAndCrowdingSelection<S>(getMaxPopulationSize(), dominanceComparator) ;
+    @Override
+    protected void updateProgress() {
+        evaluations += offspringPopulationSize;
+    }
 
-    return rankingAndCrowdingSelection.execute(jointPopulation) ;
-  }
+    @Override
+    protected boolean isStoppingConditionReached() {
+        return evaluations >= maxEvaluations;
+    }
 
-  @Override public List<S> getResult() {
-    return SolutionListUtils.getNonDominatedSolutions(getPopulation());
-  }
+    @Override
+    protected List<S> evaluatePopulation(List<S> population) {
+        population = evaluator.evaluate(population, getProblem());
 
-  @Override public String getName() {
-    return "NSGAII" ;
-  }
+        return population;
+    }
 
-  @Override public String getDescription() {
-    return "Nondominated Sorting Genetic Algorithm version II" ;
-  }
+    /**
+     * This method iteratively applies a {@link SelectionOperator} to the population to fill the mating pool population.
+     *
+     * @param population
+     * @return The mating pool population
+     */
+    @Override
+    protected List<S> selection(List<S> population) {
+        List<S> matingPopulation = new ArrayList<>(population.size());
+        for (int i = 0; i < matingPoolSize; i++) {
+            S solution = selectionOperator.execute(population);
+            matingPopulation.add(solution);
+        }
+
+        List<S> newList = population.stream().map(solution -> (S) solution.copy()).collect(Collectors.toList());
+
+        return matingPopulation;
+    }
+
+    /**
+     * This methods iteratively applies a {@link CrossoverOperator} a  {@link MutationOperator} to the population to
+     * create the offspring population. The population size must be divisible by the number of parents required
+     * by the {@link CrossoverOperator}; this way, the needed parents are taken sequentially from the population.
+     * <p>
+     * The number of solutions returned by the {@link CrossoverOperator} must be equal to the offspringPopulationSize
+     * state variable
+     *
+     * @param matingPool
+     * @return The new created offspring population
+     */
+    @Override
+    protected List<S> reproduction(List<S> matingPool) {
+        int numberOfParents = crossoverOperator.getNumberOfRequiredParents();
+
+        checkNumberOfParents(matingPool, numberOfParents);
+
+        List<S> offspringPopulation = new ArrayList<>(offspringPopulationSize);
+        for (int i = 0; i < matingPool.size(); i += numberOfParents) {
+            List<S> parents = new ArrayList<>(numberOfParents);
+            for (int j = 0; j < numberOfParents; j++) {
+                parents.add(matingPool.get(i + j));
+            }
+
+            List<S> offspring = crossoverOperator.execute(parents);
+
+            for (S s : offspring) {
+                mutationOperator.execute(s);
+                offspringPopulation.add(s);
+                if (offspringPopulation.size() >= offspringPopulationSize)
+                    break;
+            }
+        }
+        return offspringPopulation;
+    }
+
+    @Override
+    protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
+        List<S> jointPopulation = new ArrayList<>();
+        jointPopulation.addAll(population);
+        jointPopulation.addAll(offspringPopulation);
+
+        RankingAndCrowdingSelection<S> rankingAndCrowdingSelection;
+        rankingAndCrowdingSelection = new RankingAndCrowdingSelection<S>(getMaxPopulationSize(), dominanceComparator);
+
+        return rankingAndCrowdingSelection.execute(jointPopulation);
+    }
+
+    @Override
+    public List<S> getResult() {
+        return SolutionListUtils.getNonDominatedSolutions(getPopulation());
+    }
+
+    @Override
+    public String getName() {
+        return "NSGAII";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Nondominated Sorting Genetic Algorithm version II";
+    }
 }

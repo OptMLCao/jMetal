@@ -7,24 +7,24 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CRE23Test {
-  @Test
-  public void shouldConstructorCreateAProblemWithTheRightProperties() {
-    DoubleProblem problem = new CRE23();
+    @Test
+    public void shouldConstructorCreateAProblemWithTheRightProperties() {
+        DoubleProblem problem = new CRE23();
 
-    assertEquals(4, problem.getNumberOfVariables());
-    assertEquals(2, problem.getNumberOfObjectives());
-    assertEquals(4, problem.getNumberOfConstraints());
-    assertEquals("CRE23", problem.getName());
-  }
+        assertEquals(4, problem.getNumberOfVariables());
+        assertEquals(2, problem.getNumberOfObjectives());
+        assertEquals(4, problem.getNumberOfConstraints());
+        assertEquals("CRE23", problem.getName());
+    }
 
-  @Test
-  public void shouldEvaluateWorkProperly() {
-    DoubleProblem problem = new CRE23();
-    DoubleSolution solution = problem.createSolution();
-    problem.evaluate(solution);
+    @Test
+    public void shouldEvaluateWorkProperly() {
+        DoubleProblem problem = new CRE23();
+        DoubleSolution solution = problem.createSolution();
+        problem.evaluate(solution);
 
-    assertEquals(4, solution.variables().size());
-    assertEquals(2, solution.objectives().length);
-    assertEquals(4, solution.constraints().length);
-  }
+        assertEquals(4, solution.variables().size());
+        assertEquals(2, solution.objectives().length);
+        assertEquals(4, solution.constraints().length);
+    }
 }

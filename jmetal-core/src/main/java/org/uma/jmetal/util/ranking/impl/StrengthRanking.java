@@ -21,105 +21,109 @@ import java.util.stream.IntStream;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class StrengthRanking<S extends Solution<?>> implements Ranking<S> {
-  private final String attributeId = getClass().getName();
-  private Comparator<S> dominanceComparator;
+    private final String attributeId = getClass().getName();
+    private Comparator<S> dominanceComparator;
 
-  private List<ArrayList<S>> rankedSubPopulations;
+    private List<ArrayList<S>> rankedSubPopulations;
 
-  /** Constructor */
-  public StrengthRanking(Comparator<S> comparator) {
-    this.dominanceComparator = comparator;
-    rankedSubPopulations = new ArrayList<>();
-  }
+    /**
+     * Constructor
+     */
+    public StrengthRanking(Comparator<S> comparator) {
+        this.dominanceComparator = comparator;
+        rankedSubPopulations = new ArrayList<>();
+    }
 
-  /** Constructor */
-  public StrengthRanking() {
-    this(new DominanceComparator<>());
-  }
+    /**
+     * Constructor
+     */
+    public StrengthRanking() {
+        this(new DominanceComparator<>());
+    }
 
-  @Override
-  public Ranking<S> compute(List<S> solutionList) {
-    int[] strength = new int[solutionList.size()];
-    int[] rawFitness = new int[solutionList.size()];
+    @Override
+    public Ranking<S> compute(List<S> solutionList) {
+        int[] strength = new int[solutionList.size()];
+        int[] rawFitness = new int[solutionList.size()];
 
-    // strength(i) = |{j | j <- SolutionSet and i dominate j}|
-    for (int i = 0; i < solutionList.size(); i++) {
-      for (int j = 0; j < solutionList.size(); j++) {
-        if (dominanceComparator.compare(solutionList.get(i), solutionList.get(j)) < 0) {
-          strength[i] += 1.0;
+        // strength(i) = |{j | j <- SolutionSet and i dominate j}|
+        for (int i = 0; i < solutionList.size(); i++) {
+            for (int j = 0; j < solutionList.size(); j++) {
+                if (dominanceComparator.compare(solutionList.get(i), solutionList.get(j)) < 0) {
+                    strength[i] += 1.0;
+                }
+            }
         }
-      }
-    }
 
-    // Calculate the raw fitness:
-    // rawFitness(i) = |{sum strength(j) | j <- SolutionSet and j dominate i}|
-    for (int i = 0; i < solutionList.size(); i++) {
-      for (int j = 0; j < solutionList.size(); j++) {
-        if (dominanceComparator.compare(solutionList.get(i), solutionList.get(j)) == 1) {
-          rawFitness[i] += strength[j];
+        // Calculate the raw fitness:
+        // rawFitness(i) = |{sum strength(j) | j <- SolutionSet and j dominate i}|
+        for (int i = 0; i < solutionList.size(); i++) {
+            for (int j = 0; j < solutionList.size(); j++) {
+                if (dominanceComparator.compare(solutionList.get(i), solutionList.get(j)) == 1) {
+                    rawFitness[i] += strength[j];
+                }
+            }
         }
-      }
+
+        int maxFitnessValue = 0;
+        for (int i = 0; i < solutionList.size(); i++) {
+            solutionList.get(i).attributes().put(attributeId, rawFitness[i]);
+            if (rawFitness[i] > maxFitnessValue) {
+                maxFitnessValue = rawFitness[i];
+            }
+        }
+
+        // front[i] contains the list of individuals belonging to the front i
+        rankedSubPopulations = new ArrayList<>(maxFitnessValue + 1);
+        IntStream.range(0, maxFitnessValue + 1)
+                .forEach(index -> rankedSubPopulations.add(new ArrayList<>()));
+
+        // Assign each solution to its corresponding front
+        solutionList.forEach(
+                solution ->
+                        rankedSubPopulations.get((int) solution.attributes().get(attributeId)).add(solution));
+
+        // Remove empty fronts
+        // rankedSubPopulations.stream().filter(list -> (list.size() == 0));
+        int counter = 0;
+        while (counter < rankedSubPopulations.size()) {
+            if (rankedSubPopulations.get(counter).size() == 0) {
+                rankedSubPopulations.remove(counter);
+            } else {
+                counter++;
+            }
+        }
+
+        return this;
     }
 
-    int maxFitnessValue = 0;
-    for (int i = 0; i < solutionList.size(); i++) {
-      solutionList.get(i).attributes().put(attributeId, rawFitness[i]);
-      if (rawFitness[i] > maxFitnessValue) {
-        maxFitnessValue = rawFitness[i];
-      }
+    @Override
+    public List<S> getSubFront(int rank) {
+        if (rank >= rankedSubPopulations.size()) {
+            throw new JMetalException(
+                    "Invalid rank: " + rank + ". Max rank = " + (rankedSubPopulations.size() - 1));
+        }
+        return rankedSubPopulations.get(rank);
     }
 
-    // front[i] contains the list of individuals belonging to the front i
-    rankedSubPopulations = new ArrayList<>(maxFitnessValue + 1);
-    IntStream.range(0, maxFitnessValue + 1)
-        .forEach(index -> rankedSubPopulations.add(new ArrayList<>()));
-
-    // Assign each solution to its corresponding front
-    solutionList.forEach(
-        solution ->
-            rankedSubPopulations.get((int) solution.attributes().get(attributeId)).add(solution));
-
-    // Remove empty fronts
-    // rankedSubPopulations.stream().filter(list -> (list.size() == 0));
-    int counter = 0;
-    while (counter < rankedSubPopulations.size()) {
-      if (rankedSubPopulations.get(counter).size() == 0) {
-        rankedSubPopulations.remove(counter);
-      } else {
-        counter++;
-      }
+    @Override
+    public int getNumberOfSubFronts() {
+        return rankedSubPopulations.size();
     }
 
-    return this;
-  }
+    @Override
+    public Integer getRank(S solution) {
+        Check.notNull(solution);
 
-  @Override
-  public List<S> getSubFront(int rank) {
-    if (rank >= rankedSubPopulations.size()) {
-      throw new JMetalException(
-          "Invalid rank: " + rank + ". Max rank = " + (rankedSubPopulations.size() - 1));
+        Integer result = -1;
+        if (solution.attributes().get(attributeId) != null) {
+            result = (Integer) solution.attributes().get(attributeId);
+        }
+        return result;
     }
-    return rankedSubPopulations.get(rank);
-  }
 
-  @Override
-  public int getNumberOfSubFronts() {
-    return rankedSubPopulations.size();
-  }
-
-  @Override
-  public Integer getRank(S solution) {
-    Check.notNull(solution);
-
-    Integer result = -1;
-    if (solution.attributes().get(attributeId) != null) {
-      result = (Integer) solution.attributes().get(attributeId);
+    @Override
+    public Object getAttributedId() {
+        return attributeId;
     }
-    return result;
-  }
-
-  @Override
-  public Object getAttributedId() {
-    return attributeId ;
-  }
 }

@@ -29,46 +29,46 @@ import java.util.List;
  */
 public class DNSGAIIRunner extends AbstractAlgorithmRunner {
 
-  public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException {
 
-    String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ1.3D.csv";
+        String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ1.3D.csv";
 
-    // problem
-    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1";
-    Problem<DoubleSolution> problem = ProblemUtils.loadProblem(problemName);
+        // problem
+        String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1";
+        Problem<DoubleSolution> problem = ProblemUtils.loadProblem(problemName);
 
-    // crossover
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 30;
-    CrossoverOperator<DoubleSolution> crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        // crossover
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 30;
+        CrossoverOperator<DoubleSolution> crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    // mutation
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        // mutation
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    // selection
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection = new BinaryTournamentSelection<>(
-            new RankingAndDirScoreDistanceComparator<>());
+        // selection
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection = new BinaryTournamentSelection<>(
+                new RankingAndDirScoreDistanceComparator<>());
 
-    int populationSize = 300;
-    Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation, populationSize)
-            .setMaxEvaluations(300000)
-            .setVariant(NSGAIIBuilder.NSGAIIVariant.DNSGAII)
-            .setSelectionOperator(selection).build();
+        int populationSize = 300;
+        Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation, populationSize)
+                .setMaxEvaluations(300000)
+                .setVariant(NSGAIIBuilder.NSGAIIVariant.DNSGAII)
+                .setSelectionOperator(selection).build();
 
-    // reference vectors
-    double[][] referenceVectors = VectorFileUtils.readVectors("resources/weightVectorFiles/moead/W" + problem.getNumberOfObjectives() + "D_" + populationSize + ".dat");
-    ((DNSGAII<DoubleSolution>) algorithm).setReferenceVectors(referenceVectors);
+        // reference vectors
+        double[][] referenceVectors = VectorFileUtils.readVectors("resources/weightVectorFiles/moead/W" + problem.getNumberOfObjectives() + "D_" + populationSize + ".dat");
+        ((DNSGAII<DoubleSolution>) algorithm).setReferenceVectors(referenceVectors);
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-    List<DoubleSolution> population = algorithm.getResult();
-    long computingTime = algorithmRunner.getComputingTime();
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 
-    printFinalSolutionSet(population);
+        printFinalSolutionSet(population);
 
-    printQualityIndicators(population, referenceParetoFront);
-  }
+        printQualityIndicators(population, referenceParetoFront);
+    }
 }

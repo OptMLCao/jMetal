@@ -8,9 +8,13 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public interface Ranking<S> {
-  Ranking<S> compute(List<S> solutionList) ;
-  List<S> getSubFront(int rank) ;
-  int getNumberOfSubFronts() ;
-  Integer getRank(S solution) ;
-  Object getAttributedId() ;
+    Ranking<S> compute(List<S> solutionList);
+
+    List<S> getSubFront(int rank);
+
+    int getNumberOfSubFronts();
+
+    Integer getRank(S solution);
+
+    Object getAttributedId();
 }

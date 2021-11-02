@@ -16,29 +16,29 @@ import java.util.List;
  * @param <S>
  */
 public class MuCommaLambdaReplacement<S extends Solution<?>> implements Replacement<S> {
-  protected Comparator<S> comparator;
+    protected Comparator<S> comparator;
 
-  public MuCommaLambdaReplacement(Comparator<S> comparator) {
-    this.comparator = comparator;
-  }
-
-  public List<S> replace(List<S> population, List<S> offspringPopulation) {
-    Check.that(
-        population.size() < offspringPopulation.size(),
-        "Mu ("
-            + population.size()
-            + ") must be lower than lambda ("
-            + offspringPopulation.size()
-            + ")");
-
-    List<S> resultPopulation = new ArrayList<>(offspringPopulation);
-
-    resultPopulation.sort(comparator);
-
-    while (resultPopulation.size() > population.size()) {
-      resultPopulation.remove(resultPopulation.size() - 1);
+    public MuCommaLambdaReplacement(Comparator<S> comparator) {
+        this.comparator = comparator;
     }
 
-    return resultPopulation;
-  }
+    public List<S> replace(List<S> population, List<S> offspringPopulation) {
+        Check.that(
+                population.size() < offspringPopulation.size(),
+                "Mu ("
+                        + population.size()
+                        + ") must be lower than lambda ("
+                        + offspringPopulation.size()
+                        + ")");
+
+        List<S> resultPopulation = new ArrayList<>(offspringPopulation);
+
+        resultPopulation.sort(comparator);
+
+        while (resultPopulation.size() > population.size()) {
+            resultPopulation.remove(resultPopulation.size() - 1);
+        }
+
+        return resultPopulation;
+    }
 }

@@ -20,31 +20,30 @@ import java.util.List;
  */
 
 public class RandomSearchRunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws SecurityException
-   * Invoking command:
-  java org.uma.jmetal.runner.multiobjective.RandomSearchRunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    Problem<BinarySolution> problem;
-    Algorithm<List<BinarySolution>> algorithm;
+    /**
+     * @param args Command line arguments.
+     * @throws SecurityException Invoking command:
+     *                           java org.uma.jmetal.runner.multiobjective.RandomSearchRunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        Problem<BinarySolution> problem;
+        Algorithm<List<BinarySolution>> algorithm;
 
-    problem = new OneMax(1024) ;
+        problem = new OneMax(1024);
 
-    algorithm = new RandomSearchBuilder<>(problem)
-            .setMaxEvaluations(25000)
-            .build() ;
+        algorithm = new RandomSearchBuilder<>(problem)
+                .setMaxEvaluations(25000)
+                .build();
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-            .execute() ;
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
 
-    List<BinarySolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
+        List<BinarySolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 
-    JMetalLogger.logger.info("Fitness: " + population.get(0).objectives()[0]) ;
-    JMetalLogger.logger.info("Solution: " + population.get(0).variables().get(0)) ;
-  }
+        JMetalLogger.logger.info("Fitness: " + population.get(0).objectives()[0]);
+        JMetalLogger.logger.info("Solution: " + population.get(0).variables().get(0));
+    }
 }

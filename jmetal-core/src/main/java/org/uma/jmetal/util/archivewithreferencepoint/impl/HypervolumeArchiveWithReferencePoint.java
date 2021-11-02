@@ -31,24 +31,24 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class HypervolumeArchiveWithReferencePoint<S extends Solution<?>> extends ArchiveWithReferencePoint<S> {
-  private Hypervolume hypervolume ;
+    private Hypervolume hypervolume;
 
-  public HypervolumeArchiveWithReferencePoint(int maxSize, List<Double> refPointDM) {
-    super(maxSize, refPointDM, new HypervolumeContributionComparator<>());
+    public HypervolumeArchiveWithReferencePoint(int maxSize, List<Double> refPointDM) {
+        super(maxSize, refPointDM, new HypervolumeContributionComparator<>());
 
-    hypervolume = new PISAHypervolume<>() ;
-  }
-
-  @Override
-  public Comparator<S> getComparator() {
-    return comparator;
-  }
-
-  @Override
-  public void computeDensityEstimator() {
-    if (archive.size() > 3) {
-      hypervolume
-          .computeHypervolumeContribution(archive.getSolutionList(), archive.getSolutionList());
+        hypervolume = new PISAHypervolume<>();
     }
-  }
+
+    @Override
+    public Comparator<S> getComparator() {
+        return comparator;
+    }
+
+    @Override
+    public void computeDensityEstimator() {
+        if (archive.size() > 3) {
+            hypervolume
+                    .computeHypervolumeContribution(archive.getSolutionList(), archive.getSolutionList());
+        }
+    }
 }

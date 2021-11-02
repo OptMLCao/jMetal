@@ -38,48 +38,48 @@ import java.util.List;
  * @author Alejandro Santiago <aurelio.santiago@upalt.edu.mx>
  */
 public class FAMERunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws JMetalException
-   * @throws FileNotFoundException Invoking command: java
-   *     org.uma.jmetal.runner.multiobjective.FAMERunner problemName
-   */
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    Problem<DoubleSolution> problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+    /**
+     * @param args Command line arguments.
+     * @throws JMetalException
+     * @throws FileNotFoundException Invoking command: java
+     *                               org.uma.jmetal.runner.multiobjective.FAMERunner problemName
+     */
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        Problem<DoubleSolution> problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
-    String problemName = null;
-    if (args.length == 0) {
-      problemName = "org.uma.jmetal.problem.multiobjective.glt.GLT1";
-    } else if (args.length == 1) {
-      problemName = args[0];
+        String problemName = null;
+        if (args.length == 0) {
+            problemName = "org.uma.jmetal.problem.multiobjective.glt.GLT1";
+        } else if (args.length == 1) {
+            problemName = args[0];
+        }
+
+        problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
+
+        selection = new SpatialSpreadDeviationSelection<>(5);
+
+        int populationSize = 25;
+        int archiveSize = 200;
+        int maxEvaluations = 45000;
+
+        algorithm =
+                new FAME<>(
+                        problem,
+                        populationSize,
+                        archiveSize,
+                        maxEvaluations,
+                        selection,
+                        new SequentialSolutionListEvaluator<>());
+
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
+
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+
+        printFinalSolutionSet(population);
     }
-
-    problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
-    selection = new SpatialSpreadDeviationSelection<>(5);
-
-    int populationSize = 25;
-    int archiveSize = 200;
-    int maxEvaluations = 45000;
-
-    algorithm =
-        new FAME<>(
-            problem,
-            populationSize,
-            archiveSize,
-            maxEvaluations,
-            selection,
-            new SequentialSolutionListEvaluator<>());
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
-    List<DoubleSolution> population = algorithm.getResult();
-    long computingTime = algorithmRunner.getComputingTime();
-
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    printFinalSolutionSet(population);
-  }
 }

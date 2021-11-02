@@ -10,9 +10,11 @@ import java.util.Map;
  * @author Antonio J. Nebro <ajnebro@uma.es>
  */
 public interface DynamicAlgorithm<Result> extends Algorithm<Result> {
-  DynamicProblem<?, ?> getDynamicProblem() ;
+    DynamicProblem<?, ?> getDynamicProblem();
 
-  void restart();
-  RestartStrategy<?> getRestartStrategy();
-  Observable<Map<String, Object>> getObservable() ;
+    void restart();
+
+    RestartStrategy<?> getRestartStrategy();
+
+    Observable<Map<String, Object>> getObservable();
 }

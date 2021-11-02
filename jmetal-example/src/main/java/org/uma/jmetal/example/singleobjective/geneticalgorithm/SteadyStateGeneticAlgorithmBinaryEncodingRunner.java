@@ -25,51 +25,51 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class SteadyStateGeneticAlgorithmBinaryEncodingRunner {
-  /**
-   * Usage: java org.uma.jmetal.runner.singleobjective.SteadyStateGeneticAlgorithmBinaryEncodingRunner
-   */
-  public static void main(String[] args) throws Exception {
-    BinaryProblem problem;
-    Algorithm<BinarySolution> algorithm;
-    CrossoverOperator<BinarySolution> crossover;
-    MutationOperator<BinarySolution> mutation;
-    SelectionOperator<List<BinarySolution>, BinarySolution> selection;
+    /**
+     * Usage: java org.uma.jmetal.runner.singleobjective.SteadyStateGeneticAlgorithmBinaryEncodingRunner
+     */
+    public static void main(String[] args) throws Exception {
+        BinaryProblem problem;
+        Algorithm<BinarySolution> algorithm;
+        CrossoverOperator<BinarySolution> crossover;
+        MutationOperator<BinarySolution> mutation;
+        SelectionOperator<List<BinarySolution>, BinarySolution> selection;
 
-    problem = new OneMax(1024) ;
+        problem = new OneMax(1024);
 
-    crossover = new SinglePointCrossover(0.9) ;
+        crossover = new SinglePointCrossover(0.9);
 
-    double mutationProbability = 1.0 / problem.getBitsFromVariable(0) ;
-    mutation = new BitFlipMutation(mutationProbability) ;
+        double mutationProbability = 1.0 / problem.getBitsFromVariable(0);
+        mutation = new BitFlipMutation(mutationProbability);
 
-    selection = new BinaryTournamentSelection<BinarySolution>();
+        selection = new BinaryTournamentSelection<BinarySolution>();
 
-    algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation)
-        .setPopulationSize(50)
-        .setMaxEvaluations(25000)
-        .setSelectionOperator(selection)
-        .setVariant(GeneticAlgorithmBuilder.GeneticAlgorithmVariant.STEADY_STATE)
-        .build() ;
+        algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation)
+                .setPopulationSize(50)
+                .setMaxEvaluations(25000)
+                .setSelectionOperator(selection)
+                .setVariant(GeneticAlgorithmBuilder.GeneticAlgorithmVariant.STEADY_STATE)
+                .build();
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
 
-    long computingTime = algorithmRunner.getComputingTime() ;
+        long computingTime = algorithmRunner.getComputingTime();
 
-    BinarySolution solution = algorithm.getResult() ;
-    List<BinarySolution> population = new ArrayList<>(1) ;
-    population.add(solution) ;
+        BinarySolution solution = algorithm.getResult();
+        List<BinarySolution> population = new ArrayList<>(1);
+        population.add(solution);
 
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-            .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
+                .print();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
 
-    JMetalLogger.logger.info("Fitness: " + solution.objectives()[0]) ;
-    JMetalLogger.logger.info("Solution: " + solution.variables().get(0)) ;
-  }
+        JMetalLogger.logger.info("Fitness: " + solution.objectives()[0]);
+        JMetalLogger.logger.info("Solution: " + solution.variables().get(0));
+    }
 }

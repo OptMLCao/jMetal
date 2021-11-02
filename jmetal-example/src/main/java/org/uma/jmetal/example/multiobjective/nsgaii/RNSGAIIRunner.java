@@ -42,46 +42,45 @@ import java.util.List;
  * @author Cristobal Barba <cbarba@lcc.uma.es>
  */
 public class RNSGAIIRunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws JMetalException
-   * @throws FileNotFoundException
-   * Invoking command:
-    java org.uma.jmetal.runner.multiobjective.nsgaii.RNSGAIIRunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws JMetalException, IOException {
-    Problem<DoubleSolution> problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
-    String referenceParetoFront = "" ;
+    /**
+     * @param args Command line arguments.
+     * @throws JMetalException
+     * @throws FileNotFoundException Invoking command:
+     *                               java org.uma.jmetal.runner.multiobjective.nsgaii.RNSGAIIRunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws JMetalException, IOException {
+        Problem<DoubleSolution> problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+        String referenceParetoFront = "";
 
-    String problemName ;
-    if (args.length == 1) {
-      problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
-    } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv" ;
-    }
+        String problemName;
+        if (args.length == 1) {
+            problemName = args[0];
+        } else if (args.length == 2) {
+            problemName = args[0];
+            referenceParetoFront = args[1];
+        } else {
+            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+            referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+        }
 
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
+        problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    double crossoverProbability = 0.9 ;
-    double crossoverDistributionIndex = 20.0 ;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    selection = new BinaryTournamentSelection<DoubleSolution>(
-        new RankingAndCrowdingDistanceComparator<DoubleSolution>());
+        selection = new BinaryTournamentSelection<DoubleSolution>(
+                new RankingAndCrowdingDistanceComparator<DoubleSolution>());
 
-    List<Double> referencePoint = new ArrayList<>() ;
+        List<Double> referencePoint = new ArrayList<>();
 
     /*referencePoint.add(0.0) ;
     referencePoint.add(1.0) ;
@@ -93,26 +92,26 @@ public class RNSGAIIRunner extends AbstractAlgorithmRunner {
     referencePoint.add(0.8) ;
     referencePoint.add(0.8) ;
     referencePoint.add(0.2) ;*/
-    //Example fig 2 paper Deb
+        //Example fig 2 paper Deb
   /*  referencePoint.add(0.2) ;
     referencePoint.add(0.4) ;
     referencePoint.add(0.8) ;
     referencePoint.add(0.4) ;*/
-    //Example fig 3 paper Deb
-    referencePoint.add(0.1) ;
-    referencePoint.add(0.6) ;
+        //Example fig 3 paper Deb
+        referencePoint.add(0.1);
+        referencePoint.add(0.6);
 
-    referencePoint.add(0.3) ;
-    referencePoint.add(0.6) ;
+        referencePoint.add(0.3);
+        referencePoint.add(0.6);
 
-    referencePoint.add(0.5) ;
-    referencePoint.add(0.2) ;
+        referencePoint.add(0.5);
+        referencePoint.add(0.2);
 
-    referencePoint.add(0.7) ;
-    referencePoint.add(0.2) ;
+        referencePoint.add(0.7);
+        referencePoint.add(0.2);
 
-    referencePoint.add(0.9) ;
-    referencePoint.add(0.0) ;
+        referencePoint.add(0.9);
+        referencePoint.add(0.0);
     /*referencePoint.add(0.1) ;
     referencePoint.add(1.0) ;
     referencePoint.add(1.0) ;
@@ -122,37 +121,37 @@ public class RNSGAIIRunner extends AbstractAlgorithmRunner {
     referencePoint.add(0.8);
     referencePoint.add(0.8) ;
     referencePoint.add(0.6) ;*/
-    //referencePoint.add(0.0) ;
-    //referencePoint.add(1.0);
+        //referencePoint.add(0.0) ;
+        //referencePoint.add(1.0);
 
-    //referencePoint.add(1.0) ;
-    //referencePoint.add(0.6);
-    //referencePoint.add(0.4) ;
-    //referencePoint.add(0.8);
+        //referencePoint.add(1.0) ;
+        //referencePoint.add(0.6);
+        //referencePoint.add(0.4) ;
+        //referencePoint.add(0.8);
 
-    double epsilon= 0.0045;
+        double epsilon = 0.0045;
 
-    algorithm = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint, epsilon)
-        .setSelectionOperator(selection)
-        .setMaxEvaluations(25000)
-        .setPopulationSize(100)
-        .build() ;
+        algorithm = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint, epsilon)
+                .setSelectionOperator(selection)
+                .setMaxEvaluations(25000)
+                .setPopulationSize(100)
+                .build();
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
 
-    List<DoubleSolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
+        printFinalSolutionSet(population);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
+
+        QualityIndicatorUtils.printQualityIndicators(
+                SolutionListUtils.getMatrixWithObjectiveValues(population),
+                VectorUtils.readVectors(referenceParetoFront, ","));
     }
-
-    QualityIndicatorUtils.printQualityIndicators(
-            SolutionListUtils.getMatrixWithObjectiveValues(population),
-            VectorUtils.readVectors(referenceParetoFront, ","));
-  }
 }

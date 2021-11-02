@@ -22,25 +22,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class GenerationalGeneticAlgorithmTestIT {
 
-  @Test
-  public void shouldTheAlgorithmReturnTheCorrectSolutionWhenSolvingProblemOneMax() {
-    int NUMBER_OF_BITS = 512 ;
-    Algorithm<BinarySolution> algorithm;
-    BinaryProblem problem = new OneMax(NUMBER_OF_BITS) ;
+    @Test
+    public void shouldTheAlgorithmReturnTheCorrectSolutionWhenSolvingProblemOneMax() {
+        int NUMBER_OF_BITS = 512;
+        Algorithm<BinarySolution> algorithm;
+        BinaryProblem problem = new OneMax(NUMBER_OF_BITS);
 
-    CrossoverOperator<BinarySolution> crossoverOperator = new SinglePointCrossover(0.9) ;
-    MutationOperator<BinarySolution> mutationOperator = new BitFlipMutation(1.0 / problem.getBitsFromVariable(0)) ;
-    SelectionOperator<List<BinarySolution>, BinarySolution> selectionOperator = new BinaryTournamentSelection<BinarySolution>();
+        CrossoverOperator<BinarySolution> crossoverOperator = new SinglePointCrossover(0.9);
+        MutationOperator<BinarySolution> mutationOperator = new BitFlipMutation(1.0 / problem.getBitsFromVariable(0));
+        SelectionOperator<List<BinarySolution>, BinarySolution> selectionOperator = new BinaryTournamentSelection<BinarySolution>();
 
-    algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossoverOperator, mutationOperator)
-            .setPopulationSize(50)
-            .setMaxEvaluations(50000)
-            .setSelectionOperator(selectionOperator)
-            .build() ;
+        algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossoverOperator, mutationOperator)
+                .setPopulationSize(50)
+                .setMaxEvaluations(50000)
+                .setSelectionOperator(selectionOperator)
+                .build();
 
-    algorithm.run();
+        algorithm.run();
 
-    BinarySolution solution = algorithm.getResult() ;
-    assertEquals(NUMBER_OF_BITS, -1 * (int)solution.objectives()[0]) ;
-  }
+        BinarySolution solution = algorithm.getResult();
+        assertEquals(NUMBER_OF_BITS, -1 * (int) solution.objectives()[0]);
+    }
 }

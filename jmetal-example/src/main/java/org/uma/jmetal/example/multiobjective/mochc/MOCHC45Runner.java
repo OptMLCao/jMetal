@@ -27,43 +27,43 @@ import java.util.List;
  * evolutionary computation. London, England. July 2007.
  */
 public class MOCHC45Runner extends AbstractAlgorithmRunner {
-  public static void main(String[] args) throws Exception {
-    CrossoverOperator<BinarySolution> crossoverOperator;
-    MutationOperator<BinarySolution> mutationOperator;
-    SelectionOperator<List<BinarySolution>, BinarySolution> parentsSelection;
-    SelectionOperator<List<BinarySolution>, List<BinarySolution>> newGenerationSelection;
-    Algorithm<List<BinarySolution>> algorithm ;
+    public static void main(String[] args) throws Exception {
+        CrossoverOperator<BinarySolution> crossoverOperator;
+        MutationOperator<BinarySolution> mutationOperator;
+        SelectionOperator<List<BinarySolution>, BinarySolution> parentsSelection;
+        SelectionOperator<List<BinarySolution>, List<BinarySolution>> newGenerationSelection;
+        Algorithm<List<BinarySolution>> algorithm;
 
-    BinaryProblem problem ;
+        BinaryProblem problem;
 
-    String problemName ;
-    if (args.length == 1) {
-      problemName = args[0] ;
-    } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT5";
+        String problemName;
+        if (args.length == 1) {
+            problemName = args[0];
+        } else {
+            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT5";
+        }
+
+        problem = (BinaryProblem) ProblemUtils.<BinarySolution>loadProblem(problemName);
+
+        crossoverOperator = new HUXCrossover(1.0);
+        parentsSelection = new RandomSelection<BinarySolution>();
+        newGenerationSelection = new RankingAndCrowdingSelection<BinarySolution>(100);
+        mutationOperator = new BitFlipMutation(0.35);
+
+        algorithm = new MOCHC45(problem, 100, 25000, 3, 0.05, 0.25, crossoverOperator, mutationOperator,
+                newGenerationSelection, parentsSelection, new SequentialSolutionListEvaluator<BinarySolution>());
+
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
+
+        List<BinarySolution> population = (algorithm).getResult();
+        long computingTime = algorithmRunner.getComputingTime();
+
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+
+        printFinalSolutionSet(population);
+        //if (!referenceParetoFront.equals("")) {
+        //  printQualityIndicators(population, referenceParetoFront) ;
+        //}
     }
-
-    problem = (BinaryProblem) ProblemUtils.<BinarySolution> loadProblem(problemName);
-
-    crossoverOperator = new HUXCrossover(1.0) ;
-    parentsSelection = new RandomSelection<BinarySolution>() ;
-    newGenerationSelection = new RankingAndCrowdingSelection<BinarySolution>(100) ;
-    mutationOperator = new BitFlipMutation(0.35) ;
-
-    algorithm = new MOCHC45(problem, 100, 25000, 3, 0.05, 0.25, crossoverOperator, mutationOperator,
-        newGenerationSelection, parentsSelection, new SequentialSolutionListEvaluator<BinarySolution>()) ;
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
-
-    List<BinarySolution> population = (algorithm).getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
-
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    printFinalSolutionSet(population);
-    //if (!referenceParetoFront.equals("")) {
-    //  printQualityIndicators(population, referenceParetoFront) ;
-    //}
-  }
 }

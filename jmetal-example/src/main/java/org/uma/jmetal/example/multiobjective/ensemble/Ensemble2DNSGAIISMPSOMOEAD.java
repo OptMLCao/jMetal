@@ -2,7 +2,9 @@ package org.uma.jmetal.example.multiobjective.ensemble;
 
 import org.uma.jmetal.util.AbstractAlgorithmRunner;
 
-/** @author Antonio J. Nebro <antonio@lcc.uma.es> */
+/**
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ */
 public class Ensemble2DNSGAIISMPSOMOEAD extends AbstractAlgorithmRunner {
 /*
   public static void main(String[] args) throws Exception {

@@ -22,63 +22,62 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class GDE3BigDataRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws SecurityException
-   * Invoking command:
-   mvn
-    -pl jmetal-exec
-    exec:java -Dexec.mainClass="org.uma.jmetal.runner.multiobjective.GDE3BigDataRunner"
-    -Dexec.args="[problemName]"
-   */
-  public static void main(String[] args) {
-    DoubleProblem problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    DifferentialEvolutionSelection selection;
-    DifferentialEvolutionCrossover crossover;
-
-    String instanceName ;
-
-    if (args.length == 1) {
-      instanceName = args[0] ;
-    } else {
-      instanceName = "D12" ;
-    }
-
-    problem = new BigOpt2015(instanceName) ;
-
-     /*
-     * Alternatives:
-     * - evaluator = new SequentialSolutionSetEvaluator()
-     * - evaluator = new MultithreadedSolutionSetEvaluator(threads, problem)
+    /**
+     * @param args Command line arguments.
+     * @throws SecurityException Invoking command:
+     *                           mvn
+     *                           -pl jmetal-exec
+     *                           exec:java -Dexec.mainClass="org.uma.jmetal.runner.multiobjective.GDE3BigDataRunner"
+     *                           -Dexec.args="[problemName]"
      */
+    public static void main(String[] args) {
+        DoubleProblem problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        DifferentialEvolutionSelection selection;
+        DifferentialEvolutionCrossover crossover;
 
-    double cr = 1.5 ;
-    double f = 0.5 ;
-    crossover = new DifferentialEvolutionCrossover(cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN) ;
+        String instanceName;
 
-    selection = new DifferentialEvolutionSelection() ;
+        if (args.length == 1) {
+            instanceName = args[0];
+        } else {
+            instanceName = "D12";
+        }
 
-    algorithm = new GDE3Builder(problem)
-      .setCrossover(crossover)
-      .setSelection(selection)
-      .setMaxEvaluations(250000)
-      .setPopulationSize(100)
-      .build() ;
+        problem = new BigOpt2015(instanceName);
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-      .execute() ;
+        /*
+         * Alternatives:
+         * - evaluator = new SequentialSolutionSetEvaluator()
+         * - evaluator = new MultithreadedSolutionSetEvaluator(threads, problem)
+         */
 
-    List<DoubleSolution> population = ((GDE3)algorithm).getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
+        double cr = 1.5;
+        double f = 0.5;
+        crossover = new DifferentialEvolutionCrossover(cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    new SolutionListOutput(population)
-      .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-      .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-      .print();
+        selection = new DifferentialEvolutionSelection();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
-  }
+        algorithm = new GDE3Builder(problem)
+                .setCrossover(crossover)
+                .setSelection(selection)
+                .setMaxEvaluations(250000)
+                .setPopulationSize(100)
+                .build();
+
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
+
+        List<DoubleSolution> population = ((GDE3) algorithm).getResult();
+        long computingTime = algorithmRunner.getComputingTime();
+
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
+                .print();
+
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
+    }
 }

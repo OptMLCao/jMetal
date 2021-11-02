@@ -26,48 +26,48 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class GenerationalGeneticAlgorithmTSPRunner {
-  /**
-   * Usage: java org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
-   */
-  public static void main(String[] args) throws Exception {
-    PermutationProblem<PermutationSolution<Integer>> problem;
-    Algorithm<PermutationSolution<Integer>> algorithm;
-    CrossoverOperator<PermutationSolution<Integer>> crossover;
-    MutationOperator<PermutationSolution<Integer>> mutation;
-    SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
+    /**
+     * Usage: java org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
+     */
+    public static void main(String[] args) throws Exception {
+        PermutationProblem<PermutationSolution<Integer>> problem;
+        Algorithm<PermutationSolution<Integer>> algorithm;
+        CrossoverOperator<PermutationSolution<Integer>> crossover;
+        MutationOperator<PermutationSolution<Integer>> mutation;
+        SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
 
-    problem = new TSP("resources/tspInstances/kroA100.tsp");
+        problem = new TSP("resources/tspInstances/kroA100.tsp");
 
-    crossover = new PMXCrossover(0.9) ;
+        crossover = new PMXCrossover(0.9);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
-    selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
+        selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
-    algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation)
-            .setPopulationSize(100)
-            .setMaxEvaluations(250000)
-            .setSelectionOperator(selection)
-            .build() ;
+        algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation)
+                .setPopulationSize(100)
+                .setMaxEvaluations(250000)
+                .setSelectionOperator(selection)
+                .build();
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-            .execute() ;
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
 
-    PermutationSolution<Integer> solution = algorithm.getResult() ;
-    List<PermutationSolution<Integer>> population = new ArrayList<>(1) ;
-    population.add(solution) ;
+        PermutationSolution<Integer> solution = algorithm.getResult();
+        List<PermutationSolution<Integer>> population = new ArrayList<>(1);
+        population.add(solution);
 
-    long computingTime = algorithmRunner.getComputingTime() ;
+        long computingTime = algorithmRunner.getComputingTime();
 
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-            .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
+                .print();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
 
-  }
+    }
 }

@@ -13,41 +13,42 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  */
 @SuppressWarnings("serial")
 public class C3_DTLZ1 extends DTLZ1 {
-  /**
-   * Constructor
-   * @param numberOfVariables
-   * @param numberOfObjectives
-   */
-  public C3_DTLZ1(int numberOfVariables, int numberOfObjectives, int numberOfConstraints) {
-    super(numberOfVariables, numberOfObjectives) ;
+    /**
+     * Constructor
+     *
+     * @param numberOfVariables
+     * @param numberOfObjectives
+     */
+    public C3_DTLZ1(int numberOfVariables, int numberOfObjectives, int numberOfConstraints) {
+        super(numberOfVariables, numberOfObjectives);
 
-    setNumberOfConstraints(numberOfConstraints);
-  }
+        setNumberOfConstraints(numberOfConstraints);
+    }
 
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    super.evaluate(solution);
-    this.evaluateConstraints(solution);
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        super.evaluate(solution);
+        this.evaluateConstraints(solution);
 
-    return solution ;
-  }
+        return solution;
+    }
 
-  public void evaluateConstraints(DoubleSolution solution) {
-    double[] constraint = new double[this.getNumberOfConstraints()];
+    public void evaluateConstraints(DoubleSolution solution) {
+        double[] constraint = new double[this.getNumberOfConstraints()];
 
-    for (int j = 0; j < getNumberOfConstraints(); j++) {
-      double sum = 0 ;
-      constraint[j] = 0.0 ;
-      for (int i = 0; i < solution.objectives().length; i++) {
-        if (i != j) {
-          sum += solution.objectives()[j] ;
+        for (int j = 0; j < getNumberOfConstraints(); j++) {
+            double sum = 0;
+            constraint[j] = 0.0;
+            for (int i = 0; i < solution.objectives().length; i++) {
+                if (i != j) {
+                    sum += solution.objectives()[j];
+                }
+                constraint[j] += sum + solution.objectives()[i] / 0.5 - 1.0;
+            }
         }
-        constraint[j]+= sum + solution.objectives()[i]/0.5 - 1.0 ;
-      }
-    }
 
-    for (int i = 0; i < getNumberOfConstraints(); i++) {
-      solution.constraints()[i] = constraint[i];
+        for (int i = 0; i < getNumberOfConstraints(); i++) {
+            solution.constraints()[i] = constraint[i];
+        }
     }
-  }
 }

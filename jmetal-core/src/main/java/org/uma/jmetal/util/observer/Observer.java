@@ -10,5 +10,5 @@ import org.uma.jmetal.util.observable.Observable;
  */
 @FunctionalInterface
 public interface Observer<D> {
-	void update(Observable<D> observable, D data) ;
+    void update(Observable<D> observable, D data);
 }

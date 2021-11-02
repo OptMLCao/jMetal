@@ -29,48 +29,48 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class SMPSOWithUnboundedNonDominatedArchiveExample extends AbstractAlgorithmRunner {
-  public static void main(String[] args) throws Exception {
-    DoubleProblem problem;
-    SMPSOWithArchive algorithm;
-    MutationOperator<DoubleSolution> mutation;
+    public static void main(String[] args) throws Exception {
+        DoubleProblem problem;
+        SMPSOWithArchive algorithm;
+        MutationOperator<DoubleSolution> mutation;
 
-    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ";
-    String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ2.3D.csv" ;
+        String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ";
+        String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ2.3D.csv";
 
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
+        problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    int swarmSize = 100 ;
-    BoundedArchive<DoubleSolution> leadersArchive = new CrowdingDistanceArchive<DoubleSolution>(swarmSize) ;
+        int swarmSize = 100;
+        BoundedArchive<DoubleSolution> leadersArchive = new CrowdingDistanceArchive<DoubleSolution>(swarmSize);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem) ;
-    Termination termination = new TerminationByEvaluations(50000) ;
+        Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem);
+        Termination termination = new TerminationByEvaluations(50000);
 
-    Archive<DoubleSolution> externalArchive = new NonDominatedSolutionListArchive<>() ;
+        Archive<DoubleSolution> externalArchive = new NonDominatedSolutionListArchive<>();
 
-    algorithm = new SMPSOWithArchive(problem, swarmSize, leadersArchive, mutation, evaluation, termination, externalArchive) ;
+        algorithm = new SMPSOWithArchive(problem, swarmSize, leadersArchive, mutation, evaluation, termination, externalArchive);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = SolutionListUtils.distanceBasedSubsetSelection(algorithm.getResult(), 100);
+        List<DoubleSolution> population = SolutionListUtils.distanceBasedSubsetSelection(algorithm.getResult(), 100);
 
-    JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
+        JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
+        JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
 
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv"))
-            .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv"))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv"))
+                .print();
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
 
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-  }
 }

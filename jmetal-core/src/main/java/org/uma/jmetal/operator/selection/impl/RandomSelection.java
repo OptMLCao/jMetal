@@ -14,13 +14,15 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class RandomSelection<S> implements SelectionOperator<List<S>, S> {
 
-  /** Execute() method */
-  public S execute(List<S> solutionList) {
-    Check.notNull(solutionList);
-    Check.collectionIsNotEmpty(solutionList);
+    /**
+     * Execute() method
+     */
+    public S execute(List<S> solutionList) {
+        Check.notNull(solutionList);
+        Check.collectionIsNotEmpty(solutionList);
 
-    List<S> list = SolutionListUtils.selectNRandomDifferentSolutions(1, solutionList);
+        List<S> list = SolutionListUtils.selectNRandomDifferentSolutions(1, solutionList);
 
-    return list.get(0) ;
-  }
+        return list.get(0);
+    }
 }

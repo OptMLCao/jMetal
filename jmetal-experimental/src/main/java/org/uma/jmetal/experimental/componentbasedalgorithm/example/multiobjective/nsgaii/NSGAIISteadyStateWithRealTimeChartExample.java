@@ -24,43 +24,43 @@ import java.io.FileNotFoundException;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class NSGAIISteadyStateWithRealTimeChartExample extends AbstractAlgorithmRunner {
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    Problem<DoubleSolution> problem;
-    NSGAII<DoubleSolution> algorithm;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        Problem<DoubleSolution> problem;
+        NSGAII<DoubleSolution> algorithm;
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
 
-    String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-    String referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+        String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+        String referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
 
-    problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
+        problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    int populationSize = 100;
-    int offspringPopulationSize = 1;
+        int populationSize = 100;
+        int offspringPopulationSize = 1;
 
-    Termination termination = new TerminationByEvaluations(25000);
+        Termination termination = new TerminationByEvaluations(25000);
 
-    algorithm =
-        new NSGAII<>(
-            problem, populationSize, offspringPopulationSize, crossover, mutation, termination);
+        algorithm =
+                new NSGAII<>(
+                        problem, populationSize, offspringPopulationSize, crossover, mutation, termination);
 
-    EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>("NSGA-II", 80, 500, referenceParetoFront);
+        EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
+        RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
+                new RunTimeChartObserver<>("NSGA-II", 80, 500, referenceParetoFront);
 
-    algorithm.getObservable().register(evaluationObserver);
-    algorithm.getObservable().register(runTimeChartObserver);
+        algorithm.getObservable().register(evaluationObserver);
+        algorithm.getObservable().register(runTimeChartObserver);
 
-    algorithm.run();
+        algorithm.run();
 
-    System.exit(0);
-  }
+        System.exit(0);
+    }
 }

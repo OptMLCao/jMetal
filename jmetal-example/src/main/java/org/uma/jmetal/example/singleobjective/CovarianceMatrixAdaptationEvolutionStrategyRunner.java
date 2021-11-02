@@ -14,36 +14,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *
  */
 public class CovarianceMatrixAdaptationEvolutionStrategyRunner {
-  /**
-   */
-  public static void main(String[] args) throws Exception {
+    /**
+     *
+     */
+    public static void main(String[] args) throws Exception {
 
-    Algorithm<DoubleSolution> algorithm;
-    DoubleProblem problem = new Sphere() ;
+        Algorithm<DoubleSolution> algorithm;
+        DoubleProblem problem = new Sphere();
 
-    algorithm = new CovarianceMatrixAdaptationEvolutionStrategy.Builder(problem)
-            .build() ;
+        algorithm = new CovarianceMatrixAdaptationEvolutionStrategy.Builder(problem)
+                .build();
 
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-            .execute() ;
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
 
-    DoubleSolution solution = algorithm.getResult() ;
-    List<DoubleSolution> population = new ArrayList<>(1) ;
-    population.add(solution) ;
+        DoubleSolution solution = algorithm.getResult();
+        List<DoubleSolution> population = new ArrayList<>(1);
+        population.add(solution);
 
-    long computingTime = algorithmRunner.getComputingTime() ;
+        long computingTime = algorithmRunner.getComputingTime();
 
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-            .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
+                .print();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
 
-  }
+    }
 }

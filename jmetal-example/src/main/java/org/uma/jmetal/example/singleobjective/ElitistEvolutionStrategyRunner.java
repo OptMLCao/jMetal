@@ -22,39 +22,39 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class ElitistEvolutionStrategyRunner {
-  /**
-   * Usage: java org.uma.jmetal.runner.singleobjective.ElitistEvolutionStrategyRunner
-   */
-  public static void main(String[] args) throws Exception {
-    Algorithm<BinarySolution> algorithm;
-    BinaryProblem problem = new OneMax(512) ;
+    /**
+     * Usage: java org.uma.jmetal.runner.singleobjective.ElitistEvolutionStrategyRunner
+     */
+    public static void main(String[] args) throws Exception {
+        Algorithm<BinarySolution> algorithm;
+        BinaryProblem problem = new OneMax(512);
 
-    MutationOperator<BinarySolution> mutationOperator =
-        new BitFlipMutation(1.0 / problem.getBitsFromVariable(0)) ;
+        MutationOperator<BinarySolution> mutationOperator =
+                new BitFlipMutation(1.0 / problem.getBitsFromVariable(0));
 
-    algorithm = new EvolutionStrategyBuilder<BinarySolution>(problem, mutationOperator,
-        EvolutionStrategyBuilder.EvolutionStrategyVariant.ELITIST)
-        .setMaxEvaluations(25000)
-        .setMu(1)
-        .setLambda(10)
-        .build() ;
+        algorithm = new EvolutionStrategyBuilder<BinarySolution>(problem, mutationOperator,
+                EvolutionStrategyBuilder.EvolutionStrategyVariant.ELITIST)
+                .setMaxEvaluations(25000)
+                .setMu(1)
+                .setLambda(10)
+                .build();
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+                .execute();
 
-    BinarySolution solution = algorithm.getResult() ;
-    List<BinarySolution> population = new ArrayList<>(1) ;
-    population.add(solution) ;
+        BinarySolution solution = algorithm.getResult();
+        List<BinarySolution> population = new ArrayList<>(1);
+        population.add(solution);
 
-    long computingTime = algorithmRunner.getComputingTime() ;
+        long computingTime = algorithmRunner.getComputingTime();
 
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-        .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
+                .print();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
-  }
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
+    }
 }

@@ -17,46 +17,48 @@ import java.util.List;
 @SuppressWarnings("serial")
 @Deprecated
 public abstract class GenericIndicator<S>
-    extends SimpleDescribedEntity
-    implements QualityIndicator<List<S>, Double> {
+        extends SimpleDescribedEntity
+        implements QualityIndicator<List<S>, Double> {
 
-  protected Front referenceParetoFront = null ;
-  /**
-   * Default constructor
-   */
-  public GenericIndicator() {
-  }
+    protected Front referenceParetoFront = null;
 
-  public GenericIndicator(String referenceParetoFrontFile) throws FileNotFoundException {
-    setReferenceParetoFront(referenceParetoFrontFile);
-  }
+    /**
+     * Default constructor
+     */
+    public GenericIndicator() {
+    }
 
-  public GenericIndicator(Front referenceParetoFront) {
-   Check.notNull(referenceParetoFront);
+    public GenericIndicator(String referenceParetoFrontFile) throws FileNotFoundException {
+        setReferenceParetoFront(referenceParetoFrontFile);
+    }
 
-    this.referenceParetoFront = referenceParetoFront ;
-  }
+    public GenericIndicator(Front referenceParetoFront) {
+        Check.notNull(referenceParetoFront);
 
-  public void setReferenceParetoFront(String referenceParetoFrontFile) throws FileNotFoundException {
-    Check.notNull(referenceParetoFrontFile);
+        this.referenceParetoFront = referenceParetoFront;
+    }
 
-    Front front = new ArrayFront(referenceParetoFrontFile);
-    referenceParetoFront = front ;
-  }
+    public void setReferenceParetoFront(String referenceParetoFrontFile) throws FileNotFoundException {
+        Check.notNull(referenceParetoFrontFile);
 
-  public void setReferenceParetoFront(Front referenceFront) {
-    Check.notNull(referenceFront);
+        Front front = new ArrayFront(referenceParetoFrontFile);
+        referenceParetoFront = front;
+    }
 
-    referenceParetoFront = referenceFront ;
-  }
+    public void setReferenceParetoFront(Front referenceFront) {
+        Check.notNull(referenceFront);
 
-  /**
-   * This method returns true if lower indicator values are preferred and false otherwise
-   * @return
-   */
-  public abstract boolean isTheLowerTheIndicatorValueTheBetter() ;
+        referenceParetoFront = referenceFront;
+    }
 
-  public Front getReferenceParetoFront() {
-    return referenceParetoFront ;
-  }
+    /**
+     * This method returns true if lower indicator values are preferred and false otherwise
+     *
+     * @return
+     */
+    public abstract boolean isTheLowerTheIndicatorValueTheBetter();
+
+    public Front getReferenceParetoFront() {
+        return referenceParetoFront;
+    }
 }

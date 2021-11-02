@@ -9,49 +9,49 @@ import java.io.Serializable;
  */
 @SuppressWarnings("serial")
 public class JMetalRandom implements Serializable {
-  private static JMetalRandom instance ;
-  private PseudoRandomGenerator randomGenerator ;
+    private static JMetalRandom instance;
+    private PseudoRandomGenerator randomGenerator;
 
-  private JMetalRandom() {
-    randomGenerator = new JavaRandomGenerator() ;
-  }
-
-  public static JMetalRandom getInstance() {
-    if (instance == null) {
-      instance = new JMetalRandom() ;
+    private JMetalRandom() {
+        randomGenerator = new JavaRandomGenerator();
     }
-    return instance ;
-  }
 
-  public void setRandomGenerator(PseudoRandomGenerator randomGenerator) {
-    this.randomGenerator = randomGenerator;
-  }
+    public static JMetalRandom getInstance() {
+        if (instance == null) {
+            instance = new JMetalRandom();
+        }
+        return instance;
+    }
 
-  public PseudoRandomGenerator getRandomGenerator() {
-    return randomGenerator ;
-  }
+    public void setRandomGenerator(PseudoRandomGenerator randomGenerator) {
+        this.randomGenerator = randomGenerator;
+    }
 
-  public int nextInt(int lowerBound, int upperBound) {
-    return randomGenerator.nextInt(lowerBound, upperBound) ;
-  }
+    public PseudoRandomGenerator getRandomGenerator() {
+        return randomGenerator;
+    }
 
-  public double nextDouble() {
-    return randomGenerator.nextDouble() ;
-  }
+    public int nextInt(int lowerBound, int upperBound) {
+        return randomGenerator.nextInt(lowerBound, upperBound);
+    }
 
-  public double nextDouble(double lowerBound, double upperBound) {
-    return randomGenerator.nextDouble(lowerBound, upperBound) ;
-  }
+    public double nextDouble() {
+        return randomGenerator.nextDouble();
+    }
 
-  public void setSeed(long seed) {
-    randomGenerator.setSeed(seed);
-  }
+    public double nextDouble(double lowerBound, double upperBound) {
+        return randomGenerator.nextDouble(lowerBound, upperBound);
+    }
 
-  public long getSeed() {
-    return randomGenerator.getSeed() ;
-  }
+    public void setSeed(long seed) {
+        randomGenerator.setSeed(seed);
+    }
 
-  public String getGeneratorName() {
-    return randomGenerator.getName() ;
-  }
+    public long getSeed() {
+        return randomGenerator.getSeed();
+    }
+
+    public String getGeneratorName() {
+        return randomGenerator.getName();
+    }
 }

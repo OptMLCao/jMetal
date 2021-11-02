@@ -21,61 +21,61 @@ import static org.junit.Assert.assertTrue;
 
 public class MicroFAMEIT {
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() {
-    Problem<DoubleSolution> problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+    @Test
+    public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() {
+        Problem<DoubleSolution> problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
-    int archiveSize = 100;
-    int evaluations = 25000;
+        int archiveSize = 100;
+        int evaluations = 25000;
 
-    problem = new ZDT1();
+        problem = new ZDT1();
 
-    var crossover = new NullCrossover<DoubleSolution>();
-    var mutation = new NullMutation<DoubleSolution>();
-    selection = new HVTournamentSelection(5);
-    algorithm = new MicroFAME<>(problem, evaluations, archiveSize, crossover, mutation, selection);
+        var crossover = new NullCrossover<DoubleSolution>();
+        var mutation = new NullMutation<DoubleSolution>();
+        selection = new HVTournamentSelection(5);
+        algorithm = new MicroFAME<>(problem, evaluations, archiveSize, crossover, mutation, selection);
 
-    algorithm.run();
+        algorithm.run();
 
     /*
     Rationale: the default problem is ZDT1, and MicroFAME, configured with standard settings, should
     return 100 solutions
     */
-    assertTrue(algorithm.getResult().size() >= 98);
-    JMetalRandom.getInstance().setSeed(System.currentTimeMillis());
-  }
+        assertTrue(algorithm.getResult().size() >= 98);
+        JMetalRandom.getInstance().setSeed(System.currentTimeMillis());
+    }
 
-  @Test
-  public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
-    Problem<DoubleSolution> problem;
-    Algorithm<List<DoubleSolution>> algorithm;
-    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
+    @Test
+    public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
+        Problem<DoubleSolution> problem;
+        Algorithm<List<DoubleSolution>> algorithm;
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
-    int archiveSize = 100;
-    int evaluations = 25000;
+        int archiveSize = 100;
+        int evaluations = 25000;
 
-    problem = new ZDT1();
+        problem = new ZDT1();
 
-    var crossover = new NullCrossover<DoubleSolution>();
-    var mutation = new NullMutation<DoubleSolution>();
-    selection = new HVTournamentSelection(5);
-    algorithm = new MicroFAME<>(problem, evaluations, archiveSize, crossover, mutation, selection);
+        var crossover = new NullCrossover<DoubleSolution>();
+        var mutation = new NullMutation<DoubleSolution>();
+        selection = new HVTournamentSelection(5);
+        algorithm = new MicroFAME<>(problem, evaluations, archiveSize, crossover, mutation, selection);
 
-    algorithm.run();
+        algorithm.run();
 
-    QualityIndicator hypervolume =
-            new PISAHypervolume(
-                    VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
+        QualityIndicator hypervolume =
+                new PISAHypervolume(
+                        VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
 
-    // Rationale: the default problem is ZDT1, and AbYSS, configured with standard settings,
-    // should return find a front with a hypervolume value higher than 0.22
+        // Rationale: the default problem is ZDT1, and AbYSS, configured with standard settings,
+        // should return find a front with a hypervolume value higher than 0.22
 
-    double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(algorithm.getResult()));
+        double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(algorithm.getResult()));
 
-    assertTrue(hv > 0.65);
+        assertTrue(hv > 0.65);
 
-    JMetalRandom.getInstance().setSeed(System.currentTimeMillis());
-  }
+        JMetalRandom.getInstance().setSeed(System.currentTimeMillis());
+    }
 }

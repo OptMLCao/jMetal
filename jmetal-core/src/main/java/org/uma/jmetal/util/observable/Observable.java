@@ -10,14 +10,19 @@ import java.util.Collection;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public interface Observable<D> {
-	void register(Observer<D> observer) ;
-	void unregister(Observer<D> observer) ;
+    void register(Observer<D> observer);
 
-	void notifyObservers(D data);
-	int numberOfRegisteredObservers() ;
-	void setChanged() ;
-	boolean hasChanged() ;
-	void clearChanged() ;
+    void unregister(Observer<D> observer);
 
-	Collection<Observer<D>> getObservers() ;
+    void notifyObservers(D data);
+
+    int numberOfRegisteredObservers();
+
+    void setChanged();
+
+    boolean hasChanged();
+
+    void clearChanged();
+
+    Collection<Observer<D>> getObservers();
 }

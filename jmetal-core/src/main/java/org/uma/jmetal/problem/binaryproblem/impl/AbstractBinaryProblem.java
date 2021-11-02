@@ -11,25 +11,25 @@ import java.util.List;
 public abstract class AbstractBinaryProblem extends AbstractGenericProblem<BinarySolution>
         implements BinaryProblem {
 
-  public abstract List<Integer> getListOfBitsPerVariable();
+    public abstract List<Integer> getListOfBitsPerVariable();
 
-  @Override
-  public int getBitsFromVariable(int index) {
-    return getListOfBitsPerVariable().get(index);
-  }
-
-  @Override
-  public int getTotalNumberOfBits() {
-    int count = 0;
-    for (int i = 0; i < this.getNumberOfVariables(); i++) {
-      count += this.getListOfBitsPerVariable().get(i);
+    @Override
+    public int getBitsFromVariable(int index) {
+        return getListOfBitsPerVariable().get(index);
     }
 
-    return count;
-  }
+    @Override
+    public int getTotalNumberOfBits() {
+        int count = 0;
+        for (int i = 0; i < this.getNumberOfVariables(); i++) {
+            count += this.getListOfBitsPerVariable().get(i);
+        }
 
-  @Override
-  public BinarySolution createSolution() {
-    return new DefaultBinarySolution(getListOfBitsPerVariable(), getNumberOfObjectives(), getNumberOfConstraints());
-  }
+        return count;
+    }
+
+    @Override
+    public BinarySolution createSolution() {
+        return new DefaultBinarySolution(getListOfBitsPerVariable(), getNumberOfObjectives(), getNumberOfConstraints());
+    }
 }

@@ -20,84 +20,93 @@ import static org.junit.Assert.assertNotSame;
  */
 public class NullCrossoverTest {
 
-  @Test (expected = NullParameterException.class)
-  public void shouldExecuteRaiseAnExceptionIfTheParameterListIsNull() {
-    new NullCrossover<DoubleSolution>().execute(null) ;
-  }
-
-  @Test (expected = InvalidConditionException.class)
-  public void shouldExecuteRaiseAnExceptionIfTheParameterListHasNotTwoElements() {
-    new NullCrossover<DoubleSolution>().execute(new ArrayList<>()) ;
-  }
-
-  @Test
-  public void shouldExecuteReturnTwoDifferentObjectsWhichAreEquals() {
-    Problem<DoubleSolution> problem = new MockProblem() ;
-    List<DoubleSolution> parents = new ArrayList<>(2) ;
-    parents.add(problem.createSolution()) ;
-    parents.add(problem.createSolution()) ;
-
-    CrossoverOperator<DoubleSolution> crossover;
-    crossover = new NullCrossover<>() ;
-
-    List<DoubleSolution> offspring = crossover.execute(parents);
-    assertNotSame(parents.get(0), offspring.get(0)) ;
-    assertNotSame(parents.get(1), offspring.get(1)) ;
-
-    assertEquals(parents.get(0), offspring.get(0)) ;
-    assertEquals(parents.get(1), offspring.get(1)) ;
-  }
-
-  @SuppressWarnings("serial")
-  private class MockProblem extends AbstractDoubleProblem {
-    private JMetalRandom randomGenerator = JMetalRandom.getInstance() ;
-
-    public MockProblem() {
-      setNumberOfVariables(3);
-      setNumberOfObjectives(2);
-      setNumberOfConstraints(0);
-      setName("Fonseca");
-
-      List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-      List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
-
-      for (int i = 0; i < getNumberOfVariables(); i++) {
-        lowerLimit.add(-4.0);
-        upperLimit.add(4.0);
-      }
-
-      setVariableBounds(lowerLimit, upperLimit);
+    @Test(expected = NullParameterException.class)
+    public void shouldExecuteRaiseAnExceptionIfTheParameterListIsNull() {
+        new NullCrossover<DoubleSolution>().execute(null);
     }
 
-    @Override public int getNumberOfVariables() {
-      return 2;
+    @Test(expected = InvalidConditionException.class)
+    public void shouldExecuteRaiseAnExceptionIfTheParameterListHasNotTwoElements() {
+        new NullCrossover<DoubleSolution>().execute(new ArrayList<>());
     }
 
-    @Override public int getNumberOfObjectives() {
-      return 2;
+    @Test
+    public void shouldExecuteReturnTwoDifferentObjectsWhichAreEquals() {
+        Problem<DoubleSolution> problem = new MockProblem();
+        List<DoubleSolution> parents = new ArrayList<>(2);
+        parents.add(problem.createSolution());
+        parents.add(problem.createSolution());
+
+        CrossoverOperator<DoubleSolution> crossover;
+        crossover = new NullCrossover<>();
+
+        List<DoubleSolution> offspring = crossover.execute(parents);
+        assertNotSame(parents.get(0), offspring.get(0));
+        assertNotSame(parents.get(1), offspring.get(1));
+
+        assertEquals(parents.get(0), offspring.get(0));
+        assertEquals(parents.get(1), offspring.get(1));
     }
 
-    @Override public int getNumberOfConstraints() {
-      return 0;
-    }
+    @SuppressWarnings("serial")
+    private class MockProblem extends AbstractDoubleProblem {
+        private JMetalRandom randomGenerator = JMetalRandom.getInstance();
 
-    @Override public String getName() {
-      return null;
-    }
+        public MockProblem() {
+            setNumberOfVariables(3);
+            setNumberOfObjectives(2);
+            setNumberOfConstraints(0);
+            setName("Fonseca");
 
-    @Override public DoubleSolution evaluate(DoubleSolution solution) {
-      solution.objectives()[0] = randomGenerator.nextDouble();
-      solution.objectives()[1] = randomGenerator.nextDouble();
+            List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
+            List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
 
-      return solution ;
-    }
+            for (int i = 0; i < getNumberOfVariables(); i++) {
+                lowerLimit.add(-4.0);
+                upperLimit.add(4.0);
+            }
 
-    @Override @Deprecated public Double getLowerBound(int index) {
-      return super.getBoundsForVariables().get(index).getUpperBound();
-    }
+            setVariableBounds(lowerLimit, upperLimit);
+        }
 
-    @Override @Deprecated public Double getUpperBound(int index) {
-      return super.getBoundsForVariables().get(index).getUpperBound();
+        @Override
+        public int getNumberOfVariables() {
+            return 2;
+        }
+
+        @Override
+        public int getNumberOfObjectives() {
+            return 2;
+        }
+
+        @Override
+        public int getNumberOfConstraints() {
+            return 0;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public DoubleSolution evaluate(DoubleSolution solution) {
+            solution.objectives()[0] = randomGenerator.nextDouble();
+            solution.objectives()[1] = randomGenerator.nextDouble();
+
+            return solution;
+        }
+
+        @Override
+        @Deprecated
+        public Double getLowerBound(int index) {
+            return super.getBoundsForVariables().get(index).getUpperBound();
+        }
+
+        @Override
+        @Deprecated
+        public Double getUpperBound(int index) {
+            return super.getBoundsForVariables().get(index).getUpperBound();
+        }
     }
-  }
 }

@@ -13,72 +13,72 @@ import java.util.List;
  * contains the remaining index values (so, its size would be higher than the size of the rest of
  * groups).
  *
- * @author Antonio J. Nebro
- *
  * @param <C>
+ * @author Antonio J. Nebro
  */
 public abstract class ListGrouping<C extends Comparable<C>> implements CollectionGrouping<List<C>> {
-  protected final int numberOfGroups;
-  protected List<Integer> indices;
-  protected List<List<Integer>> groups;
+    protected final int numberOfGroups;
+    protected List<Integer> indices;
+    protected List<List<Integer>> groups;
 
-  public ListGrouping(int numberOfGroups) {
-    this.numberOfGroups = numberOfGroups;
-    this.groups = new ArrayList<>(numberOfGroups);
-  }
-
-  public abstract void computeGroups(List<C> list) ;
-
-  protected void createGroups() {
-    int groupSize = computeGroupSize();
-    int index = groupValues(groupSize);
-
-    fillRemainingIndices(index);
-  }
-
-  /**
-   * Method that groups the values and return the index counter
-   *
-   * @param groupSize
-   * @return the position of the index after the grouping
-   */
-  private int groupValues(int groupSize) {
-    int index = 0 ;
-    for (int i = 0; i < numberOfGroups; i++) {
-      groups.add(new ArrayList<>());
-      for (int j = 0; j < groupSize; j++) {
-        groups.get(i).add(indices.get(index++));
-      }
+    public ListGrouping(int numberOfGroups) {
+        this.numberOfGroups = numberOfGroups;
+        this.groups = new ArrayList<>(numberOfGroups);
     }
-    return index;
-  }
 
-  /**
-   * If the indices length is not divisible by the number of groups, the remaining indices
-   * are added to the last group
-   * @param index
-   */
-  private void fillRemainingIndices(int index) {
-    int lastGroupIndex = groups.size() - 1 ;
-    while (index < indices.size()) {
-      groups.get(lastGroupIndex).add(indices.get(index++)) ;
+    public abstract void computeGroups(List<C> list);
+
+    protected void createGroups() {
+        int groupSize = computeGroupSize();
+        int index = groupValues(groupSize);
+
+        fillRemainingIndices(index);
     }
-  }
 
-  private int computeGroupSize() {
-    return indices.size() / numberOfGroups;
-  }
+    /**
+     * Method that groups the values and return the index counter
+     *
+     * @param groupSize
+     * @return the position of the index after the grouping
+     */
+    private int groupValues(int groupSize) {
+        int index = 0;
+        for (int i = 0; i < numberOfGroups; i++) {
+            groups.add(new ArrayList<>());
+            for (int j = 0; j < groupSize; j++) {
+                groups.get(i).add(indices.get(index++));
+            }
+        }
+        return index;
+    }
 
-  @Override
-  public int numberOfGroups() {
-    return numberOfGroups;
-  }
+    /**
+     * If the indices length is not divisible by the number of groups, the remaining indices
+     * are added to the last group
+     *
+     * @param index
+     */
+    private void fillRemainingIndices(int index) {
+        int lastGroupIndex = groups.size() - 1;
+        while (index < indices.size()) {
+            groups.get(lastGroupIndex).add(indices.get(index++));
+        }
+    }
 
-  @Override
-  public List<Integer> getGroup(int groupIndex) {
-    Check.that(
-            ((groupIndex >= 0) && (groupIndex < numberOfGroups)),
-            "The group index " + groupIndex + " is invalid");
-    return groups.get(groupIndex);
-  }
+    private int computeGroupSize() {
+        return indices.size() / numberOfGroups;
+    }
+
+    @Override
+    public int numberOfGroups() {
+        return numberOfGroups;
+    }
+
+    @Override
+    public List<Integer> getGroup(int groupIndex) {
+        Check.that(
+                ((groupIndex >= 0) && (groupIndex < numberOfGroups)),
+                "The group index " + groupIndex + " is invalid");
+        return groups.get(groupIndex);
+    }
 }

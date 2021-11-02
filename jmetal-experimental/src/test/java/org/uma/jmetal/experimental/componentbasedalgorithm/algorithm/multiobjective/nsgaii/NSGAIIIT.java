@@ -25,92 +25,92 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class NSGAIIIT {
-  Algorithm<List<DoubleSolution>> algorithm;
+    Algorithm<List<DoubleSolution>> algorithm;
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() throws Exception {
-    DoubleProblem problem = new Kursawe() ;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
+    @Test
+    public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() throws Exception {
+        DoubleProblem problem = new Kursawe();
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
 
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    int populationSize = 100;
-    int offspringPopulationSize = 100;
+        int populationSize = 100;
+        int offspringPopulationSize = 100;
 
-    Termination termination = new TerminationByEvaluations(25000);
+        Termination termination = new TerminationByEvaluations(25000);
 
-    algorithm =
-            new NSGAII<>(
-                    problem,
-                    populationSize,
-                    offspringPopulationSize,
-                    crossover,
-                    mutation,
-                    termination);
+        algorithm =
+                new NSGAII<>(
+                        problem,
+                        populationSize,
+                        offspringPopulationSize,
+                        crossover,
+                        mutation,
+                        termination);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult() ;
+        List<DoubleSolution> population = algorithm.getResult();
 
     /*
     Rationale: the default problem is Kursawe, and usually NSGA-II, configured with standard
     settings, should return 100 solutions
     */
-    assertTrue(population.size() >= 98) ;
-  }
+        assertTrue(population.size() >= 98);
+    }
 
-  @Test
-  public void shouldTheAlgorithmReturnAGoodQualityFrontWhenSolvingAConstrainedProblem() throws Exception {
-    ConstrEx problem = new ConstrEx() ;
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
+    @Test
+    public void shouldTheAlgorithmReturnAGoodQualityFrontWhenSolvingAConstrainedProblem() throws Exception {
+        ConstrEx problem = new ConstrEx();
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
 
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    int populationSize = 100;
-    int offspringPopulationSize = 100;
+        int populationSize = 100;
+        int offspringPopulationSize = 100;
 
-    Termination termination = new TerminationByEvaluations(25000);
+        Termination termination = new TerminationByEvaluations(25000);
 
-    algorithm =
-            new NSGAII<>(
-                    problem,
-                    populationSize,
-                    offspringPopulationSize,
-                    crossover,
-                    mutation,
-                    termination);
+        algorithm =
+                new NSGAII<>(
+                        problem,
+                        populationSize,
+                        offspringPopulationSize,
+                        crossover,
+                        mutation,
+                        termination);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult() ;
+        List<DoubleSolution> population = algorithm.getResult();
 
-    String referenceFrontFileName = "../resources/referenceFrontsCSV/ConstrEx.csv" ;
+        String referenceFrontFileName = "../resources/referenceFrontsCSV/ConstrEx.csv";
 
-    Front referenceFront = new ArrayFront(referenceFrontFileName);
-    FrontNormalizer frontNormalizer = new FrontNormalizer(referenceFront) ;
+        Front referenceFront = new ArrayFront(referenceFrontFileName);
+        FrontNormalizer frontNormalizer = new FrontNormalizer(referenceFront);
 
-    Front normalizedReferenceFront = frontNormalizer.normalize(referenceFront) ;
-    Front normalizedFront = frontNormalizer.normalize(new ArrayFront(population)) ;
-    List<PointSolution> normalizedPopulation = FrontUtils
-        .convertFrontToSolutionList(normalizedFront) ;
+        Front normalizedReferenceFront = frontNormalizer.normalize(referenceFront);
+        Front normalizedFront = frontNormalizer.normalize(new ArrayFront(population));
+        List<PointSolution> normalizedPopulation = FrontUtils
+                .convertFrontToSolutionList(normalizedFront);
 
-    double hv = new PISAHypervolume<PointSolution>(normalizedReferenceFront).evaluate(normalizedPopulation) ;
+        double hv = new PISAHypervolume<PointSolution>(normalizedReferenceFront).evaluate(normalizedPopulation);
 
-    assertTrue(population.size() >= 98) ;
-    assertTrue(hv > 0.77) ;
-  }
+        assertTrue(population.size() >= 98);
+        assertTrue(hv > 0.77);
+    }
 }

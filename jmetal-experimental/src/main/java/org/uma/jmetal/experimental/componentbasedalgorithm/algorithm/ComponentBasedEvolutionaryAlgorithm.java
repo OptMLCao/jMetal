@@ -28,216 +28,218 @@ import java.util.Map;
  */
 @SuppressWarnings("serial")
 public class ComponentBasedEvolutionaryAlgorithm<S extends Solution<?>>
-    extends AbstractEvolutionaryAlgorithm<S, List<S>> {
-  protected Evaluation<S> evaluation;
-  protected SolutionsCreation<S> createInitialPopulation;
-  protected Termination termination;
-  protected MatingPoolSelection<S> selection;
-  protected Variation<S> variation;
-  protected Replacement<S> replacement;
+        extends AbstractEvolutionaryAlgorithm<S, List<S>> {
+    protected Evaluation<S> evaluation;
+    protected SolutionsCreation<S> createInitialPopulation;
+    protected Termination termination;
+    protected MatingPoolSelection<S> selection;
+    protected Variation<S> variation;
+    protected Replacement<S> replacement;
 
-  protected Map<String, Object> attributes;
+    protected Map<String, Object> attributes;
 
-  protected long initTime;
-  protected long totalComputingTime;
-  protected int evaluations;
+    protected long initTime;
+    protected long totalComputingTime;
+    protected int evaluations;
 
-  protected Observable<Map<String, Object>> observable;
+    protected Observable<Map<String, Object>> observable;
 
-  protected String name;
-  protected Archive<S> archive ;
-  /**
-   * Constructor
-   *
-   * @param name
-   * @param evaluation
-   * @param initialPopulationCreation
-   * @param termination
-   * @param selection
-   * @param variation
-   * @param replacement
-   */
-  public ComponentBasedEvolutionaryAlgorithm(
-      String name,
-      Evaluation<S> evaluation,
-      SolutionsCreation<S> initialPopulationCreation,
-      Termination termination,
-      MatingPoolSelection<S> selection,
-      Variation<S> variation,
-      Replacement<S> replacement) {
-    this.name = name;
+    protected String name;
+    protected Archive<S> archive;
 
-    this.evaluation = evaluation;
-    this.createInitialPopulation = initialPopulationCreation;
-    this.termination = termination;
-    this.selection = selection;
-    this.variation = variation;
-    this.replacement = replacement;
+    /**
+     * Constructor
+     *
+     * @param name
+     * @param evaluation
+     * @param initialPopulationCreation
+     * @param termination
+     * @param selection
+     * @param variation
+     * @param replacement
+     */
+    public ComponentBasedEvolutionaryAlgorithm(
+            String name,
+            Evaluation<S> evaluation,
+            SolutionsCreation<S> initialPopulationCreation,
+            Termination termination,
+            MatingPoolSelection<S> selection,
+            Variation<S> variation,
+            Replacement<S> replacement) {
+        this.name = name;
 
-    this.observable = new DefaultObservable<>(name);
-    this.attributes = new HashMap<>();
+        this.evaluation = evaluation;
+        this.createInitialPopulation = initialPopulationCreation;
+        this.termination = termination;
+        this.selection = selection;
+        this.variation = variation;
+        this.replacement = replacement;
 
-    this.archive = null ;
-  }
+        this.observable = new DefaultObservable<>(name);
+        this.attributes = new HashMap<>();
 
-  /**
-   * Empty constructor that creates an empty instance. It is intended to allow the definition of
-   * different subclass constructors. It is up to the developer the correct creation of the
-   * algorithm components.
-   */
-  public ComponentBasedEvolutionaryAlgorithm() {}
-
-  @Override
-  public void run() {
-    initTime = System.currentTimeMillis();
-    super.run();
-    totalComputingTime = System.currentTimeMillis() - initTime;
-  }
-
-  @Override
-  protected void initProgress() {
-    evaluations = population.size();
-
-    attributes.put("EVALUATIONS", evaluations);
-    attributes.put("POPULATION", population);
-    attributes.put("COMPUTING_TIME", getCurrentComputingTime());
-
-    observable.setChanged();
-    observable.notifyObservers(attributes);
-  }
-
-  @Override
-  protected void updateProgress() {
-    evaluations += variation.getOffspringPopulationSize();
-
-    attributes.put("EVALUATIONS", evaluations);
-    attributes.put("POPULATION", population);
-    attributes.put("COMPUTING_TIME", getCurrentComputingTime());
-
-    observable.setChanged();
-    observable.notifyObservers(attributes);
-  }
-
-  @Override
-  protected boolean isStoppingConditionReached() {
-    return this.termination.isMet(attributes);
-  }
-
-  @Override
-  protected List<S> createInitialPopulation() {
-    return createInitialPopulation.create();
-  }
-
-  @Override
-  protected List<S> evaluatePopulation(List<S> population) {
-    var solutionList = evaluation.evaluate(population) ;
-    if (null != archive) {
-      solutionList.forEach(archive::add);
+        this.archive = null;
     }
 
-    return solutionList ;
-  }
+    /**
+     * Empty constructor that creates an empty instance. It is intended to allow the definition of
+     * different subclass constructors. It is up to the developer the correct creation of the
+     * algorithm components.
+     */
+    public ComponentBasedEvolutionaryAlgorithm() {
+    }
 
-  @Override
-  protected List<S> selection(List<S> population) {
-    return selection.select(population);
-  }
+    @Override
+    public void run() {
+        initTime = System.currentTimeMillis();
+        super.run();
+        totalComputingTime = System.currentTimeMillis() - initTime;
+    }
 
-  @Override
-  protected List<S> reproduction(List<S> matingPool) {
-    return variation.variate(population, matingPool);
-  }
+    @Override
+    protected void initProgress() {
+        evaluations = population.size();
 
-  @Override
-  protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
-    return replacement.replace(population, offspringPopulation);
-  }
+        attributes.put("EVALUATIONS", evaluations);
+        attributes.put("POPULATION", population);
+        attributes.put("COMPUTING_TIME", getCurrentComputingTime());
 
-  @Override
-  public List<S> getResult() {
-    return null == archive ? population: archive.getSolutionList() ;
-  }
+        observable.setChanged();
+        observable.notifyObservers(attributes);
+    }
 
-  @Override
-  public String getName() {
-    return name;
-  }
+    @Override
+    protected void updateProgress() {
+        evaluations += variation.getOffspringPopulationSize();
 
-  @Override
-  public String getDescription() {
-    return name;
-  }
+        attributes.put("EVALUATIONS", evaluations);
+        attributes.put("POPULATION", population);
+        attributes.put("COMPUTING_TIME", getCurrentComputingTime());
 
-  public int getEvaluations() {
-    return evaluations;
-  }
+        observable.setChanged();
+        observable.notifyObservers(attributes);
+    }
 
-  public Archive<S> getArchive() {
-    return archive ;
-  }
+    @Override
+    protected boolean isStoppingConditionReached() {
+        return this.termination.isMet(attributes);
+    }
 
-  public ComponentBasedEvolutionaryAlgorithm<S> withArchive(Archive<S> archive) {
-    this.archive = archive ;
+    @Override
+    protected List<S> createInitialPopulation() {
+        return createInitialPopulation.create();
+    }
 
-    return this ;
-  }
+    @Override
+    protected List<S> evaluatePopulation(List<S> population) {
+        var solutionList = evaluation.evaluate(population);
+        if (null != archive) {
+            solutionList.forEach(archive::add);
+        }
 
-  public ComponentBasedEvolutionaryAlgorithm<S> withEvaluation(Evaluation<S> evaluation) {
-    this.evaluation = evaluation;
+        return solutionList;
+    }
 
-    return this ;
-  }
+    @Override
+    protected List<S> selection(List<S> population) {
+        return selection.select(population);
+    }
 
-  public ComponentBasedEvolutionaryAlgorithm<S> withCreateInitialPopulation(SolutionsCreation<S> createInitialPopulation) {
-    this.createInitialPopulation = createInitialPopulation;
+    @Override
+    protected List<S> reproduction(List<S> matingPool) {
+        return variation.variate(population, matingPool);
+    }
 
-    return this ;
-  }
+    @Override
+    protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
+        return replacement.replace(population, offspringPopulation);
+    }
+
+    @Override
+    public List<S> getResult() {
+        return null == archive ? population : archive.getSolutionList();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return name;
+    }
+
+    public int getEvaluations() {
+        return evaluations;
+    }
+
+    public Archive<S> getArchive() {
+        return archive;
+    }
+
+    public ComponentBasedEvolutionaryAlgorithm<S> withArchive(Archive<S> archive) {
+        this.archive = archive;
+
+        return this;
+    }
+
+    public ComponentBasedEvolutionaryAlgorithm<S> withEvaluation(Evaluation<S> evaluation) {
+        this.evaluation = evaluation;
+
+        return this;
+    }
+
+    public ComponentBasedEvolutionaryAlgorithm<S> withCreateInitialPopulation(SolutionsCreation<S> createInitialPopulation) {
+        this.createInitialPopulation = createInitialPopulation;
+
+        return this;
+    }
 
 
-  public ComponentBasedEvolutionaryAlgorithm<S> withTermination(Termination termination) {
-    this.termination = termination;
+    public ComponentBasedEvolutionaryAlgorithm<S> withTermination(Termination termination) {
+        this.termination = termination;
 
-    return this ;
-  }
+        return this;
+    }
 
-  public ComponentBasedEvolutionaryAlgorithm<S> withSelection(MatingPoolSelection<S> selection) {
-    this.selection = selection;
+    public ComponentBasedEvolutionaryAlgorithm<S> withSelection(MatingPoolSelection<S> selection) {
+        this.selection = selection;
 
-    return this ;
-  }
+        return this;
+    }
 
-  public ComponentBasedEvolutionaryAlgorithm<S> withVariation(Variation<S> variation) {
-    this.variation = variation;
+    public ComponentBasedEvolutionaryAlgorithm<S> withVariation(Variation<S> variation) {
+        this.variation = variation;
 
-    return this ;
-  }
+        return this;
+    }
 
-  public ComponentBasedEvolutionaryAlgorithm<S> withReplacement(Replacement<S> replacement) {
-    this.replacement = replacement;
+    public ComponentBasedEvolutionaryAlgorithm<S> withReplacement(Replacement<S> replacement) {
+        this.replacement = replacement;
 
-    return this ;
-  }
+        return this;
+    }
 
-  public ComponentBasedEvolutionaryAlgorithm<S> withName(String newName) {
-    this.name = newName ;
+    public ComponentBasedEvolutionaryAlgorithm<S> withName(String newName) {
+        this.name = newName;
 
-    return this ;
-  }
+        return this;
+    }
 
-  public Observable<Map<String, Object>> getObservable() {
-    return observable;
-  }
+    public Observable<Map<String, Object>> getObservable() {
+        return observable;
+    }
 
-  public Map<String, Object> getAttributes() {
-    return attributes;
-  }
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
-  public long getTotalComputingTime() {
-    return totalComputingTime;
-  }
+    public long getTotalComputingTime() {
+        return totalComputingTime;
+    }
 
-  public long getCurrentComputingTime() {
-    return System.currentTimeMillis() - initTime;
-  }
+    public long getCurrentComputingTime() {
+        return System.currentTimeMillis() - initTime;
+    }
 }

@@ -6,38 +6,40 @@ import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 
-/** Cristóbal Barba <cbarba@lcc.uma.es> */
+/**
+ * Cristóbal Barba <cbarba@lcc.uma.es>
+ */
 @SuppressWarnings("serial")
 public abstract class FDA extends AbstractDoubleProblem
-    implements DynamicProblem<DoubleSolution, Integer>, BoundedProblem<Double, DoubleSolution> {
-  protected double time;
-  private boolean changeStatus = false;
+        implements DynamicProblem<DoubleSolution, Integer>, BoundedProblem<Double, DoubleSolution> {
+    protected double time;
+    private boolean changeStatus = false;
 
-  private int tauT = 5;
-  private int nT = 10;
+    private int tauT = 5;
+    private int nT = 10;
 
-  public FDA() {
-  }
+    public FDA() {
+    }
 
-  public void update(Integer counter) {
-    time = (1.0d / (double) nT) * Math.floor(counter / (double) tauT);
-    JMetalLogger.logger.info("Received counter: " + counter + ". Time: " + time);
+    public void update(Integer counter) {
+        time = (1.0d / (double) nT) * Math.floor(counter / (double) tauT);
+        JMetalLogger.logger.info("Received counter: " + counter + ". Time: " + time);
 
-    setChanged();
-  }
+        setChanged();
+    }
 
-  @Override
-  public boolean hasChanged() {
-    return changeStatus;
-  }
+    @Override
+    public boolean hasChanged() {
+        return changeStatus;
+    }
 
-  @Override
-  public void setChanged() {
-    changeStatus = true;
-  }
+    @Override
+    public void setChanged() {
+        changeStatus = true;
+    }
 
-  @Override
-  public void clearChanged() {
-    changeStatus = false;
-  }
+    @Override
+    public void clearChanged() {
+        changeStatus = false;
+    }
 }

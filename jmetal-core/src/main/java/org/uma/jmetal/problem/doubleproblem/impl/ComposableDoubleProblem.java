@@ -40,98 +40,98 @@ import java.util.stream.IntStream;
 @SuppressWarnings("serial")
 public class ComposableDoubleProblem implements DoubleProblem {
 
-  private List<Function<Double[], Double>> objectiveFunctions;
-  private List<Function<Double[], Double>> constraints;
-  private List<Bounds<Double>> bounds;
-  private String name;
+    private List<Function<Double[], Double>> objectiveFunctions;
+    private List<Function<Double[], Double>> constraints;
+    private List<Bounds<Double>> bounds;
+    private String name;
 
-  public ComposableDoubleProblem() {
-    objectiveFunctions = new ArrayList<>();
-    constraints = new ArrayList<>();
-    bounds = new ArrayList<>();
+    public ComposableDoubleProblem() {
+        objectiveFunctions = new ArrayList<>();
+        constraints = new ArrayList<>();
+        bounds = new ArrayList<>();
 
-    name = "";
-  }
+        name = "";
+    }
 
-  public ComposableDoubleProblem addFunction(Function<Double[], Double> objective) {
-    objectiveFunctions.add(objective);
-    return this;
-  }
+    public ComposableDoubleProblem addFunction(Function<Double[], Double> objective) {
+        objectiveFunctions.add(objective);
+        return this;
+    }
 
-  public ComposableDoubleProblem addConstraint(Function<Double[], Double> constraint) {
-    constraints.add(constraint);
-    return this;
-  }
+    public ComposableDoubleProblem addConstraint(Function<Double[], Double> constraint) {
+        constraints.add(constraint);
+        return this;
+    }
 
-  public ComposableDoubleProblem addVariable(double lowerBound, double upperBound) {
-    bounds.add(Bounds.create(lowerBound, upperBound));
-    return this;
-  }
+    public ComposableDoubleProblem addVariable(double lowerBound, double upperBound) {
+        bounds.add(Bounds.create(lowerBound, upperBound));
+        return this;
+    }
 
-  public ComposableDoubleProblem setName(String name) {
-    this.name = name;
+    public ComposableDoubleProblem setName(String name) {
+        this.name = name;
 
-    return this;
-  }
+        return this;
+    }
 
-  @Override
-  public int getNumberOfVariables() {
-    return bounds.size();
-  }
+    @Override
+    public int getNumberOfVariables() {
+        return bounds.size();
+    }
 
-  @Override
-  public int getNumberOfObjectives() {
-    return objectiveFunctions.size();
-  }
+    @Override
+    public int getNumberOfObjectives() {
+        return objectiveFunctions.size();
+    }
 
-  @Override
-  public int getNumberOfConstraints() {
-    return constraints.size();
-  }
+    @Override
+    public int getNumberOfConstraints() {
+        return constraints.size();
+    }
 
-  @Override
-  public String getName() {
-    return name;
-  }
+    @Override
+    public String getName() {
+        return name;
+    }
 
-  @Override
-  @Deprecated
-  public Double getLowerBound(int index) {
-    return bounds.get(index).getLowerBound();
-  }
+    @Override
+    @Deprecated
+    public Double getLowerBound(int index) {
+        return bounds.get(index).getLowerBound();
+    }
 
-  @Override
-  @Deprecated
-  public Double getUpperBound(int index) {
-    return bounds.get(index).getUpperBound();
-  }
+    @Override
+    @Deprecated
+    public Double getUpperBound(int index) {
+        return bounds.get(index).getUpperBound();
+    }
 
-  @Override
-  public DoubleSolution createSolution() {
-    return new DefaultDoubleSolution(getNumberOfObjectives(), getNumberOfConstraints(), bounds);
-  }
+    @Override
+    public DoubleSolution createSolution() {
+        return new DefaultDoubleSolution(getNumberOfObjectives(), getNumberOfConstraints(), bounds);
+    }
 
-  @Override
-  @Deprecated
-  public List<Pair<Double, Double>> getBounds() {
-    return bounds.stream().map(Bounds<Double>::toPair).collect(Collectors.toList());
-  }
-  
-  @Override
-  public List<Bounds<Double>> getBoundsForVariables() {
-    return bounds;
-  }
+    @Override
+    @Deprecated
+    public List<Pair<Double, Double>> getBounds() {
+        return bounds.stream().map(Bounds<Double>::toPair).collect(Collectors.toList());
+    }
 
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    Double[] vars = solution.variables().toArray(new Double[getNumberOfVariables()]);
+    @Override
+    public List<Bounds<Double>> getBoundsForVariables() {
+        return bounds;
+    }
 
-    IntStream.range(0, getNumberOfObjectives())
-        .forEach(i -> solution.objectives()[i] =  objectiveFunctions.get(i).apply(vars));
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        Double[] vars = solution.variables().toArray(new Double[getNumberOfVariables()]);
 
-    IntStream.range(0, getNumberOfConstraints())
-        .forEach(i -> solution.constraints()[i] =  constraints.get(i).apply(vars));
+        IntStream.range(0, getNumberOfObjectives())
+                .forEach(i -> solution.objectives()[i] = objectiveFunctions.get(i).apply(vars));
 
-    return solution ;
-  }
+        IntStream.range(0, getNumberOfConstraints())
+                .forEach(i -> solution.constraints()[i] = constraints.get(i).apply(vars));
+
+        return solution;
+    }
 }

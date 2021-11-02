@@ -21,56 +21,61 @@ import java.util.List;
 @Deprecated
 @SuppressWarnings("serial")
 public class IntegerDoubleSBXCrossover implements CrossoverOperator<IntegerDoubleSolution> {
-  private IntegerSBXCrossover integerSBXCrossover;
-  private SBXCrossover doubleSBXCrossover;
+    private IntegerSBXCrossover integerSBXCrossover;
+    private SBXCrossover doubleSBXCrossover;
 
-  /** Constructor */
-  public IntegerDoubleSBXCrossover(
-      IntegerSBXCrossover integerSBXCrossover, SBXCrossover doubleSBXCrossover) {
-    this.integerSBXCrossover = integerSBXCrossover;
-    this.doubleSBXCrossover = doubleSBXCrossover;
-  }
-  /** Execute() method */
-  @Override
-  public List<IntegerDoubleSolution> execute(List<IntegerDoubleSolution> parentSolutions) {
-    Check.notNull(parentSolutions);
-    Check.that(
-        parentSolutions.size() == 2,
-        "There must be two parents instead of " + parentSolutions.size());
+    /**
+     * Constructor
+     */
+    public IntegerDoubleSBXCrossover(
+            IntegerSBXCrossover integerSBXCrossover, SBXCrossover doubleSBXCrossover) {
+        this.integerSBXCrossover = integerSBXCrossover;
+        this.doubleSBXCrossover = doubleSBXCrossover;
+    }
 
-    List<IntegerSolution> integerParentSolutions =
-        Arrays.asList(
-            parentSolutions.get(0).getIntegerSolution(),
-            parentSolutions.get(1).getIntegerSolution());
+    /**
+     * Execute() method
+     */
+    @Override
+    public List<IntegerDoubleSolution> execute(List<IntegerDoubleSolution> parentSolutions) {
+        Check.notNull(parentSolutions);
+        Check.that(
+                parentSolutions.size() == 2,
+                "There must be two parents instead of " + parentSolutions.size());
 
-    List<DoubleSolution> doubleParentSolutions =
-        Arrays.asList(
-            parentSolutions.get(0).getDoubleSolution(), parentSolutions.get(1).getDoubleSolution());
+        List<IntegerSolution> integerParentSolutions =
+                Arrays.asList(
+                        parentSolutions.get(0).getIntegerSolution(),
+                        parentSolutions.get(1).getIntegerSolution());
 
-    List<IntegerSolution> integerChildrenSolutions =
-        integerSBXCrossover.execute(integerParentSolutions);
-    List<DoubleSolution> doubleChildrenSolutions =
-        doubleSBXCrossover.execute(doubleParentSolutions);
+        List<DoubleSolution> doubleParentSolutions =
+                Arrays.asList(
+                        parentSolutions.get(0).getDoubleSolution(), parentSolutions.get(1).getDoubleSolution());
 
-    return Arrays.asList(
-        new DefaultIntegerDoubleSolution(
-            integerChildrenSolutions.get(0), doubleChildrenSolutions.get(0)),
-        new DefaultIntegerDoubleSolution(
-            integerChildrenSolutions.get(1), doubleChildrenSolutions.get(1)));
-  }
+        List<IntegerSolution> integerChildrenSolutions =
+                integerSBXCrossover.execute(integerParentSolutions);
+        List<DoubleSolution> doubleChildrenSolutions =
+                doubleSBXCrossover.execute(doubleParentSolutions);
 
-  @Override
-  public int getNumberOfRequiredParents() {
-    return 2;
-  }
+        return Arrays.asList(
+                new DefaultIntegerDoubleSolution(
+                        integerChildrenSolutions.get(0), doubleChildrenSolutions.get(0)),
+                new DefaultIntegerDoubleSolution(
+                        integerChildrenSolutions.get(1), doubleChildrenSolutions.get(1)));
+    }
 
-  @Override
-  public int getNumberOfGeneratedChildren() {
-    return 2;
-  }
+    @Override
+    public int getNumberOfRequiredParents() {
+        return 2;
+    }
 
-  @Override
-  public double getCrossoverProbability() {
-    return 1.0 ;
-  }
+    @Override
+    public int getNumberOfGeneratedChildren() {
+        return 2;
+    }
+
+    @Override
+    public double getCrossoverProbability() {
+        return 1.0;
+    }
 }

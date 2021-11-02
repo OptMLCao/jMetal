@@ -6,5 +6,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface MatingPoolSelection<S extends Solution<?>> {
-  List<S> select(List<S> solutionList) ;
+    List<S> select(List<S> solutionList);
 }

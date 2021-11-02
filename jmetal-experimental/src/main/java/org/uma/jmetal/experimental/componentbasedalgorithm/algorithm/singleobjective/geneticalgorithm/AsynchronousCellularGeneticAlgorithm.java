@@ -32,70 +32,72 @@ import java.util.HashMap;
  */
 @SuppressWarnings("serial")
 public class AsynchronousCellularGeneticAlgorithm<S extends Solution<?>>
-    extends ComponentBasedEvolutionaryAlgorithm<S> {
+        extends ComponentBasedEvolutionaryAlgorithm<S> {
 
-  protected SequenceGenerator<Integer> solutionIndexGenerator;
+    protected SequenceGenerator<Integer> solutionIndexGenerator;
 
-  /**
-   * Constructor
-   *
-   * @param evaluation
-   * @param initialPopulationCreation
-   * @param termination
-   * @param selection
-   * @param variation
-   * @param replacement
-   */
-  public AsynchronousCellularGeneticAlgorithm(
-      Evaluation<S> evaluation,
-      SolutionsCreation<S> initialPopulationCreation,
-      Termination termination,
-      MatingPoolSelection<S> selection,
-      CrossoverAndMutationVariation<S> variation,
-      Replacement<S> replacement) {
-    super(
-        "Asynchronous Cellular Genetic algorithm",
-        evaluation,
-        initialPopulationCreation,
-        termination,
-        selection,
-        variation,
-        replacement);
-  }
+    /**
+     * Constructor
+     *
+     * @param evaluation
+     * @param initialPopulationCreation
+     * @param termination
+     * @param selection
+     * @param variation
+     * @param replacement
+     */
+    public AsynchronousCellularGeneticAlgorithm(
+            Evaluation<S> evaluation,
+            SolutionsCreation<S> initialPopulationCreation,
+            Termination termination,
+            MatingPoolSelection<S> selection,
+            CrossoverAndMutationVariation<S> variation,
+            Replacement<S> replacement) {
+        super(
+                "Asynchronous Cellular Genetic algorithm",
+                evaluation,
+                initialPopulationCreation,
+                termination,
+                selection,
+                variation,
+                replacement);
+    }
 
-  /** Constructor */
-  public AsynchronousCellularGeneticAlgorithm(
-      Problem<S> problem,
-      int populationSize,
-      Neighborhood<S> neighborhood,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      Termination termination) {
-    this.name = "Asynchronous Cellular Genetic algorithm";
-    this.problem = problem;
-    this.observable = new DefaultObservable<>(name);
-    this.attributes = new HashMap<>();
-    this.solutionIndexGenerator = new IntegerBoundedSequenceGenerator(populationSize);
+    /**
+     * Constructor
+     */
+    public AsynchronousCellularGeneticAlgorithm(
+            Problem<S> problem,
+            int populationSize,
+            Neighborhood<S> neighborhood,
+            CrossoverOperator<S> crossoverOperator,
+            MutationOperator<S> mutationOperator,
+            Termination termination) {
+        this.name = "Asynchronous Cellular Genetic algorithm";
+        this.problem = problem;
+        this.observable = new DefaultObservable<>(name);
+        this.attributes = new HashMap<>();
+        this.solutionIndexGenerator = new IntegerBoundedSequenceGenerator(populationSize);
 
-    this.createInitialPopulation = new RandomSolutionsCreation<>(problem, populationSize);
+        this.createInitialPopulation = new RandomSolutionsCreation<>(problem, populationSize);
 
-    this.replacement =
-        new SingleSolutionReplacement<>(solutionIndexGenerator, new ObjectiveComparator<>(0));
+        this.replacement =
+                new SingleSolutionReplacement<>(solutionIndexGenerator, new ObjectiveComparator<>(0));
 
-    this.variation = new CrossoverAndMutationVariation<>(1, crossoverOperator, mutationOperator);
+        this.variation = new CrossoverAndMutationVariation<>(1, crossoverOperator, mutationOperator);
 
-    this.selection =
-        new NeighborhoodMatingPoolSelection<>(
-            variation.getMatingPoolSize(),
-            solutionIndexGenerator,
-            neighborhood,
-            new NaryTournamentSelection<>(2, new ObjectiveComparator<>(0)),
-            false);
+        this.selection =
+                new NeighborhoodMatingPoolSelection<>(
+                        variation.getMatingPoolSize(),
+                        solutionIndexGenerator,
+                        neighborhood,
+                        new NaryTournamentSelection<>(2, new ObjectiveComparator<>(0)),
+                        false);
 
-    this.termination = termination;
+        this.termination = termination;
 
-    this.evaluation = new SequentialEvaluation<>(problem);
+        this.evaluation = new SequentialEvaluation<>(problem);
 
-    this.archive = null;
-  }
+        this.archive = null;
+    }
 }

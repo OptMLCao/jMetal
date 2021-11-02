@@ -7,7 +7,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 /**
  * The Error Ratio (ER) quality indicator reports the ratio of solutions in a front of points
  * that are not members of the true Pareto front.
- *
+ * <p>
  * NOTE: the indicator merely checks if the solutions in the front are not members of the
  * second front. No assumption is made about the second front is a true Pareto front, i.e,
  * the front could contain solutions that dominate some of those of the supposed Pareto front.
@@ -18,87 +18,90 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  */
 @SuppressWarnings("serial")
 public class ErrorRatio extends QualityIndicator {
-  private double[][] referenceFront ;
+    private double[][] referenceFront;
 
-  /**
-   * Constructor
-   */
-  public ErrorRatio() {
-  }
-
-  /**
-   * Constructor
-   *
-   * @param referenceFront
-   */
-  public ErrorRatio(double[][] referenceFront) {
-    Check.notNull(referenceFront);
-    this.referenceFront = referenceFront ;
-  }
-
-  /**
-   * Evaluate() method
-   * @param front
-   * @return
-   */
-  @Override public double compute(double[][] front) {
-    Check.notNull(front);
-
-    return errorRatio(front, referenceFront);
-  }
-
-  /**
-   * Returns the value of the error ratio indicator.
-   *
-   * @param front Solution front
-   * @param referenceFront True Pareto front
-   *
-   * @return the value of the error ratio indicator
-   * @throws JMetalException
-   */
-  private double errorRatio(double[][] front, double[][] referenceFront) {
-    int numberOfObjectives = referenceFront[0].length ;
-    double sum = 0;
-
-    for (int i = 0; i < front.length; i++) {
-      double[] currentPoint = front[i];
-      boolean thePointIsInTheParetoFront = false;
-      for (int j = 0; j < referenceFront.length; j++) {
-        double[] currentParetoFrontPoint = referenceFront[j];
-        boolean found = true;
-        for (int k = 0; k < numberOfObjectives; k++) {
-          if(currentPoint[k] != currentParetoFrontPoint[k]){
-            found = false;
-            break;
-          }
-        }
-        if(found){
-          thePointIsInTheParetoFront = true;
-          break;
-        }
-      }
-      if(!thePointIsInTheParetoFront){
-        sum++;
-      }
+    /**
+     * Constructor
+     */
+    public ErrorRatio() {
     }
 
-    return sum / front.length;
-  }
+    /**
+     * Constructor
+     *
+     * @param referenceFront
+     */
+    public ErrorRatio(double[][] referenceFront) {
+        Check.notNull(referenceFront);
+        this.referenceFront = referenceFront;
+    }
 
-  public void setReferenceFront(double[][] referenceFront) {
-    this.referenceFront = referenceFront;
-  }
+    /**
+     * Evaluate() method
+     *
+     * @param front
+     * @return
+     */
+    @Override
+    public double compute(double[][] front) {
+        Check.notNull(front);
 
-  @Override public String getDescription() {
-    return "Error ratio" ;
-  }
+        return errorRatio(front, referenceFront);
+    }
 
-  @Override public String getName() {
-    return "ER" ;
-  }
+    /**
+     * Returns the value of the error ratio indicator.
+     *
+     * @param front          Solution front
+     * @param referenceFront True Pareto front
+     * @return the value of the error ratio indicator
+     * @throws JMetalException
+     */
+    private double errorRatio(double[][] front, double[][] referenceFront) {
+        int numberOfObjectives = referenceFront[0].length;
+        double sum = 0;
 
-  @Override
-  public boolean isTheLowerTheIndicatorValueTheBetter() {
-    return true ;
-  }
+        for (int i = 0; i < front.length; i++) {
+            double[] currentPoint = front[i];
+            boolean thePointIsInTheParetoFront = false;
+            for (int j = 0; j < referenceFront.length; j++) {
+                double[] currentParetoFrontPoint = referenceFront[j];
+                boolean found = true;
+                for (int k = 0; k < numberOfObjectives; k++) {
+                    if (currentPoint[k] != currentParetoFrontPoint[k]) {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found) {
+                    thePointIsInTheParetoFront = true;
+                    break;
+                }
+            }
+            if (!thePointIsInTheParetoFront) {
+                sum++;
+            }
+        }
+
+        return sum / front.length;
+    }
+
+    public void setReferenceFront(double[][] referenceFront) {
+        this.referenceFront = referenceFront;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Error ratio";
+    }
+
+    @Override
+    public String getName() {
+        return "ER";
+    }
+
+    @Override
+    public boolean isTheLowerTheIndicatorValueTheBetter() {
+        return true;
+    }
 }

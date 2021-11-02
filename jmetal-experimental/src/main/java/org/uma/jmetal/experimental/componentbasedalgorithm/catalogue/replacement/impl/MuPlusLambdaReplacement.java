@@ -14,23 +14,23 @@ import java.util.List;
  * @param <S>
  */
 public class MuPlusLambdaReplacement<S extends Solution<?>> implements Replacement<S> {
-  protected Comparator<S> comparator ;
+    protected Comparator<S> comparator;
 
-  public MuPlusLambdaReplacement(Comparator<S> comparator) {
-    this.comparator = comparator ;
-  }
-
-  public List<S> replace(List<S> population, List<S> offspringPopulation) {
-    List<S> jointPopulation = new ArrayList<>();
-    jointPopulation.addAll(population);
-    jointPopulation.addAll(offspringPopulation);
-
-    jointPopulation.sort(comparator);
-
-    while (jointPopulation.size() > population.size()) {
-      jointPopulation.remove(jointPopulation.size() - 1);
+    public MuPlusLambdaReplacement(Comparator<S> comparator) {
+        this.comparator = comparator;
     }
 
-    return jointPopulation;
-  }
+    public List<S> replace(List<S> population, List<S> offspringPopulation) {
+        List<S> jointPopulation = new ArrayList<>();
+        jointPopulation.addAll(population);
+        jointPopulation.addAll(offspringPopulation);
+
+        jointPopulation.sort(comparator);
+
+        while (jointPopulation.size() > population.size()) {
+            jointPopulation.remove(jointPopulation.size() - 1);
+        }
+
+        return jointPopulation;
+    }
 }

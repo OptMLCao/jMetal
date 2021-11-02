@@ -14,47 +14,51 @@ import java.util.List;
  */
 public class RE36 extends AbstractDoubleProblem {
 
-  private int numberOfOriginalConstraints = 1;
+    private int numberOfOriginalConstraints = 1;
 
-  /** Constructor */
-  public RE36() {
-    setNumberOfVariables(4);
-    setNumberOfObjectives(3);
-    setNumberOfConstraints(0);
-    setName("RE36");
+    /**
+     * Constructor
+     */
+    public RE36() {
+        setNumberOfVariables(4);
+        setNumberOfObjectives(3);
+        setNumberOfConstraints(0);
+        setName("RE36");
 
-    List<Double> lowerLimit = List.of(12.0, 12.0, 12.0, 12.0);
-    List<Double> upperLimit = List.of(60.0, 60.0, 60.0, 60.0);
+        List<Double> lowerLimit = List.of(12.0, 12.0, 12.0, 12.0);
+        List<Double> upperLimit = List.of(60.0, 60.0, 60.0, 60.0);
 
-    setVariableBounds(lowerLimit, upperLimit);
-  }
-
-  /** Evaluate() method */
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    double x1 = Math.rint(solution.variables().get(0));
-    double x2 = Math.rint(solution.variables().get(1));
-    double x3 = Math.rint(solution.variables().get(2));
-    double x4 = Math.rint(solution.variables().get(3));
-
-    solution.objectives()[0] = Math.abs(6.931 - ((x3 / x1) * (x4 / x2)));
-
-    double maxValue = x1;
-    if (x2 > maxValue) maxValue = x2;
-    if (x3 > maxValue) maxValue = x3;
-    if (x4 > maxValue) maxValue = x4;
-    solution.objectives()[1] = maxValue;
-
-    double[] g = new double[numberOfOriginalConstraints];
-    g[0] = 0.5 - (solution.objectives()[0] / 6.931);
-
-    for (int i = 0; i < numberOfOriginalConstraints; i++) {
-      if (g[i] < 0.0) g[i] = -g[i];
-      else g[i] = 0;
+        setVariableBounds(lowerLimit, upperLimit);
     }
 
-    solution.objectives()[2] = g[0];
+    /**
+     * Evaluate() method
+     */
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        double x1 = Math.rint(solution.variables().get(0));
+        double x2 = Math.rint(solution.variables().get(1));
+        double x3 = Math.rint(solution.variables().get(2));
+        double x4 = Math.rint(solution.variables().get(3));
 
-    return solution;
-  }
+        solution.objectives()[0] = Math.abs(6.931 - ((x3 / x1) * (x4 / x2)));
+
+        double maxValue = x1;
+        if (x2 > maxValue) maxValue = x2;
+        if (x3 > maxValue) maxValue = x3;
+        if (x4 > maxValue) maxValue = x4;
+        solution.objectives()[1] = maxValue;
+
+        double[] g = new double[numberOfOriginalConstraints];
+        g[0] = 0.5 - (solution.objectives()[0] / 6.931);
+
+        for (int i = 0; i < numberOfOriginalConstraints; i++) {
+            if (g[i] < 0.0) g[i] = -g[i];
+            else g[i] = 0;
+        }
+
+        solution.objectives()[2] = g[0];
+
+        return solution;
+    }
 }

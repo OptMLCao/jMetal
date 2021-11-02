@@ -11,93 +11,93 @@ import org.uma.jmetal.util.errorchecking.exception.NullParameterException;
  * @version 1.0
  */
 public class SetCoverageTest {
-  private static final double EPSILON = 0.0000000000001 ;
+    private static final double EPSILON = 0.0000000000001;
 
-  private SetCoverage setCoverage ;
+    private SetCoverage setCoverage;
 
-  @BeforeEach
-  public void setup() {
-    setCoverage = new SetCoverage() ;
-  }
+    @BeforeEach
+    public void setup() {
+        setCoverage = new SetCoverage();
+    }
 
-  @Test
-  public void shouldExecuteRaiseAnExceptionIfTheFirstFrontIsNull() {
-    Assertions.assertThrows(NullParameterException.class, () -> setCoverage.compute(null, new double[][]{}));
-  }
+    @Test
+    public void shouldExecuteRaiseAnExceptionIfTheFirstFrontIsNull() {
+        Assertions.assertThrows(NullParameterException.class, () -> setCoverage.compute(null, new double[][]{}));
+    }
 
-  @Test
-  public void shouldExecuteRaiseAnExceptionIfTheParetoFrontIsNull() {
-    Assertions.assertThrows(NullParameterException.class, () -> setCoverage.compute(new double[][]{}, null));
-  }
+    @Test
+    public void shouldExecuteRaiseAnExceptionIfTheParetoFrontIsNull() {
+        Assertions.assertThrows(NullParameterException.class, () -> setCoverage.compute(new double[][]{}, null));
+    }
 
-  @Test
-  public void shouldExecuteReturnZeroIfTheFrontsContainOnePointWhichIsTheSame() {
-   double[][] frontA = {{10.0, 12.0, -1.0}} ;
-   double[][] frontB = {{10.0, 12.0, -1.0}} ;
+    @Test
+    public void shouldExecuteReturnZeroIfTheFrontsContainOnePointWhichIsTheSame() {
+        double[][] frontA = {{10.0, 12.0, -1.0}};
+        double[][] frontB = {{10.0, 12.0, -1.0}};
 
-    Assertions.assertEquals(0.0, setCoverage.compute(frontA, frontB), EPSILON);
-  }
+        Assertions.assertEquals(0.0, setCoverage.compute(frontA, frontB), EPSILON);
+    }
 
-  @Test
-  public void shouldExecuteReturnZeroIfBothFrontsAreEmpty() {
-    double[][] frontA = {{}} ;
-    double[][] frontB = {{}} ;
+    @Test
+    public void shouldExecuteReturnZeroIfBothFrontsAreEmpty() {
+        double[][] frontA = {{}};
+        double[][] frontB = {{}};
 
-    Assertions.assertEquals(0.0, setCoverage.compute(frontA, frontB), EPSILON);
-  }
+        Assertions.assertEquals(0.0, setCoverage.compute(frontA, frontB), EPSILON);
+    }
 
-  @Test
-  public void shouldExecuteReturnOneIfTheSecondFrontIsEmpty() {
-    double[][] frontA = {{10.0, 12.0}} ;
-    double[][] frontB = {} ;
+    @Test
+    public void shouldExecuteReturnOneIfTheSecondFrontIsEmpty() {
+        double[][] frontA = {{10.0, 12.0}};
+        double[][] frontB = {};
 
-    Assertions.assertEquals(1.0, setCoverage.compute(frontA, frontB), EPSILON);
-  }
+        Assertions.assertEquals(1.0, setCoverage.compute(frontA, frontB), EPSILON);
+    }
 
-  /**
-   * Given a frontA with point [2,3] and a frontB with point [1,2], the value of the
-   * setCoverage(frontA, frontB) == 0 and setCoverage(frontB, frontA) == 1
-   */
-  @Test
-  public void shouldExecuteReturnTheRightValueIfTheFrontsContainOnePointWhichIsNotTheSame() {
-    double[][] frontA = {{2.0, 3.0}} ;
-    double[][] frontB = {{1.0, 2.0}} ;
+    /**
+     * Given a frontA with point [2,3] and a frontB with point [1,2], the value of the
+     * setCoverage(frontA, frontB) == 0 and setCoverage(frontB, frontA) == 1
+     */
+    @Test
+    public void shouldExecuteReturnTheRightValueIfTheFrontsContainOnePointWhichIsNotTheSame() {
+        double[][] frontA = {{2.0, 3.0}};
+        double[][] frontB = {{1.0, 2.0}};
 
-    Assertions.assertEquals(0.0, setCoverage.compute(frontA, frontB), EPSILON);
-    Assertions.assertEquals(1.0, setCoverage.compute(frontB, frontA), EPSILON);
-  }
+        Assertions.assertEquals(0.0, setCoverage.compute(frontA, frontB), EPSILON);
+        Assertions.assertEquals(1.0, setCoverage.compute(frontB, frontA), EPSILON);
+    }
 
-  /**
-   * Given a frontA with points [0.0,6.0], [2.0,3.0],[4.0,2.0] and a frontB with points
-   * [1.0,7.0], [2.0,3.0], [3.5, 1.0], the value of setCoverage(frontA, frontB) == 1/3 and
-   * setCoverage(frontB, frontA) == 1/3
-   */
-  @Test
-  public void shouldExecuteReturnTheCorrectValueCaseA() {
-    double[][] frontA = {{0.0, 6.0}, {2.0, 3.0}, {4.0, 2.0}} ;
-    double[][] frontB = {{1.0, 7.0}, {2.0, 3.0}, {3.5, 1.0}} ;
+    /**
+     * Given a frontA with points [0.0,6.0], [2.0,3.0],[4.0,2.0] and a frontB with points
+     * [1.0,7.0], [2.0,3.0], [3.5, 1.0], the value of setCoverage(frontA, frontB) == 1/3 and
+     * setCoverage(frontB, frontA) == 1/3
+     */
+    @Test
+    public void shouldExecuteReturnTheCorrectValueCaseA() {
+        double[][] frontA = {{0.0, 6.0}, {2.0, 3.0}, {4.0, 2.0}};
+        double[][] frontB = {{1.0, 7.0}, {2.0, 3.0}, {3.5, 1.0}};
 
-    Assertions.assertEquals(1.0/3.0, setCoverage.compute(frontA, frontB), EPSILON);
-    Assertions.assertEquals(1.0/3.0, setCoverage.compute(frontB, frontA), EPSILON);
-  }
+        Assertions.assertEquals(1.0 / 3.0, setCoverage.compute(frontA, frontB), EPSILON);
+        Assertions.assertEquals(1.0 / 3.0, setCoverage.compute(frontB, frontA), EPSILON);
+    }
 
-  /**
-   * Given a frontA with points [0.0,6.0], [2.0,3.0],[4.0,2.0] and a frontB with points
-   * [1.0,7.0], [2.5,3.0], [5.0, 2.5], the value of setCoverage(frontA, frontB) == 1 and
-   * setCoverage(frontB, frontA) == 0
-   */
-  @Test
-  public void shouldExecuteReturnTheCorrectValueCaseB() {
-    double[][] frontA = {{0.0, 6.0}, {2.0, 3.0}, {4.0, 2.0}} ;
-    double[][] frontB = {{1.0, 7.0}, {2.5, 3.0}, {5.0, 2.5}} ;
+    /**
+     * Given a frontA with points [0.0,6.0], [2.0,3.0],[4.0,2.0] and a frontB with points
+     * [1.0,7.0], [2.5,3.0], [5.0, 2.5], the value of setCoverage(frontA, frontB) == 1 and
+     * setCoverage(frontB, frontA) == 0
+     */
+    @Test
+    public void shouldExecuteReturnTheCorrectValueCaseB() {
+        double[][] frontA = {{0.0, 6.0}, {2.0, 3.0}, {4.0, 2.0}};
+        double[][] frontB = {{1.0, 7.0}, {2.5, 3.0}, {5.0, 2.5}};
 
-    Assertions.assertEquals(1.0, setCoverage.compute(frontA, frontB), EPSILON);
-    Assertions.assertEquals(0.0, setCoverage.compute(frontB, frontA), EPSILON);
-  }
+        Assertions.assertEquals(1.0, setCoverage.compute(frontA, frontB), EPSILON);
+        Assertions.assertEquals(0.0, setCoverage.compute(frontB, frontA), EPSILON);
+    }
 
-  /**
-   * The same case as shouldExecuteReturnTheCorrectValueCaseB() but using solution lists
-   */
+    /**
+     * The same case as shouldExecuteReturnTheCorrectValueCaseB() but using solution lists
+     */
   /*
   @Test
   public void shouldExecuteReturnTheCorrectValueCaseC() {
@@ -141,8 +141,8 @@ public class SetCoverageTest {
     assertEquals(0.0, setCoverage.execute(listB, listA), EPSILON);
   }
 */
-  @Test
-  public void shouldGetNameReturnTheCorrectValue() {
-    Assertions.assertEquals("SC", setCoverage.getName());
-  }
+    @Test
+    public void shouldGetNameReturnTheCorrectValue() {
+        Assertions.assertEquals("SC", setCoverage.getName());
+    }
 }

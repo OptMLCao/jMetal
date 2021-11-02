@@ -7,14 +7,17 @@ import java.util.Map;
 /**
  * Interface representing a Solution
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
  * @param <T> Type (Double, Integer, etc.)
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public interface Solution<T> extends Serializable {
-  List<T> variables() ;
-  double[] objectives() ;
-  double[] constraints() ;
-  Map<Object,Object> attributes() ;
+    List<T> variables();
 
-  Solution<T> copy() ;
+    double[] objectives();
+
+    double[] constraints();
+
+    Map<Object, Object> attributes();
+
+    Solution<T> copy();
 }

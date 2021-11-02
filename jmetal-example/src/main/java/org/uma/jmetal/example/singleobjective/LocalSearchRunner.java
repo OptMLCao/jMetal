@@ -17,30 +17,30 @@ import java.util.Comparator;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class LocalSearchRunner {
-  /**
-   * Usage: java org.uma.jmetal.runner.singleobjective.LocalSearchRunner
-   */
-  public static void main(String[] args) throws Exception {
-    BinaryProblem problem = new OneMax(1024) ;
+    /**
+     * Usage: java org.uma.jmetal.runner.singleobjective.LocalSearchRunner
+     */
+    public static void main(String[] args) throws Exception {
+        BinaryProblem problem = new OneMax(1024);
 
-    MutationOperator<BinarySolution> mutationOperator =
-        new BitFlipMutation(1.0 / problem.getBitsFromVariable(0)) ;
+        MutationOperator<BinarySolution> mutationOperator =
+                new BitFlipMutation(1.0 / problem.getBitsFromVariable(0));
 
-    int improvementRounds = 10000 ;
+        int improvementRounds = 10000;
 
-    Comparator<BinarySolution> comparator = new DominanceComparator<>() ;
+        Comparator<BinarySolution> comparator = new DominanceComparator<>();
 
-    DefaultLocalSearch<BinarySolution> localSearch = new DefaultLocalSearch<BinarySolution>(
-            improvementRounds,
-            problem,
-            mutationOperator,
-            comparator) ;
+        DefaultLocalSearch<BinarySolution> localSearch = new DefaultLocalSearch<BinarySolution>(
+                improvementRounds,
+                problem,
+                mutationOperator,
+                comparator);
 
-    localSearch.run();
+        localSearch.run();
 
-    BinarySolution newSolution = localSearch.getResult() ;
+        BinarySolution newSolution = localSearch.getResult();
 
-    JMetalLogger.logger.info("Fitness: " + newSolution.objectives()[0]) ;
-    JMetalLogger.logger.info("Solution: " + newSolution.variables().get(0)) ;
-  }
+        JMetalLogger.logger.info("Fitness: " + newSolution.objectives()[0]);
+        JMetalLogger.logger.info("Solution: " + newSolution.variables().get(0));
+    }
 }

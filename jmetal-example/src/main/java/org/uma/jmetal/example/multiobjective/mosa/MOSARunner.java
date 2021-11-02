@@ -25,31 +25,31 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class MOSARunner extends AbstractAlgorithmRunner {
-  public static void main(String[] args) throws JMetalException, FileNotFoundException {
-    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2_2D";
-    String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ2.2D.csv";
+    public static void main(String[] args) throws JMetalException, FileNotFoundException {
+        String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2_2D";
+        String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ2.2D.csv";
 
-    Problem<DoubleSolution> problem = ProblemUtils.loadProblem(problemName);
+        Problem<DoubleSolution> problem = ProblemUtils.loadProblem(problemName);
 
-    MutationOperator<DoubleSolution> mutation =
-            new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0);
+        MutationOperator<DoubleSolution> mutation =
+                new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0);
 
-    BoundedArchive<DoubleSolution> archive = new GenericBoundedArchive<>(100, new GridDensityEstimator<>(5, problem.getNumberOfObjectives()));
-    archive = new GenericBoundedArchive<>(100, new CrowdingDistanceDensityEstimator<>());
+        BoundedArchive<DoubleSolution> archive = new GenericBoundedArchive<>(100, new GridDensityEstimator<>(5, problem.getNumberOfObjectives()));
+        archive = new GenericBoundedArchive<>(100, new CrowdingDistanceDensityEstimator<>());
 
-    MOSA<DoubleSolution> algorithm =
-            new MOSA<>(problem, 50000, archive, mutation, 1.0, new Exponential(0.95));
+        MOSA<DoubleSolution> algorithm =
+                new MOSA<>(problem, 50000, archive, mutation, 1.0, new Exponential(0.95));
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-    List<DoubleSolution> population = algorithm.getResult();
-    long computingTime = algorithmRunner.getComputingTime();
+        List<DoubleSolution> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    JMetalLogger.logger.info("Number of non-accepted solutions: " + algorithm.getNumberOfWorstAcceptedSolutions());
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront);
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Number of non-accepted solutions: " + algorithm.getNumberOfWorstAcceptedSolutions());
+        printFinalSolutionSet(population);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
     }
-  }
 }

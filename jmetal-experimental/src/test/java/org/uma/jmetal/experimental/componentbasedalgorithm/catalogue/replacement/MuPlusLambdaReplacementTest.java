@@ -13,23 +13,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MuPlusLambdaReplacementTest {
 
-  @Test
-  public void shouldReplaceReturnAPopulationOfTheRequiredSizeIfMuIs10AndLambdaIs2() {
-    int mu = 10;
-    int lambda = 2;
-    DummyDoubleProblem problem = new DummyDoubleProblem();
-    List<DoubleSolution> population = new ArrayList<>();
-    for (int i = 0; i < mu; i++) {
-      population.add(problem.createSolution());
+    @Test
+    public void shouldReplaceReturnAPopulationOfTheRequiredSizeIfMuIs10AndLambdaIs2() {
+        int mu = 10;
+        int lambda = 2;
+        DummyDoubleProblem problem = new DummyDoubleProblem();
+        List<DoubleSolution> population = new ArrayList<>();
+        for (int i = 0; i < mu; i++) {
+            population.add(problem.createSolution());
+        }
+
+        List<DoubleSolution> offspringPopulation = new ArrayList<>();
+        for (int i = 0; i < lambda; i++) {
+            offspringPopulation.add(problem.createSolution());
+        }
+
+        MuPlusLambdaReplacement<DoubleSolution> replacement = new MuPlusLambdaReplacement<>(new ObjectiveComparator<>(0));
+
+        assertEquals(mu, replacement.replace(population, offspringPopulation).size());
     }
-
-    List<DoubleSolution> offspringPopulation = new ArrayList<>();
-    for (int i = 0; i < lambda; i++) {
-      offspringPopulation.add(problem.createSolution());
-    }
-
-    MuPlusLambdaReplacement<DoubleSolution> replacement = new MuPlusLambdaReplacement<>(new ObjectiveComparator<>(0)) ;
-
-    assertEquals(mu, replacement.replace(population, offspringPopulation).size()) ;
-  }
 }

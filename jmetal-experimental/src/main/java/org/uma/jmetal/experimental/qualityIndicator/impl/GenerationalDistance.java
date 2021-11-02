@@ -19,74 +19,77 @@ import java.io.IOException;
  */
 @SuppressWarnings("serial")
 public class GenerationalDistance extends QualityIndicator {
-  private double pow = 2.0;
+    private double pow = 2.0;
 
-  /**
-   * Default constructor
-   */
-  public GenerationalDistance() {
-  }
-
-  /**
-   * Constructor
-   *
-   * @param referenceParetoFrontFile
-   * @param p
-   * @throws FileNotFoundException
-   */
-  public GenerationalDistance(String referenceParetoFrontFile, double p) throws IOException {
-    super(referenceParetoFrontFile) ;
-    pow = p ;
-  }
-
-  /**
-   * Constructor
-   *
-   * @param referenceFront
-   */
-  public GenerationalDistance(double[][] referenceFront) {
-    super(referenceFront) ;
-  }
-
-  /**
-   * Evaluate() method
-   * @param front
-   * @return
-   */
-  @Override public double compute(double[][] front) {
-    Check.notNull(front);
-
-    return generationalDistance(front, referenceFront);
-  }
-
-  /**
-   * Returns the generational distance value for a given front
-   *
-   * @param front           The front
-   * @param referenceFront The reference pareto front
-   */
-  public double generationalDistance(double[][] front, double[][] referenceFront) {
-    double sum = 0.0;
-    for (int i = 0; i < front.length;  i++) {
-      sum += Math.pow(VectorUtils.distanceToClosestVector(front[i], referenceFront), pow);
+    /**
+     * Default constructor
+     */
+    public GenerationalDistance() {
     }
 
-    sum = Math.pow(sum, 1.0 / pow);
+    /**
+     * Constructor
+     *
+     * @param referenceParetoFrontFile
+     * @param p
+     * @throws FileNotFoundException
+     */
+    public GenerationalDistance(String referenceParetoFrontFile, double p) throws IOException {
+        super(referenceParetoFrontFile);
+        pow = p;
+    }
 
-    return sum / front.length;
-  }
+    /**
+     * Constructor
+     *
+     * @param referenceFront
+     */
+    public GenerationalDistance(double[][] referenceFront) {
+        super(referenceFront);
+    }
 
-  @Override public String getName() {
-    return "GD" ;
-  }
+    /**
+     * Evaluate() method
+     *
+     * @param front
+     * @return
+     */
+    @Override
+    public double compute(double[][] front) {
+        Check.notNull(front);
 
-  @Override
-  public String getDescription() {
-    return "Generational distance quality indicator" ;
-  }
+        return generationalDistance(front, referenceFront);
+    }
 
-  @Override
-  public boolean isTheLowerTheIndicatorValueTheBetter() {
-    return true ;
-  }
+    /**
+     * Returns the generational distance value for a given front
+     *
+     * @param front          The front
+     * @param referenceFront The reference pareto front
+     */
+    public double generationalDistance(double[][] front, double[][] referenceFront) {
+        double sum = 0.0;
+        for (int i = 0; i < front.length; i++) {
+            sum += Math.pow(VectorUtils.distanceToClosestVector(front[i], referenceFront), pow);
+        }
+
+        sum = Math.pow(sum, 1.0 / pow);
+
+        return sum / front.length;
+    }
+
+    @Override
+    public String getName() {
+        return "GD";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Generational distance quality indicator";
+    }
+
+    @Override
+    public boolean isTheLowerTheIndicatorValueTheBetter() {
+        return true;
+    }
 }

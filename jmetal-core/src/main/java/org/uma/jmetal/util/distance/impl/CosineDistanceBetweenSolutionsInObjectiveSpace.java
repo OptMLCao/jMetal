@@ -9,34 +9,34 @@ import org.uma.jmetal.util.distance.Distance;
  * @author <antonio@lcc.uma.es>
  */
 public class CosineDistanceBetweenSolutionsInObjectiveSpace<S extends Solution<?>>
-    implements Distance<S, S> {
+        implements Distance<S, S> {
 
-  private S referencePoint;
+    private S referencePoint;
 
-  public CosineDistanceBetweenSolutionsInObjectiveSpace(S referencePoint) {
-    this.referencePoint = referencePoint ;
-  }
-
-  @Override
-  public double compute(S solution1, S solution2) {
-    double sum = 0.0 ;
-    for (int i = 0; i < solution1.objectives().length; i++) {
-      sum += (solution1.objectives()[i] - referencePoint.objectives()[i]) *
-          (solution2.objectives()[i] - referencePoint.objectives()[i]);
+    public CosineDistanceBetweenSolutionsInObjectiveSpace(S referencePoint) {
+        this.referencePoint = referencePoint;
     }
 
-    double result = sum / (sumOfDistancesToIdealPoint(solution1) * sumOfDistancesToIdealPoint(solution2)) ;
+    @Override
+    public double compute(S solution1, S solution2) {
+        double sum = 0.0;
+        for (int i = 0; i < solution1.objectives().length; i++) {
+            sum += (solution1.objectives()[i] - referencePoint.objectives()[i]) *
+                    (solution2.objectives()[i] - referencePoint.objectives()[i]);
+        }
 
-    return result ;
-  }
+        double result = sum / (sumOfDistancesToIdealPoint(solution1) * sumOfDistancesToIdealPoint(solution2));
 
-  private double sumOfDistancesToIdealPoint(S solution) {
-    double sum = 0.0 ;
-
-    for (int i = 0 ; i < solution.objectives().length; i++) {
-      sum += Math.pow(solution.objectives()[i] - referencePoint.objectives()[i], 2.0) ;
+        return result;
     }
 
-    return Math.sqrt(sum) ;
-  }
+    private double sumOfDistancesToIdealPoint(S solution) {
+        double sum = 0.0;
+
+        for (int i = 0; i < solution.objectives().length; i++) {
+            sum += Math.pow(solution.objectives()[i] - referencePoint.objectives()[i], 2.0);
+        }
+
+        return Math.sqrt(sum);
+    }
 }

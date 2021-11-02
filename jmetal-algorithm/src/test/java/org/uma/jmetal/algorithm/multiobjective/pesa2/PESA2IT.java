@@ -21,76 +21,76 @@ import static org.junit.Assert.assertTrue;
 import static org.uma.jmetal.util.AbstractAlgorithmRunner.printFinalSolutionSet;
 
 public class PESA2IT {
-  Algorithm<List<DoubleSolution>> algorithm;
+    Algorithm<List<DoubleSolution>> algorithm;
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
-      throws Exception {
-    Kursawe problem = new Kursawe();
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
+    @Test
+    public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
+            throws Exception {
+        Kursawe problem = new Kursawe();
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
 
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    algorithm = new PESA2Builder<>(problem, crossover, mutation).build();
+        algorithm = new PESA2Builder<>(problem, crossover, mutation).build();
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
 
     /*
     Rationale: the default problem is Kursawe, and usually PESA2, configured with standard
     settings, should return 100 solutions
     */
-    assertTrue(population.size() >= 99);
-  }
+        assertTrue(population.size() >= 99);
+    }
 
-  @Test
-  public void shouldTheAlgorithmReturnAGoodQualityFrontWhenSolvingAConstrainedProblem()
-      throws Exception {
-    ConstrEx problem = new ConstrEx();
-    CrossoverOperator<DoubleSolution> crossover;
-    MutationOperator<DoubleSolution> mutation;
+    @Test
+    public void shouldTheAlgorithmReturnAGoodQualityFrontWhenSolvingAConstrainedProblem()
+            throws Exception {
+        ConstrEx problem = new ConstrEx();
+        CrossoverOperator<DoubleSolution> crossover;
+        MutationOperator<DoubleSolution> mutation;
 
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        double crossoverProbability = 0.9;
+        double crossoverDistributionIndex = 20.0;
+        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    algorithm = new PESA2Builder<DoubleSolution>(problem, crossover, mutation).build();
+        algorithm = new PESA2Builder<DoubleSolution>(problem, crossover, mutation).build();
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult() ;
+        List<DoubleSolution> population = algorithm.getResult();
 
-    String referenceFrontFileName = "../resources/referenceFrontsCSV/ConstrEx.csv" ;
+        String referenceFrontFileName = "../resources/referenceFrontsCSV/ConstrEx.csv";
 
-    printFinalSolutionSet(population);
+        printFinalSolutionSet(population);
 
-    double[][] referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",") ;
-    QualityIndicator hypervolume = new PISAHypervolume(referenceFront);
+        double[][] referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
+        QualityIndicator hypervolume = new PISAHypervolume(referenceFront);
 
-    // Rationale: the default problem is ConstrEx, and PESA-II, configured with standard settings, should
-    // return find a front with a hypervolume value higher than 0.7
+        // Rationale: the default problem is ConstrEx, and PESA-II, configured with standard settings, should
+        // return find a front with a hypervolume value higher than 0.7
 
-    double[][] normalizedFront =
-            NormalizeUtils.normalize(
-                    SolutionListUtils.getMatrixWithObjectiveValues(population),
-                    NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
-                    NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
+        double[][] normalizedFront =
+                NormalizeUtils.normalize(
+                        SolutionListUtils.getMatrixWithObjectiveValues(population),
+                        NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
+                        NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-    double hv = hypervolume.compute(normalizedFront);
+        double hv = hypervolume.compute(normalizedFront);
 
-    assertTrue(population.size() >= 98);
-    assertTrue(hv > 0.7);
-  }
+        assertTrue(population.size() >= 98);
+        assertTrue(hv > 0.7);
+    }
 }

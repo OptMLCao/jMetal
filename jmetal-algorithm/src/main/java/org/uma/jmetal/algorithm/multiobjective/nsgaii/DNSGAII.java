@@ -22,54 +22,54 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class DNSGAII<S extends Solution<?>> extends NSGAII<S> {
 
-  private double[][] referenceVectors;
+    private double[][] referenceVectors;
 
-  public DNSGAII(
-      Problem<S> problem,
-      int maxEvaluations,
-      int populationSize,
-      int matingPoolSize,
-      int offspringPopulationSize,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      SelectionOperator<List<S>, S> selectionOperator,
-      Comparator<S> dominanceComparator,
-      SolutionListEvaluator<S> evaluator) {
-    super(
-        problem,
-        maxEvaluations,
-        populationSize,
-        matingPoolSize,
-        offspringPopulationSize,
-        crossoverOperator,
-        mutationOperator,
-        selectionOperator,
-        dominanceComparator,
-        evaluator);
-  }
+    public DNSGAII(
+            Problem<S> problem,
+            int maxEvaluations,
+            int populationSize,
+            int matingPoolSize,
+            int offspringPopulationSize,
+            CrossoverOperator<S> crossoverOperator,
+            MutationOperator<S> mutationOperator,
+            SelectionOperator<List<S>, S> selectionOperator,
+            Comparator<S> dominanceComparator,
+            SolutionListEvaluator<S> evaluator) {
+        super(
+                problem,
+                maxEvaluations,
+                populationSize,
+                matingPoolSize,
+                offspringPopulationSize,
+                crossoverOperator,
+                mutationOperator,
+                selectionOperator,
+                dominanceComparator,
+                evaluator);
+    }
 
-  public void setReferenceVectors(double[][] referenceVectors) {
-    this.referenceVectors = referenceVectors;
-  }
+    public void setReferenceVectors(double[][] referenceVectors) {
+        this.referenceVectors = referenceVectors;
+    }
 
-  @Override
-  protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
-    List<S> jointPopulation = new ArrayList<>();
-    jointPopulation.addAll(population);
-    jointPopulation.addAll(offspringPopulation);
-    RankingAndDirScoreSelection<S> rankingAndDirScoreSelection =
-        new RankingAndDirScoreSelection<>(
-            getMaxPopulationSize(), dominanceComparator, referenceVectors);
-    return rankingAndDirScoreSelection.execute(jointPopulation);
-  }
+    @Override
+    protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
+        List<S> jointPopulation = new ArrayList<>();
+        jointPopulation.addAll(population);
+        jointPopulation.addAll(offspringPopulation);
+        RankingAndDirScoreSelection<S> rankingAndDirScoreSelection =
+                new RankingAndDirScoreSelection<>(
+                        getMaxPopulationSize(), dominanceComparator, referenceVectors);
+        return rankingAndDirScoreSelection.execute(jointPopulation);
+    }
 
-  @Override
-  public String getName() {
-    return "D-NSGA-II";
-  }
+    @Override
+    public String getName() {
+        return "D-NSGA-II";
+    }
 
-  @Override
-  public String getDescription() {
-    return "DIR based NSGA-II";
-  }
+    @Override
+    public String getDescription() {
+        return "DIR based NSGA-II";
+    }
 }

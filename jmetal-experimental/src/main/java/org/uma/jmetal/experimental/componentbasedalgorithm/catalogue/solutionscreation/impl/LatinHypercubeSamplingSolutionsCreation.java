@@ -11,56 +11,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LatinHypercubeSamplingSolutionsCreation
-    implements SolutionsCreation<DoubleSolution> {
-  private final int numberOfSolutionsToCreate;
-  private final DoubleProblem problem;
+        implements SolutionsCreation<DoubleSolution> {
+    private final int numberOfSolutionsToCreate;
+    private final DoubleProblem problem;
 
-  public LatinHypercubeSamplingSolutionsCreation(
-      DoubleProblem problem, int numberOfSolutionsToCreate) {
-    this.problem = problem;
-    this.numberOfSolutionsToCreate = numberOfSolutionsToCreate;
-  }
-
-  public List<DoubleSolution> create() {
-    int[][] latinHypercube = new int[numberOfSolutionsToCreate][problem.getNumberOfVariables()];
-    for (int dim = 0; dim < problem.getNumberOfVariables(); dim++) {
-      List<Integer> permutation = getPermutation(numberOfSolutionsToCreate);
-      for (int v = 0; v < numberOfSolutionsToCreate; v++) {
-        latinHypercube[v][dim] = permutation.get(v);
-      }
+    public LatinHypercubeSamplingSolutionsCreation(
+            DoubleProblem problem, int numberOfSolutionsToCreate) {
+        this.problem = problem;
+        this.numberOfSolutionsToCreate = numberOfSolutionsToCreate;
     }
 
-    List<DoubleSolution> solutionList = new ArrayList<>(numberOfSolutionsToCreate);
-    for (int i = 0; i < numberOfSolutionsToCreate; i++) {
-      DoubleSolution newSolution =
-          new DefaultDoubleSolution(problem.getNumberOfObjectives(), problem.getBoundsForVariables());
-      for (int j = 0; j < problem.getNumberOfVariables(); j++) {
-        Bounds<Double> bounds = problem.getBoundsForVariables().get(j);
-        newSolution.variables().set(
-            j,
-            NormalizeUtils.normalize(
-                latinHypercube[i][j],
-                bounds.getLowerBound(),
-                bounds.getUpperBound(),
-                0,
-                numberOfSolutionsToCreate));
-      }
+    public List<DoubleSolution> create() {
+        int[][] latinHypercube = new int[numberOfSolutionsToCreate][problem.getNumberOfVariables()];
+        for (int dim = 0; dim < problem.getNumberOfVariables(); dim++) {
+            List<Integer> permutation = getPermutation(numberOfSolutionsToCreate);
+            for (int v = 0; v < numberOfSolutionsToCreate; v++) {
+                latinHypercube[v][dim] = permutation.get(v);
+            }
+        }
 
-      solutionList.add(newSolution);
+        List<DoubleSolution> solutionList = new ArrayList<>(numberOfSolutionsToCreate);
+        for (int i = 0; i < numberOfSolutionsToCreate; i++) {
+            DoubleSolution newSolution =
+                    new DefaultDoubleSolution(problem.getNumberOfObjectives(), problem.getBoundsForVariables());
+            for (int j = 0; j < problem.getNumberOfVariables(); j++) {
+                Bounds<Double> bounds = problem.getBoundsForVariables().get(j);
+                newSolution.variables().set(
+                        j,
+                        NormalizeUtils.normalize(
+                                latinHypercube[i][j],
+                                bounds.getLowerBound(),
+                                bounds.getUpperBound(),
+                                0,
+                                numberOfSolutionsToCreate));
+            }
+
+            solutionList.add(newSolution);
+        }
+
+        return solutionList;
     }
 
-    return solutionList;
-  }
+    private List<Integer> getPermutation(int permutationLength) {
+        List<Integer> randomSequence = new ArrayList<>(permutationLength);
 
-  private List<Integer> getPermutation(int permutationLength) {
-    List<Integer> randomSequence = new ArrayList<>(permutationLength);
+        for (int j = 0; j < permutationLength; j++) {
+            randomSequence.add(j);
+        }
 
-    for (int j = 0; j < permutationLength; j++) {
-      randomSequence.add(j);
+        java.util.Collections.shuffle(randomSequence);
+
+        return randomSequence;
     }
-
-    java.util.Collections.shuffle(randomSequence);
-
-    return randomSequence;
-  }
 }

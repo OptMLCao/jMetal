@@ -36,88 +36,88 @@ import java.util.List;
  */
 public class MOEADDEComponentBasedConfigurationExample extends AbstractAlgorithmRunner {
 
-  public static void main(String[] args) throws FileNotFoundException {
-    DoubleProblem problem;
-    MOEADDE algorithm;
-    MutationOperator<DoubleSolution> mutation;
-    DifferentialEvolutionCrossover crossover;
+    public static void main(String[] args) throws FileNotFoundException {
+        DoubleProblem problem;
+        MOEADDE algorithm;
+        MutationOperator<DoubleSolution> mutation;
+        DifferentialEvolutionCrossover crossover;
 
-    String problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F2";
-    String referenceParetoFront = "resources/referenceFrontsCSV/LZ09_F2.csv";
+        String problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F2";
+        String referenceParetoFront = "resources/referenceFrontsCSV/LZ09_F2.csv";
 
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
+        problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    int populationSize = 300;
+        int populationSize = 300;
 
-    SequenceGenerator<Integer> subProblemIdGenerator =
-        new IntegerPermutationGenerator(populationSize);
+        SequenceGenerator<Integer> subProblemIdGenerator =
+                new IntegerPermutationGenerator(populationSize);
 
-    double cr = 1.0;
-    double f = 0.5;
-    crossover =
-        new DifferentialEvolutionCrossover(
-            cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
+        double cr = 1.0;
+        double f = 0.5;
+        crossover =
+                new DifferentialEvolutionCrossover(
+                        cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double mutationDistributionIndex = 20.0;
+        mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    DifferentialCrossoverVariation variation =
-        new DifferentialCrossoverVariation(1, crossover, mutation, subProblemIdGenerator);
+        DifferentialCrossoverVariation variation =
+                new DifferentialCrossoverVariation(1, crossover, mutation, subProblemIdGenerator);
 
-    double neighborhoodSelectionProbability = 0.9;
-    int neighborhoodSize = 20;
-    WeightVectorNeighborhood<DoubleSolution> neighborhood =
-        new WeightVectorNeighborhood<>(populationSize, neighborhoodSize);
+        double neighborhoodSelectionProbability = 0.9;
+        int neighborhoodSize = 20;
+        WeightVectorNeighborhood<DoubleSolution> neighborhood =
+                new WeightVectorNeighborhood<>(populationSize, neighborhoodSize);
 
-    PopulationAndNeighborhoodMatingPoolSelection<DoubleSolution> selection =
-        new PopulationAndNeighborhoodMatingPoolSelection<>(
-            variation.getCrossover().getNumberOfRequiredParents(),
-            subProblemIdGenerator,
-            neighborhood,
-            neighborhoodSelectionProbability,
-            true);
+        PopulationAndNeighborhoodMatingPoolSelection<DoubleSolution> selection =
+                new PopulationAndNeighborhoodMatingPoolSelection<>(
+                        variation.getCrossover().getNumberOfRequiredParents(),
+                        subProblemIdGenerator,
+                        neighborhood,
+                        neighborhoodSelectionProbability,
+                        true);
 
-    int maximumNumberOfReplacedSolutions = 2;
-    AggregativeFunction aggregativeFunction = new Tschebyscheff();
-    MOEADReplacement<DoubleSolution> replacement =
-        new MOEADReplacement<>(
-            selection,
-            neighborhood,
-            aggregativeFunction,
-            subProblemIdGenerator,
-            maximumNumberOfReplacedSolutions);
+        int maximumNumberOfReplacedSolutions = 2;
+        AggregativeFunction aggregativeFunction = new Tschebyscheff();
+        MOEADReplacement<DoubleSolution> replacement =
+                new MOEADReplacement<>(
+                        selection,
+                        neighborhood,
+                        aggregativeFunction,
+                        subProblemIdGenerator,
+                        maximumNumberOfReplacedSolutions);
 
-    Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem);
+        Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem);
 
-    algorithm =
-        new MOEADDE(
-            evaluation,
-            new RandomSolutionsCreation<>(problem, populationSize),
-            new TerminationByEvaluations(150000),
-            selection,
-            variation,
-            replacement);
+        algorithm =
+                new MOEADDE(
+                        evaluation,
+                        new RandomSolutionsCreation<>(problem, populationSize),
+                        new TerminationByEvaluations(150000),
+                        selection,
+                        variation,
+                        replacement);
 
-    algorithm.run();
+        algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
-    JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
+        List<DoubleSolution> population = algorithm.getResult();
+        JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
+        JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
 
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-        .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+                .print();
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
 
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront);
+        if (!referenceParetoFront.equals("")) {
+            printQualityIndicators(population, referenceParetoFront);
+        }
+
+        System.exit(0);
     }
-
-    System.exit(0);
-  }
 }

@@ -18,40 +18,40 @@ import java.util.stream.Stream;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class TSVToCSVConverter {
-  public static void main(String[] args) throws IOException {
-    if (args.length != 2) {
-      throw new JMetalException("Wrong number of arguments: two file names are required.");
+    public static void main(String[] args) throws IOException {
+        if (args.length != 2) {
+            throw new JMetalException("Wrong number of arguments: two file names are required.");
+        }
+
+        String inputFileName = args[0];
+        String outputFileName = args[1];
+
+        Stream<String> lines;
+        BufferedWriter outputFile;
+
+        try {
+            lines = Files.lines(Paths.get(inputFileName), Charset.defaultCharset());
+            outputFile = Files.newBufferedWriter(Paths.get(outputFileName));
+            lines.forEach(
+                    line -> {
+                        // List<String> values = Arrays.asList(l.split("\\s+")) ;
+                        String values = line.replaceAll("\\s+", ",");
+
+                        if (values.endsWith(",")) {
+                            values = values.substring(0, values.length() - 1);
+                        }
+                        try {
+                            outputFile.write(values);
+                            outputFile.write("\n");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+        } catch (IOException e) {
+            throw new JMetalException(e);
+        }
+
+        lines.close();
+        outputFile.close();
     }
-
-    String inputFileName = args[0];
-    String outputFileName = args[1];
-
-    Stream<String> lines;
-    BufferedWriter outputFile;
-
-    try {
-      lines = Files.lines(Paths.get(inputFileName), Charset.defaultCharset());
-      outputFile = Files.newBufferedWriter(Paths.get(outputFileName));
-      lines.forEach(
-          line -> {
-            // List<String> values = Arrays.asList(l.split("\\s+")) ;
-            String values = line.replaceAll("\\s+", ",");
-
-            if (values.endsWith(",")) {
-              values = values.substring(0, values.length() - 1);
-            }
-            try {
-              outputFile.write(values);
-              outputFile.write("\n");
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-          });
-    } catch (IOException e) {
-      throw new JMetalException(e);
-    }
-
-    lines.close();
-    outputFile.close();
-  }
 }

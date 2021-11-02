@@ -13,31 +13,31 @@ import java.util.Comparator;
  */
 @SuppressWarnings("serial")
 public class GenericBoundedArchive<S extends Solution<?>> extends AbstractBoundedArchive<S> {
-  private Comparator<S> comparator;
-  private DensityEstimator<S> densityEstimator ;
+    private Comparator<S> comparator;
+    private DensityEstimator<S> densityEstimator;
 
-  public GenericBoundedArchive(int maxSize, DensityEstimator<S> densityEstimator) {
-    super(maxSize);
-    this.densityEstimator = densityEstimator ;
-    comparator = densityEstimator.getComparator() ;
-  }
-
-  @Override
-  public void prune() {
-    if (getSolutionList().size() > getMaxSize()) {
-      computeDensityEstimator();
-      S worst = new SolutionListUtils().findWorstSolution(getSolutionList(), comparator) ;
-      getSolutionList().remove(worst);
+    public GenericBoundedArchive(int maxSize, DensityEstimator<S> densityEstimator) {
+        super(maxSize);
+        this.densityEstimator = densityEstimator;
+        comparator = densityEstimator.getComparator();
     }
-  }
 
-  @Override
-  public Comparator<S> getComparator() {
-    return comparator ;
-  }
+    @Override
+    public void prune() {
+        if (getSolutionList().size() > getMaxSize()) {
+            computeDensityEstimator();
+            S worst = new SolutionListUtils().findWorstSolution(getSolutionList(), comparator);
+            getSolutionList().remove(worst);
+        }
+    }
 
-  @Override
-  public void computeDensityEstimator() {
-    densityEstimator.compute(getSolutionList());
-  }
+    @Override
+    public Comparator<S> getComparator() {
+        return comparator;
+    }
+
+    @Override
+    public void computeDensityEstimator() {
+        densityEstimator.compute(getSolutionList());
+    }
 }

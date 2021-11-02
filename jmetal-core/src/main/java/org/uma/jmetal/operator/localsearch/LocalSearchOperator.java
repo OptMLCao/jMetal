@@ -4,10 +4,11 @@ import org.uma.jmetal.operator.Operator;
 
 /**
  * Interface representing a local search operator
- *
+ * <p>
  * Created by cbarba on 5/3/15.
  */
-public interface LocalSearchOperator <Source> extends Operator<Source, Source> {
-  int getNumberOfImprovements() ;
-  int getNumberOfEvaluations() ;
+public interface LocalSearchOperator<Source> extends Operator<Source, Source> {
+    int getNumberOfImprovements();
+
+    int getNumberOfEvaluations();
 }

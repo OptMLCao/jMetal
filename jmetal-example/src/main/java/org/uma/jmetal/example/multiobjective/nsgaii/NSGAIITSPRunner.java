@@ -29,52 +29,52 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class NSGAIITSPRunner extends AbstractAlgorithmRunner {
-  /**
-   * @param args Command line arguments.
-   * @throws java.io.IOException
-   * @throws SecurityException
-   * @throws ClassNotFoundException Invoking command: java
-   *     org.uma.jmetal.runner.multiobjective.nsgaii.NSGAIITSPRunner problemName [referenceFront]
-   */
-  public static void main(String[] args) throws JMetalException, IOException {
-    PermutationProblem<PermutationSolution<Integer>> problem;
-    Algorithm<List<PermutationSolution<Integer>>> algorithm;
-    CrossoverOperator<PermutationSolution<Integer>> crossover;
-    MutationOperator<PermutationSolution<Integer>> mutation;
-    SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
+    /**
+     * @param args Command line arguments.
+     * @throws java.io.IOException
+     * @throws SecurityException
+     * @throws ClassNotFoundException Invoking command: java
+     *                                org.uma.jmetal.runner.multiobjective.nsgaii.NSGAIITSPRunner problemName [referenceFront]
+     */
+    public static void main(String[] args) throws JMetalException, IOException {
+        PermutationProblem<PermutationSolution<Integer>> problem;
+        Algorithm<List<PermutationSolution<Integer>>> algorithm;
+        CrossoverOperator<PermutationSolution<Integer>> crossover;
+        MutationOperator<PermutationSolution<Integer>> mutation;
+        SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
 
-    problem = new MultiobjectiveTSP("resources/tspInstances/kroA100.tsp", "resources/tspInstances/kroB100.tsp");
+        problem = new MultiobjectiveTSP("resources/tspInstances/kroA100.tsp", "resources/tspInstances/kroB100.tsp");
 
-    crossover = new PMXCrossover(0.9);
+        crossover = new PMXCrossover(0.9);
 
-    double mutationProbability = 0.2;
-    mutation = new PermutationSwapMutation<Integer>(mutationProbability);
+        double mutationProbability = 0.2;
+        mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
-    selection =
-        new BinaryTournamentSelection<PermutationSolution<Integer>>(
-            new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
+        selection =
+                new BinaryTournamentSelection<PermutationSolution<Integer>>(
+                        new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
-    int populationSize = 100;
-    algorithm =
-        new NSGAIIBuilder<PermutationSolution<Integer>>(
-                problem, crossover, mutation, populationSize)
-            .setSelectionOperator(selection)
-            .setMaxEvaluations(10000)
-            .build();
+        int populationSize = 100;
+        algorithm =
+                new NSGAIIBuilder<PermutationSolution<Integer>>(
+                        problem, crossover, mutation, populationSize)
+                        .setSelectionOperator(selection)
+                        .setMaxEvaluations(10000)
+                        .build();
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-    List<PermutationSolution<Integer>> population = algorithm.getResult();
-    long computingTime = algorithmRunner.getComputingTime();
+        List<PermutationSolution<Integer>> population = algorithm.getResult();
+        long computingTime = algorithmRunner.getComputingTime();
 
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-        .print();
+        new SolutionListOutput(population)
+                .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+                .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
+                .print();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
-  }
+        JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+        JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+        JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+        JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
+    }
 }

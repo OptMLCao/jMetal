@@ -12,13 +12,13 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class NullEvaluator<S> implements SolutionListEvaluator<S> {
 
-  @Override
-  public List<S> evaluate(List<S> solutionList, Problem<S> problem) throws JMetalException {
-    return solutionList;
-  }
+    @Override
+    public List<S> evaluate(List<S> solutionList, Problem<S> problem) throws JMetalException {
+        return solutionList;
+    }
 
-  @Override
-  public void shutdown() {
-    // This method is an intentionally-blank override.
-  }
+    @Override
+    public void shutdown() {
+        // This method is an intentionally-blank override.
+    }
 }

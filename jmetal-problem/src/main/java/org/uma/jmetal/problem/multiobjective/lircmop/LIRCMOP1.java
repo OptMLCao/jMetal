@@ -13,71 +13,80 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class LIRCMOP1 extends AbstractDoubleProblem {
-  /** Constructor */
-  public LIRCMOP1() {
-    this(30);
-  }
-  /** Constructor */
-  public LIRCMOP1(int numberOfVariables) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(2);
-    setNumberOfConstraints(2);
-    setName("LIRCMOP1");
-
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
-
-    for (int i = 0; i < getNumberOfVariables(); i++) {
-      lowerLimit.add(0.0);
-      upperLimit.add(1.0);
+    /**
+     * Constructor
+     */
+    public LIRCMOP1() {
+        this(30);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
-  }
+    /**
+     * Constructor
+     */
+    public LIRCMOP1(int numberOfVariables) {
+        setNumberOfVariables(numberOfVariables);
+        setNumberOfObjectives(2);
+        setNumberOfConstraints(2);
+        setName("LIRCMOP1");
 
-  /** Evaluate() method */
-  @Override
-  public DoubleSolution evaluate(DoubleSolution solution) {
-    double[] x = new double[getNumberOfVariables()];
-    for (int i = 0; i < getNumberOfVariables(); i++) {
-      x[i] = solution.variables().get(i);
+        List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
+        List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+
+        for (int i = 0; i < getNumberOfVariables(); i++) {
+            lowerLimit.add(0.0);
+            upperLimit.add(1.0);
+        }
+
+        setVariableBounds(lowerLimit, upperLimit);
     }
 
-    solution.objectives()[0] = x[0] + g1(x);
-    solution.objectives()[1] = 1 - x[0] * x[0] + g2(x);
+    /**
+     * Evaluate() method
+     */
+    @Override
+    public DoubleSolution evaluate(DoubleSolution solution) {
+        double[] x = new double[getNumberOfVariables()];
+        for (int i = 0; i < getNumberOfVariables(); i++) {
+            x[i] = solution.variables().get(i);
+        }
 
-    evaluateConstraints(solution);
-    return solution ;
-  }
+        solution.objectives()[0] = x[0] + g1(x);
+        solution.objectives()[1] = 1 - x[0] * x[0] + g2(x);
 
-  /** EvaluateConstraints() method */
-  public void evaluateConstraints(DoubleSolution solution) {
-    double[] x = new double[getNumberOfVariables()];
-    for (int i = 0; i < getNumberOfVariables(); i++) {
-      x[i] = solution.variables().get(i);
+        evaluateConstraints(solution);
+        return solution;
     }
 
-    final double a = 0.51;
-    final double b = 0.5;
+    /**
+     * EvaluateConstraints() method
+     */
+    public void evaluateConstraints(DoubleSolution solution) {
+        double[] x = new double[getNumberOfVariables()];
+        for (int i = 0; i < getNumberOfVariables(); i++) {
+            x[i] = solution.variables().get(i);
+        }
 
-    solution.constraints()[0] = (a - g1(x)) * (g1(x) - b);
-    solution.constraints()[1] = (a - g2(x)) * (g2(x) - b);
-  }
+        final double a = 0.51;
+        final double b = 0.5;
 
-  protected double g1(double[] x) {
-    double result = 0.0;
-    for (int i = 2; i < getNumberOfVariables(); i += 2) {
-      result += Math.pow(x[i] - Math.sin(0.5 * Math.PI * x[0]), 2.0);
-    }
-    return result;
-  }
-
-  protected double g2(double[] x) {
-    double result = 0.0;
-    for (int i = 1; i < getNumberOfVariables(); i += 2) {
-      result += Math.pow(x[i] - Math.cos(0.5 * Math.PI * x[0]), 2.0);
+        solution.constraints()[0] = (a - g1(x)) * (g1(x) - b);
+        solution.constraints()[1] = (a - g2(x)) * (g2(x) - b);
     }
 
-    return result;
-  }
+    protected double g1(double[] x) {
+        double result = 0.0;
+        for (int i = 2; i < getNumberOfVariables(); i += 2) {
+            result += Math.pow(x[i] - Math.sin(0.5 * Math.PI * x[0]), 2.0);
+        }
+        return result;
+    }
+
+    protected double g2(double[] x) {
+        double result = 0.0;
+        for (int i = 1; i < getNumberOfVariables(); i += 2) {
+            result += Math.pow(x[i] - Math.cos(0.5 * Math.PI * x[0]), 2.0);
+        }
+
+        return result;
+    }
 }
