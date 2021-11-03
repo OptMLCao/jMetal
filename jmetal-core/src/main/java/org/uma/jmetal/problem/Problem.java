@@ -9,12 +9,16 @@ import java.io.Serializable;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public interface Problem<S> extends Serializable {
+
     int getNumberOfVariables();
 
+    /* problem 多个目标数量 */
     int getNumberOfObjectives();
 
+    /* 获取问题的约束 */
     int getNumberOfConstraints();
 
+    /* 问题名称定义 */
     String getName();
 
     /**

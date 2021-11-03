@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Abstract class representing an evolutionary algorithm
+ * 进化算法使用的抽象父类.
  *
  * @param <S> Solution
  * @param <R> Result
@@ -14,7 +15,10 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R> {
+
+    /* 种群 */
     protected List<S> population;
+    /* 计算的问题 */
     protected Problem<S> problem;
 
     public List<S> getPopulation() {
@@ -37,16 +41,22 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 
     protected abstract void updateProgress();
 
+    /* 算法终止条件判断 */
     protected abstract boolean isStoppingConditionReached();
 
+    /* 构造初始解 */
     protected abstract List<S> createInitialPopulation();
 
+    /* 评价解 */
     protected abstract List<S> evaluatePopulation(List<S> population);
 
+    /* 解的选择 */
     protected abstract List<S> selection(List<S> population);
 
+    /* 产生子种群 */
     protected abstract List<S> reproduction(List<S> population);
 
+    /* 选择子代进入下一次迭代 */
     protected abstract List<S> replacement(List<S> population, List<S> offspringPopulation);
 
     @Override
@@ -54,11 +64,16 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 
     @Override
     public void run() {
+        /* run中存在的为算法执行的主流程 */
+        /* 子种群 */
         List<S> offspringPopulation;
+        /* 杂交种群 */
         List<S> matingPopulation;
-
+        /* 构造初始解 */
         population = createInitialPopulation();
+        /* 评价解 */
         population = evaluatePopulation(population);
+        /* 算法初始化 */
         initProgress();
         while (!isStoppingConditionReached()) {
             matingPopulation = selection(population);

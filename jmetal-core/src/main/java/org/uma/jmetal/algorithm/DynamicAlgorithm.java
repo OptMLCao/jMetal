@@ -10,6 +10,7 @@ import java.util.Map;
  * @author Antonio J. Nebro <ajnebro@uma.es>
  */
 public interface DynamicAlgorithm<Result> extends Algorithm<Result> {
+
     DynamicProblem<?, ?> getDynamicProblem();
 
     void restart();
