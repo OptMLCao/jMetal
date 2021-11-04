@@ -76,8 +76,11 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
         /* 算法初始化 */
         initProgress();
         while (!isStoppingConditionReached()) {
+            /* 选择并构建种群 */
             matingPopulation = selection(population);
+            /* 在当前解领域进行搜索（以遗传为例进行交、变异等操作） */
             offspringPopulation = reproduction(matingPopulation);
+            /* 对解进行评价 */
             offspringPopulation = evaluatePopulation(offspringPopulation);
             population = replacement(population, offspringPopulation);
             updateProgress();

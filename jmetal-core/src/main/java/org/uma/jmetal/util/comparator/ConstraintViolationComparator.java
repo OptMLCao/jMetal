@@ -26,10 +26,14 @@ public class ConstraintViolationComparator<S extends Solution<?>> implements Com
     public int compare(S solution1, S solution2) {
         double violationDegreeSolution1;
         double violationDegreeSolution2;
-
+        /* 统计违反约束的聚合数值 */
         violationDegreeSolution1 = ConstraintHandling.overallConstraintViolationDegree(solution1);
         violationDegreeSolution2 = ConstraintHandling.overallConstraintViolationDegree(solution2);
-
+        /**
+         *（1）若两个Solution都违反约束，违反约束程度较低的解更优；
+         *（2）若两个Solution一个违反约束，而另一个不违反，则不违约束的解更优；
+         *（3）若两个Solution都违反约束，则这里不做偏向;
+         */
         if ((violationDegreeSolution1 < 0) && (violationDegreeSolution2 < 0)) {
             return Double.compare(violationDegreeSolution2, violationDegreeSolution1);
         } else if ((violationDegreeSolution1 == 0) && (violationDegreeSolution2 < 0)) {
@@ -40,4 +44,5 @@ public class ConstraintViolationComparator<S extends Solution<?>> implements Com
             return 0;
         }
     }
+
 }

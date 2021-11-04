@@ -38,6 +38,7 @@ public abstract class AbstractDoubleProblem extends AbstractGenericProblem<Doubl
         return getBoundsForVariables().get(index).getLowerBound();
     }
 
+    /* 设置自变量边界 */
     public void setVariableBounds(List<Double> lowerBounds, List<Double> upperBounds) {
         Check.notNull(lowerBounds);
         Check.notNull(upperBounds);

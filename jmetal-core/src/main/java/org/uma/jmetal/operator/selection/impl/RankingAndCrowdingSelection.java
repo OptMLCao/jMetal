@@ -19,12 +19,17 @@ import java.util.List;
  *
  * @author Antonio J. Nebro, Juan J. Durillo
  */
-@SuppressWarnings("serial")
-public class RankingAndCrowdingSelection<S extends Solution<?>>
-        implements SelectionOperator<List<S>, List<S>> {
-    private final int solutionsToSelect;
-    private Comparator<S> dominanceComparator;
 
+/**
+ * 拥挤度排序过程.
+ */
+@SuppressWarnings("serial")
+public class RankingAndCrowdingSelection<S extends Solution<?>> implements SelectionOperator<List<S>, List<S>> {
+
+    /* 选择的解个体数量 */
+    private final int solutionsToSelect;
+    /* 解的支配关系笔记器 */
+    private Comparator<S> dominanceComparator;
 
     /**
      * Constructor

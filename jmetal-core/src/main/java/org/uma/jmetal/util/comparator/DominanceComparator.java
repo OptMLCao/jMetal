@@ -13,6 +13,8 @@ import java.util.Comparator;
  */
 @SuppressWarnings("serial")
 public class DominanceComparator<S extends Solution<?>> implements Comparator<S>, Serializable {
+
+    /* 约束违反比较 */
     private ConstraintViolationComparator<S> constraintViolationComparator;
 
     /**
@@ -48,15 +50,22 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
                         + " objectives and solution2 has "
                         + solution2.objectives().length);
 
-        int result;
-        result = constraintViolationComparator.compare(solution1, solution2);
+        int result = constraintViolationComparator.compare(solution1, solution2);
         if (result == 0) {
+            /* 只有在都无违反约束的时候，进行多个目标评价值的支配关系比较 */
             result = dominanceTest(solution1, solution2);
         }
 
         return result;
     }
 
+    /**
+     * 获取解的支配关系.
+     *
+     * @param solution1
+     * @param solution2
+     * @return
+     */
     private int dominanceTest(S solution1, S solution2) {
         int bestIsOne = 0;
         int bestIsTwo = 0;
@@ -76,4 +85,5 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
         result = Integer.compare(bestIsTwo, bestIsOne);
         return result;
     }
+
 }

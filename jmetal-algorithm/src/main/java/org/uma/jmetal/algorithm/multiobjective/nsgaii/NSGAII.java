@@ -89,6 +89,7 @@ public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
 
     @Override
     protected List<S> evaluatePopulation(List<S> population) {
+        /* 解的评价值就存放在Solution对应的目标字段之中 */
         population = evaluator.evaluate(population, getProblem());
 
         return population;
@@ -154,7 +155,7 @@ public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
         List<S> jointPopulation = new ArrayList<>();
         jointPopulation.addAll(population);
         jointPopulation.addAll(offspringPopulation);
-
+        /* 拥挤度排序选择器 */
         RankingAndCrowdingSelection<S> rankingAndCrowdingSelection;
         rankingAndCrowdingSelection = new RankingAndCrowdingSelection<S>(getMaxPopulationSize(), dominanceComparator);
 

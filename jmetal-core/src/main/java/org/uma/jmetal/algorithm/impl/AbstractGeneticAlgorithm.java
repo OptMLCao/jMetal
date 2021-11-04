@@ -10,15 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Abstract class representing a genetic algorithm
+ * Abstract class representing a genetic algorithm -->  遗传算法的通用模板.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 @SuppressWarnings("serial")
 public abstract class AbstractGeneticAlgorithm<S, Result> extends AbstractEvolutionaryAlgorithm<S, Result> {
     protected int maxPopulationSize;
+    /* 解的选择 */
     protected SelectionOperator<List<S>, S> selectionOperator;
+    /* 解的交叉 */
     protected CrossoverOperator<S> crossoverOperator;
+    /* 解的变异 */
     protected MutationOperator<S> mutationOperator;
 
     /* Setters and getters */
@@ -104,9 +107,9 @@ public abstract class AbstractGeneticAlgorithm<S, Result> extends AbstractEvolut
             for (int j = 0; j < numberOfParents; j++) {
                 parents.add(population.get(i + j));
             }
-
+            /* 先交叉产生子种群 */
             List<S> offspring = crossoverOperator.execute(parents);
-
+            /* 再针对子种群的个体逐个变异 */
             for (S s : offspring) {
                 mutationOperator.execute(s);
                 offspringPopulation.add(s);
