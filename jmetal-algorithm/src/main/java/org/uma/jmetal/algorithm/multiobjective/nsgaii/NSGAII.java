@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("serial")
 public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, List<S>> {
+
     protected final int maxEvaluations;
 
     protected final SolutionListEvaluator<S> evaluator;
@@ -51,17 +52,23 @@ public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
                   SelectionOperator<List<S>, S> selectionOperator, Comparator<S> dominanceComparator,
                   SolutionListEvaluator<S> evaluator) {
         super(problem);
+        /* 最大进化代数 */
         this.maxEvaluations = maxEvaluations;
+        /* 种群大小 */
         setMaxPopulationSize(populationSize);
-
+        /* 交叉操作 */
         this.crossoverOperator = crossoverOperator;
+        /* 变异操作 */
         this.mutationOperator = mutationOperator;
+        /* 解的选择 */
         this.selectionOperator = selectionOperator;
-
+        /* 解的评价 */
         this.evaluator = evaluator;
+        /* 支配关系比较 */
         this.dominanceComparator = dominanceComparator;
-
+        /* 杂交池 */
         this.matingPoolSize = matingPoolSize;
+        /* 子代种群规模 */
         this.offspringPopulationSize = offspringPopulationSize;
     }
 
