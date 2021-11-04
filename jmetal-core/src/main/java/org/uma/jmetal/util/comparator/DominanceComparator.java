@@ -32,7 +32,7 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
     }
 
     /**
-     * Compares two solutions.
+     * Compares two solutions. 这个版本的支配关系排序的支持对约束的比较.
      *
      * @param solution1 Object representing the first <code>Solution</code>.
      * @param solution2 Object representing the second <code>Solution</code>.
@@ -49,13 +49,12 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
                         + solution1.objectives().length
                         + " objectives and solution2 has "
                         + solution2.objectives().length);
-
+        /* 先比较约束的违反情况 */
         int result = constraintViolationComparator.compare(solution1, solution2);
         if (result == 0) {
             /* 只有在都无违反约束的时候，进行多个目标评价值的支配关系比较 */
             result = dominanceTest(solution1, solution2);
         }
-
         return result;
     }
 

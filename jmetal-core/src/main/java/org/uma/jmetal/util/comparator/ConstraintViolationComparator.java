@@ -14,7 +14,8 @@ import java.util.Comparator;
 @SuppressWarnings("serial")
 public class ConstraintViolationComparator<S extends Solution<?>> implements Comparator<S> {
     /**
-     * Compares two solutions. If the solutions has no constraints the method return 0
+     * 对解违反约束的情况进行比较，若都不违反约束则返回 0.
+     * Compares two solutions. If the solutions has no constraints the method return 0.
      *
      * @param solution1 Object representing the first <code>Solution</code>.
      * @param solution2 Object representing the second <code>Solution</code>.

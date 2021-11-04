@@ -16,7 +16,7 @@ import java.util.Comparator;
 public class DominanceComparatorV2<S extends Solution<?>> implements Comparator<S>, Serializable {
 
     /**
-     * Compares two solutions.
+     * Compares two solutions. --> 这个版本的支配关系比较仅仅只考虑目标函数值的支持排序.
      *
      * @param solution1 Object representing the first <code>Solution</code>.
      * @param solution2 Object representing the second <code>Solution</code>.
@@ -36,4 +36,5 @@ public class DominanceComparatorV2<S extends Solution<?>> implements Comparator<
 
         return VectorUtils.dominanceTest(solution1.objectives(), solution2.objectives());
     }
+
 }

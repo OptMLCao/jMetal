@@ -53,25 +53,24 @@ public class EpsilonDominanceComparator<S extends Solution<?>> extends Dominance
      */
     @Override
     public int compare(S solution1, S solution2) {
+
         Check.notNull(solution1);
         Check.notNull(solution2);
-        Check.that(
-                solution1.objectives().length == solution2.objectives().length,
-                "Cannot compare because solution1 has "
-                        + solution1.objectives().length
-                        + " objectives and solution2 has "
-                        + solution2.objectives().length);
+        Check.that(solution1.objectives().length == solution2.objectives().length,
+                "Cannot compare because solution1 has " + solution1.objectives().length
+                        + " objectives and solution2 has " + solution2.objectives().length);
 
         int result;
         result = constraintViolationComparator.compare(solution1, solution2);
         if (result == 0) {
             result = dominanceTest(solution1, solution2);
         }
-
         return result;
+
     }
 
     private int dominanceTest(Solution<?> solution1, Solution<?> solution2) {
+
         boolean bestIsOne = false;
         boolean bestIsTwo = false;
         for (int i = 0; i < solution1.objectives().length; i++) {
@@ -91,18 +90,17 @@ public class EpsilonDominanceComparator<S extends Solution<?>> extends Dominance
                 }
             }
         }
+
         if (!bestIsOne && !bestIsTwo) {
+
             double dist1 = 0.0;
             double dist2 = 0.0;
-
             for (int i = 0; i < solution1.objectives().length; i++) {
                 double index1 = Math.floor(solution1.objectives()[i] / epsilon);
                 double index2 = Math.floor(solution2.objectives()[i] / epsilon);
 
-                dist1 += Math.pow(solution1.objectives()[i] - index1 * epsilon,
-                        2.0);
-                dist2 += Math.pow(solution2.objectives()[i] - index2 * epsilon,
-                        2.0);
+                dist1 += Math.pow(solution1.objectives()[i] - index1 * epsilon, 2.0);
+                dist2 += Math.pow(solution2.objectives()[i] - index2 * epsilon, 2.0);
             }
 
             if (dist1 < dist2) {
@@ -110,10 +108,13 @@ public class EpsilonDominanceComparator<S extends Solution<?>> extends Dominance
             } else {
                 return 1;
             }
+
         } else if (bestIsTwo) {
             return 1;
         } else {
             return -1;
         }
+
     }
+
 }
