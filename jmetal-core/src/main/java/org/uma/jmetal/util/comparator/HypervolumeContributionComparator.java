@@ -7,8 +7,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * Compares two solutions according to the crowding distance attribute. The higher
- * the distance the better
+ * Compares two solutions according to the crowding distance attribute. The higher the distance the better.
+ * 这里是越大越好.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */

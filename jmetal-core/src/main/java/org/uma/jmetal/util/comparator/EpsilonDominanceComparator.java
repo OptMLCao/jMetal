@@ -69,10 +69,22 @@ public class EpsilonDominanceComparator<S extends Solution<?>> extends Dominance
 
     }
 
+    /**
+     * <p>
+     * epsilon dominance 比较的特点是，通过 epsilon 进行分层；
+     * 第一层进行的是epsilon格子间支配关系的比较；
+     * 第二层进行的是到epsilon格子欧式距离的支配关系比较.
+     * </p>
+     *
+     * @param solution1
+     * @param solution2
+     * @return
+     */
     private int dominanceTest(Solution<?> solution1, Solution<?> solution2) {
 
         boolean bestIsOne = false;
         boolean bestIsTwo = false;
+        /* 先获取Solution1和Solution2 的 epsilon大小格子的支配关系 */
         for (int i = 0; i < solution1.objectives().length; i++) {
             double value1 = Math.floor(solution1.objectives()[i] / epsilon);
             double value2 = Math.floor(solution2.objectives()[i] / epsilon);
@@ -90,9 +102,9 @@ public class EpsilonDominanceComparator<S extends Solution<?>> extends Dominance
                 }
             }
         }
-
+        /* 若solution1 和 solution2 是一个相同的epsilon格子，那么再进行的到对应epsilon格子距离的支配关系比较 */
         if (!bestIsOne && !bestIsTwo) {
-
+            /* 相同的格子 */
             double dist1 = 0.0;
             double dist2 = 0.0;
             for (int i = 0; i < solution1.objectives().length; i++) {
@@ -108,7 +120,7 @@ public class EpsilonDominanceComparator<S extends Solution<?>> extends Dominance
             } else {
                 return 1;
             }
-
+            /* 以下是不同的格子 */
         } else if (bestIsTwo) {
             return 1;
         } else {

@@ -65,6 +65,12 @@ public class GDominanceComparator<S extends Solution<?>> implements Comparator<S
         return result;
     }
 
+    /**
+     * 获取@param Solution与 referencePoint之间的支配关系.
+     *
+     * @param solution
+     * @return
+     */
     private int flag(S solution) {
         int result = 1;
         for (int i = 0; i < solution.objectives().length; i++) {
@@ -80,7 +86,8 @@ public class GDominanceComparator<S extends Solution<?>> implements Comparator<S
                 }
             }
         }
-
+        /* 0表示不支配，1表示支配 */
         return result;
     }
+
 }

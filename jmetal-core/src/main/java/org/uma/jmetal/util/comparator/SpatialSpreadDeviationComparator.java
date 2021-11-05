@@ -41,41 +41,17 @@ public class SpatialSpreadDeviationComparator<S extends Solution<?>> implements 
 
         double distance1 = Double.MIN_VALUE;
         double distance2 = Double.MIN_VALUE;
-
         distance1 = (double) NewcrowdingDistance.getAttribute(solution1);
         distance2 = (double) NewcrowdingDistance.getAttribute(solution2);
-      /*
-      if (NewcrowdingDistance.getAttribute(solution1) != null) {
-        distance1 = (double) NewcrowdingDistance.getAttribute(solution1);
-        System.out.println("Distancia 1"+distance1);
-      }
-
-      if (NewcrowdingDistance.getAttribute(solution2) != null) {
-        distance2 = (double) NewcrowdingDistance.getAttribute(solution2);
-        System.out.println("Distancia 2"+distance2);
-      }*/
-
-        //System.out.println("Valores de distancias "+distance1+" "+distance2);
-
         if (distance1 > distance2) {
             return -1;
         }
         if (distance2 > distance1) {
             return 1;
         }
-      /*
-      if (distance1 > distance2) {
-        result = -1;
-      } else  if (distance1 < distance2) {
-        result = 1;
-      } else {
-        result = 0;
-      }
-      */
         return 0;
 
     }
 
-    //return result ;
 }
 
