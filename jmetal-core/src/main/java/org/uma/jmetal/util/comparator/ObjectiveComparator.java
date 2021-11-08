@@ -75,7 +75,7 @@ public class ObjectiveComparator<S extends Solution<?>> implements Comparator<S>
         } else {
             double objective1 = solution1.objectives()[this.objectiveId];
             double objective2 = solution2.objectives()[this.objectiveId];
-            /* 看起来写的比较死，可以改成--> 从外部传入一个比较器，由具体的比较器代理 compare 的工作 */
+            /* 看起来写的比较死，可以改成--> 从外部传入一个比较器，由具体注入的compare代理器完成比较工作是不是更好？ */
             if (order == Ordering.ASCENDING) {
                 result = Double.compare(objective1, objective2);
             } else {
