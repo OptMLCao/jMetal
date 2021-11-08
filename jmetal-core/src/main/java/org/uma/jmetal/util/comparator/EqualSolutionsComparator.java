@@ -21,8 +21,8 @@ public class EqualSolutionsComparator<S extends Solution<?>> implements Comparat
      *
      * @param solution1 First <code>Solution</code>.
      * @param solution2 Second <code>Solution</code>.
-     * @return -1, or 0, or 1, or 2 if solution1 is dominates solution2, solution1
-     * and solution2 are equals, or solution1 is greater than solution2,
+     * @return -1, or 0, or 1, or 2 if solution1 is dominates solution2(-1), solution1
+     * and solution2 are equals(0), or solution1 is greater than solution2(1),
      * respectively.
      */
     @Override
