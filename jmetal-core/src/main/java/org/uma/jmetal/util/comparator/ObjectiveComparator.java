@@ -7,15 +7,20 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * This class implements a comparator based on a given objective
+ * This class implements a comparator based on a given objective, 类似目标compare的集合.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 @SuppressWarnings("serial")
 public class ObjectiveComparator<S extends Solution<?>> implements Comparator<S>, Serializable {
-    public enum Ordering {ASCENDING, DESCENDING}
 
-    ;
+    public enum Ordering {
+
+        ASCENDING,  /* 升序 */
+        DESCENDING  /* 降序 */
+
+    }
+
     private int objectiveId;
 
     private Ordering order;
@@ -52,6 +57,7 @@ public class ObjectiveComparator<S extends Solution<?>> implements Comparator<S>
     @Override
     public int compare(S solution1, S solution2) {
         int result;
+        /* 到else{} 之前都是对异常&空值的处理. */
         if (solution1 == null) {
             if (solution2 == null) {
                 result = 0;
@@ -69,6 +75,7 @@ public class ObjectiveComparator<S extends Solution<?>> implements Comparator<S>
         } else {
             double objective1 = solution1.objectives()[this.objectiveId];
             double objective2 = solution2.objectives()[this.objectiveId];
+            /* 看起来写的比较死，可以改成--> 从外部传入一个比较器，由具体的比较器代理 compare 的工作 */
             if (order == Ordering.ASCENDING) {
                 result = Double.compare(objective1, objective2);
             } else {
@@ -77,4 +84,5 @@ public class ObjectiveComparator<S extends Solution<?>> implements Comparator<S>
         }
         return result;
     }
+
 }

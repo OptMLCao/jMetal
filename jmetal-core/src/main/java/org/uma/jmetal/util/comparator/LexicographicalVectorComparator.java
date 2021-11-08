@@ -6,7 +6,7 @@ import java.util.Comparator;
 
 /**
  * This class implements the Comparator interface for comparing two vectors.
- * The order used is lexicographical order.
+ * The order used is lexicographical[字典序、字母次序] order.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
@@ -44,4 +44,5 @@ public class LexicographicalVectorComparator implements Comparator<double[]> {
         }
         return result;
     }
+    
 }
