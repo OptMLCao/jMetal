@@ -45,7 +45,7 @@ public class EqualSolutionsComparator<S extends Solution<?>> implements Comparat
         for (int i = 0; i < solution1.objectives().length; i++) {
             value1 = solution1.objectives()[i];
             value2 = solution2.objectives()[i];
-
+            /* 目标值比较大小 */
             if (value1 < value2) {
                 flag = -1;
             } else if (value1 > value2) {
@@ -53,7 +53,7 @@ public class EqualSolutionsComparator<S extends Solution<?>> implements Comparat
             } else {
                 flag = 0;
             }
-
+            /* 解析两个目标值之间的支配关系 */
             if (flag == -1) {
                 dominate1 = 1;
             }
@@ -62,12 +62,15 @@ public class EqualSolutionsComparator<S extends Solution<?>> implements Comparat
                 dominate2 = 1;
             }
         }
-
+        /* 两个解之间互不支配 */
         if (dominate1 == 0 && dominate2 == 0) {
             //No one dominates the other
             return 0;
         }
-
+        /* 这个是不是有点问题，若上层调用的时候，是两个解交叉调用两次，然后再获取最终结果的话则无问题，若否是不是存在疑问？ */
+        /*                                        |                                                    */
+        /*                                        |/                                                   */
+        /* 没问题的，注意这里写的是 if{} else if {},哈哈哈，对的对的!                                          */
         if (dominate1 == 1) {
             // solution1 dominates
             return -1;
