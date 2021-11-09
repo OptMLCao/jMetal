@@ -30,13 +30,11 @@ public class NSGAIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<NS
     private int populationSize;
     protected int matingPoolSize;
     protected int offspringPopulationSize;
-
     private CrossoverOperator<S> crossoverOperator;
     private MutationOperator<S> mutationOperator;
     private SelectionOperator<List<S>, S> selectionOperator;
     private SolutionListEvaluator<S> evaluator;
     private Comparator<S> dominanceComparator;
-
     private NSGAIIVariant variant;
 
     /**
@@ -45,16 +43,15 @@ public class NSGAIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<NS
     public NSGAIIBuilder(Problem<S> problem, CrossoverOperator<S> crossoverOperator,
                          MutationOperator<S> mutationOperator, int populationSize) {
         this.problem = problem;
-        maxEvaluations = 25000;
+        this.maxEvaluations = 25000;
         this.populationSize = populationSize;
-        matingPoolSize = populationSize;
-        offspringPopulationSize = populationSize;
+        this.matingPoolSize = populationSize;
+        this.offspringPopulationSize = populationSize;
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
-        selectionOperator = new BinaryTournamentSelection<S>(new RankingAndCrowdingDistanceComparator<S>());
-        evaluator = new SequentialSolutionListEvaluator<S>();
-        dominanceComparator = new DominanceComparator<>();
-
+        this.selectionOperator = new BinaryTournamentSelection<S>(new RankingAndCrowdingDistanceComparator<S>());
+        this.evaluator = new SequentialSolutionListEvaluator<S>();
+        this.dominanceComparator = new DominanceComparator<>();
         this.variant = NSGAIIVariant.NSGAII;
     }
 

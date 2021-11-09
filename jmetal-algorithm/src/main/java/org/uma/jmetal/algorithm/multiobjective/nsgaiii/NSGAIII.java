@@ -23,41 +23,49 @@ import java.util.Vector;
  */
 @SuppressWarnings("serial")
 public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, List<S>> {
+
+    /* 当前迭代次数 */
     protected int iterations;
+    /* 最大迭代次数 */
     protected int maxIterations;
-
+    /* 解评价 */
     protected SolutionListEvaluator<S> evaluator;
-
+    /* 沿着每个目标在其方向上的等分数量  */
     protected int numberOfDivisions;
+    /* 超平面上的参考点集合 */
     protected List<ReferencePoint<S>> referencePoints = new Vector<>();
 
     /**
      * Constructor
      */
-    public NSGAIII(NSGAIIIBuilder<S> builder) { // can be created from the NSGAIIIBuilder within the same package
+    public NSGAIII(NSGAIIIBuilder<S> builder) {
+        // can be created from the NSGAIIIBuilder within the same package
         super(builder.getProblem());
+        /* 基础运行参数 */
+        /* 最大迭代次数 */
         maxIterations = builder.getMaxIterations();
-
+        /* 解的交叉操作 */
         crossoverOperator = builder.getCrossoverOperator();
+        /* 解的变异操作 */
         mutationOperator = builder.getMutationOperator();
+        /* 解的选择 */
         selectionOperator = builder.getSelectionOperator();
-
+        /* 解的评价 */
         evaluator = builder.getEvaluator();
-
-        /// NSGAIII
+        /* NSGAIII 用于在每个方向上的等分数量. */
         numberOfDivisions = builder.getNumberOfDivisions();
-
-        (new ReferencePoint<S>()).generateReferencePoints(referencePoints, getProblem().getNumberOfObjectives(), numberOfDivisions);
-
+        /* 参考点 */
+        ReferencePoint<S> referencePoint = new ReferencePoint<>();
+        // assert this.referencePoints.size() == 0;
+        referencePoint.generateReferencePoints(referencePoints, getProblem().getNumberOfObjectives(), numberOfDivisions);
+        /* start 根据参考点集合中点数量决定种群规模 */
         int populationSize = referencePoints.size();
         while (populationSize % 4 > 0) {
             populationSize++;
         }
-
         setMaxPopulationSize(populationSize);
-
-        JMetalLogger.logger.info("rpssize: " + referencePoints.size());
-        ;
+        /* end 根据参考点集合中点数量决定种群规模 */
+        JMetalLogger.logger.info("referencePointSize: " + referencePoints.size());
     }
 
     @Override

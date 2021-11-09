@@ -123,7 +123,6 @@ public class NormalizeUtils {
         double[] minValues = new double[rowLength];
         Arrays.fill(minValues, Double.MAX_VALUE);
         for (int j = 0; j < rowLength; j++) {
-            /* 获取列 */
             for (double[] values : matrix) {
                 if (values[j] < minValues[j]) {
                     minValues[j] = values[j];
@@ -143,9 +142,7 @@ public class NormalizeUtils {
     public static double[] getMaxValuesOfTheColumnsOfAMatrix(double[][] matrix) {
         int rowLength = matrix[0].length;
         double[] maxValues = new double[rowLength];
-
         Arrays.fill(maxValues, Double.MIN_VALUE);
-
         for (int j = 0; j < rowLength; j++) {
             for (double[] values : matrix) {
                 if (values[j] > maxValues[j]) {
@@ -153,7 +150,6 @@ public class NormalizeUtils {
                 }
             }
         }
-
         return maxValues;
     }
 

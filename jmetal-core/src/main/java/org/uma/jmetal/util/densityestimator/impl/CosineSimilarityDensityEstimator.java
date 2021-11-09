@@ -15,14 +15,17 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * This class implements the a density estimator based on the cosine similarity
+ * This class implements the density estimator based on the cosine similarity --> 余弦相似性.
+ * 余弦相似性更加注重两个向量在方向上的差异，而非距离或长度上的差异.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class CosineSimilarityDensityEstimator<S extends Solution<?>> implements DensityEstimator<S> {
+
     private final String attributeId = getClass().getName();
     private Distance<double[], double[]> distance;
     private Point referencePoint;
+    /* 正则化参数 */
     private boolean normalize;
 
     public CosineSimilarityDensityEstimator(Point referencePoint) {
@@ -31,7 +34,7 @@ public class CosineSimilarityDensityEstimator<S extends Solution<?>> implements 
 
     public CosineSimilarityDensityEstimator(Point referencePoint, boolean normalize) {
         this.referencePoint = referencePoint;
-        distance = new CosineSimilarityBetweenVectors(referencePoint.getValues());
+        this.distance = new CosineSimilarityBetweenVectors(referencePoint.getValues());
         this.normalize = normalize;
     }
 
@@ -42,23 +45,23 @@ public class CosineSimilarityDensityEstimator<S extends Solution<?>> implements 
      */
     @Override
     public void compute(List<S> solutionList) {
-        int size = solutionList.size();
 
+        int size = solutionList.size();
+        /* 异常参数处理 */
         if (size == 0) {
             return;
         }
-
+        /* 异常参数处理 */
         if (size == 1) {
             solutionList.get(0).attributes().put(attributeId, 0.0);
         }
-
+        /* 解的个数 */
         int numberOfObjectives = solutionList.get(0).objectives().length;
-
+        /* 目标个数与解的个数相同 */
         if (size == numberOfObjectives) {
             for (S solution : solutionList) {
                 solution.attributes().put(attributeId, 0.0);
             }
-
             return;
         }
 
@@ -69,6 +72,7 @@ public class CosineSimilarityDensityEstimator<S extends Solution<?>> implements 
         double[][] distanceMatrix = new double[solutionList.size()][solutionList.size()];
         double[][] solutionMatrix = null;
         if (normalize) {
+            /* 正则化 */
             try {
                 solutionMatrix = NormalizeUtils.normalize(SolutionListUtils.getMatrixWithObjectiveValues(solutionList));
             } catch (JMetalException e) {
@@ -86,13 +90,12 @@ public class CosineSimilarityDensityEstimator<S extends Solution<?>> implements 
         }
 
         for (int i = 0; i < solutionList.size(); i++) {
+            /* 找到最大的两个数 */
             double currentMaximumDistance = 0.0;
             double secondCurrentMaximumDistance = 0.0;
-
             for (int j = 0; j < solutionList.size(); j++) {
                 if (i != j) {
                     double d = distanceMatrix[i][j];
-
                     if (d >= currentMaximumDistance) {
                         secondCurrentMaximumDistance = currentMaximumDistance;
                         currentMaximumDistance = d;
@@ -102,12 +105,8 @@ public class CosineSimilarityDensityEstimator<S extends Solution<?>> implements 
                 }
             }
 
-            solutionList
-                    .get(i)
-                    .attributes().put(attributeId, (currentMaximumDistance + secondCurrentMaximumDistance));
-            solutionList
-                    .get(i)
-                    .attributes().put("DIFF", Math.abs(currentMaximumDistance - secondCurrentMaximumDistance));
+            solutionList.get(i).attributes().put(attributeId, (currentMaximumDistance + secondCurrentMaximumDistance));
+            solutionList.get(i).attributes().put("DIFF", Math.abs(currentMaximumDistance - secondCurrentMaximumDistance));
         }
 
         for (int i = 0; i < solutionList.get(0).objectives().length; i++) {

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * d
  * Class representing an ideal point (minimization is assumed)
  *
  * @author Antonio J.Nebro <antonio@lcc.uma.es>

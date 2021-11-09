@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Class representing a nadir point (minimization is assumed)
+ * Class representing a nadir[最低点] point (minimization is assumed)
  *
  * @author Antonio J.Nebro <antonio@lcc.uma.es>
  */

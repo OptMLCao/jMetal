@@ -82,9 +82,6 @@ public class NSGAIIIT {
                 new PISAHypervolume(
                         VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
 
-        // Rationale: the default problem is ZDT1, and NSGA-II, configured with standard settings,
-        // should return find a front with a hypervolume value higher than 0.62
-
         double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
 
         assertTrue(hv > 0.62);

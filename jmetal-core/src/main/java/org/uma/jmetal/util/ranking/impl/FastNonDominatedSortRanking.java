@@ -6,7 +6,11 @@ import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.ranking.Ranking;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * This class implements a solution list ranking based on dominance ranking. Given a collection of
@@ -18,46 +22,47 @@ import java.util.*;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranking<S> {
+
     private String attributeId = getClass().getName();
     private Comparator<S> dominanceComparator;
-    private static final Comparator<Solution<?>> CONSTRAINT_VIOLATION_COMPARATOR =
-            new ConstraintViolationComparator<Solution<?>>();
-
+    /* 约束违反情况比较 */
+    private static final Comparator<Solution<?>> CONSTRAINT_VIOLATION_COMPARATOR
+            = new ConstraintViolationComparator<Solution<?>>();
+    /* 解的排序部分 */
     private List<ArrayList<S>> rankedSubPopulations;
 
     /**
-     * Constructor
+     * dominanceComparator内部也包含了一个ConstraintViolationComparator.
+     * FastNonDominatedSortRanking.CONSTRAINT_VIOLATION_COMPARATOR 和 DominanceComparator.constraintViolationComparator
+     * 是一样东西，原作者在这里的设计是有问题还是有意为之？或者是代码修改之后没有统一？ todo 需再确认
      */
+
+    /* Constructor */
     public FastNonDominatedSortRanking(Comparator<S> comparator) {
         this.dominanceComparator = comparator;
         rankedSubPopulations = new ArrayList<>();
     }
 
-    /**
-     * Constructor
-     */
+    /* Constructor */
     public FastNonDominatedSortRanking() {
         this(new DominanceComparator<>());
     }
 
     @Override
     public Ranking<S> compute(List<S> solutionList) {
+
         List<S> population = solutionList;
-
-        // dominateMe[i] contains the number of population dominating i
+        // dominateMe[i] contains the number of population dominating i --> 支配解i的解的个数.
         int[] dominateMe = new int[population.size()];
-
-        // iDominate[k] contains the list of population dominated by k
+        // iDominate[k] contains the list of population dominated by k  --> 被解k支配的解集.
         List<List<Integer>> iDominate = new ArrayList<>(population.size());
-
-        // front[i] contains the list of individuals belonging to the front i
+        // front[i] contains the list of individuals belonging to the front i --> pareto非劣解集前沿.
         ArrayList<List<Integer>> front = new ArrayList<>(population.size() + 1);
-
+        /* start 初始化数据准备过程 */
         // Initialize the fronts
         for (int i = 0; i < population.size() + 1; i++) {
             front.add(new LinkedList<Integer>());
         }
-
         // Fast non dominated sorting algorithm
         // Contribution of Guillaume Jacquenot
         for (int p = 0; p < population.size(); p++) {
@@ -66,13 +71,15 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
             iDominate.add(new LinkedList<Integer>());
             dominateMe[p] = 0;
         }
-
+        /* end 初始化数据准备过程 */
+        /* start 确定支配关系 */
         int flagDominate;
+        /* 双层for循环看起来复杂度有点高 --> todo 有优化的空间不? */
         for (int p = 0; p < (population.size() - 1); p++) {
             // For all q individuals , calculate if p dominates q or vice versa
             for (int q = p + 1; q < population.size(); q++) {
-                flagDominate =
-                        CONSTRAINT_VIOLATION_COMPARATOR.compare(solutionList.get(p), solutionList.get(q));
+                /* 感觉这个约束的比较有点多余 */
+                flagDominate = CONSTRAINT_VIOLATION_COMPARATOR.compare(solutionList.get(p), solutionList.get(q));
                 if (flagDominate == 0) {
                     flagDominate = dominanceComparator.compare(solutionList.get(p), solutionList.get(q));
                 }
@@ -85,14 +92,15 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
                 }
             }
         }
-
+        /* 种群中最后一个解的支配关系 */
         for (int i = 0; i < population.size(); i++) {
             if (dominateMe[i] == 0) {
                 front.get(0).add(i);
                 solutionList.get(i).attributes().put(attributeId, 0);
             }
         }
-
+        /* end 确定支配关系 */
+        /* start 进行pareto支配关系排序 */
         // Obtain the rest of fronts
         int i = 0;
         Iterator<Integer> it1, it2; // Iterators
@@ -111,7 +119,8 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
                 }
             }
         }
-
+        /* end 进行pareto支配关系排序 */
+        /* start 对外封装排序后的结果 */
         rankedSubPopulations = new ArrayList<>();
         // 0,1,2,....,i-1 are fronts, then i fronts
         for (int j = 0; j < i; j++) {
@@ -121,7 +130,7 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
                 rankedSubPopulations.get(j).add(solutionList.get(it1.next()));
             }
         }
-
+        /* end 对外封装排序后的结果 */
         return this;
     }
 
@@ -154,4 +163,5 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
     public Object getAttributedId() {
         return attributeId;
     }
+
 }

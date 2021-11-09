@@ -82,11 +82,6 @@ public class NSGAIIBuilderTest {
         assertEquals(20.0, mutation.getDistributionIndex(), EPSILON);
     }
 
-    //@Test(expected = JMetalException.class)
-    //public void setNegativePopulationSize() {
-    //  builder.setPopulationSize(-1);
-    //}
-
     @Test
     public void setPositiveMaxNumberOfIterations() {
         builder.setMaxEvaluations(20000);

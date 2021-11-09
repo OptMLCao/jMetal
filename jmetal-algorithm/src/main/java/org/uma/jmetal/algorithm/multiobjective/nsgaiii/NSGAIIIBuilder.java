@@ -11,7 +11,6 @@ import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 import java.util.List;
 
-
 /**
  * Builder class
  */
@@ -24,7 +23,6 @@ public class NSGAIIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<N
     private CrossoverOperator<S> crossoverOperator;
     private MutationOperator<S> mutationOperator;
     private SelectionOperator<List<S>, S> selectionOperator;
-
     private SolutionListEvaluator<S> evaluator;
 
     /**
@@ -52,7 +50,6 @@ public class NSGAIIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<N
 
     public NSGAIIIBuilder<S> setNumberOfDivisions(int numberOfDivisions) {
         this.numberOfDivisions = numberOfDivisions;
-
         return this;
     }
 

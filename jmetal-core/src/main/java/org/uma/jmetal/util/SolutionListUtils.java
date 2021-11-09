@@ -487,6 +487,7 @@ public class SolutionListUtils {
     }
 
     /**
+     * 给定一个List, 然后转变成矩阵.
      * Given a list of solutions, returns a matrix with the objective values of all the solutions
      *
      * @param solutionList
@@ -495,9 +496,7 @@ public class SolutionListUtils {
      */
     public static <S extends Solution<?>> double[][] getMatrixWithObjectiveValues(List<S> solutionList) {
         double[][] matrix = new double[solutionList.size()][];
-
         IntStream.range(0, solutionList.size()).forEach(i -> matrix[i] = solutionList.get(i).objectives());
-
         return matrix;
     }
 }

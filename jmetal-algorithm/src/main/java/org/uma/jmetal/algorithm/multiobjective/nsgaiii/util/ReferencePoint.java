@@ -16,6 +16,7 @@ import java.util.List;
  * http://web.ntnu.edu.tw/~tcchiang/publications/nsga3cpp/nsga3cpp.htm
  */
 public class ReferencePoint<S extends Solution<?>> {
+
     public List<Double> position;
     private int memberSize;
     private List<Pair<S, Double>> potentialMembers;
@@ -25,11 +26,14 @@ public class ReferencePoint<S extends Solution<?>> {
 
     /**
      * Constructor
+     *
+     * @param size multiple Objective size.
      */
     public ReferencePoint(int size) {
         position = new ArrayList<>();
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++) {
             position.add(0.0);
+        }
         memberSize = 0;
         potentialMembers = new ArrayList<>();
     }
@@ -43,29 +47,38 @@ public class ReferencePoint<S extends Solution<?>> {
         potentialMembers = new ArrayList<>();
     }
 
-    public void generateReferencePoints(
-            List<ReferencePoint<S>> referencePoints,
-            int numberOfObjectives,
-            int numberOfDivisions) {
-
+    /**
+     * 生成参考点阵列.
+     *
+     * @param referencePoints    参考点
+     * @param numberOfObjectives 目标个数
+     * @param numberOfDivisions
+     */
+    public void generateReferencePoints(List<ReferencePoint<S>> referencePoints,
+                                        int numberOfObjectives, int numberOfDivisions) {
         ReferencePoint<S> refPoint = new ReferencePoint<>(numberOfObjectives);
         generateRecursive(referencePoints, refPoint, numberOfObjectives, numberOfDivisions, numberOfDivisions, 0);
     }
 
-    private void generateRecursive(
-            List<ReferencePoint<S>> referencePoints,
-            ReferencePoint<S> refPoint,
-            int numberOfObjectives,
-            int left,
-            int total,
-            int element) {
+    /**
+     * 递归生成整个参考平面.
+     *
+     * @param referencePoints
+     * @param refPoint
+     * @param numberOfObjectives
+     * @param left
+     * @param total
+     * @param element
+     */
+    private void generateRecursive(List<ReferencePoint<S>> referencePoints, ReferencePoint<S> refPoint,
+                                   int numberOfObjectives, int left, int total, int element) {
         if (element == (numberOfObjectives - 1)) {
             refPoint.position.set(element, (double) left / total);
             referencePoints.add(new ReferencePoint<>(refPoint));
         } else {
-            for (int i = 0; i <= left; i += 1) {
+            /* i += 1 --> ++i */
+            for (int i = 0; i <= left; ++i) {
                 refPoint.position.set(element, (double) i / total);
-
                 generateRecursive(referencePoints, refPoint, numberOfObjectives, left - i, total, element + 1);
             }
         }
@@ -101,12 +114,13 @@ public class ReferencePoint<S extends Solution<?>> {
     }
 
     public S FindClosestMember() {
-        return this.potentialMembers.remove(this.potentialMembers.size() - 1)
-                .getLeft();
+        return this.potentialMembers.remove(this.potentialMembers.size() - 1).getLeft();
     }
 
     public S RandomMember() {
-        int index = this.potentialMembers.size() > 1 ? JMetalRandom.getInstance().nextInt(0, this.potentialMembers.size() - 1) : 0;
+        int index = this.potentialMembers.size() > 1 ?
+                JMetalRandom.getInstance().nextInt(0, this.potentialMembers.size() - 1) : 0;
         return this.potentialMembers.remove(index).getLeft();
     }
+
 }
