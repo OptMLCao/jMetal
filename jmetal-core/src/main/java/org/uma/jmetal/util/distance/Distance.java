@@ -7,5 +7,7 @@ package org.uma.jmetal.util.distance;
  */
 @FunctionalInterface
 public interface Distance<E, J> {
+
     double compute(E element1, J element2);
+
 }

@@ -59,7 +59,7 @@ public class CrowdingDistanceDensityEstimator<S extends Solution<?>> implements 
             // It may be beneficial to change this according to https://dl.acm.org/citation.cfm?doid=2463372.2463456.
             // The additional change that may be beneficial is that if we have only two distinct objective values,
             //   we also don't update the crowding distance, as they all will "go to eleven",
-            //   which makes no sense as this objective just appears to be non-discriminating.
+            //   which makes no sense as this objective just appears to be non-discriminating
 
             double minObjective = front.get(0).objectives()[i];
             double maxObjective = front.get(front.size() - 1).objectives()[i];

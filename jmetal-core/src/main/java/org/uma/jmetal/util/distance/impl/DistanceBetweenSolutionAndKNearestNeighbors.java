@@ -1,5 +1,6 @@
 package org.uma.jmetal.util.distance.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.distance.Distance;
@@ -13,13 +14,18 @@ import java.util.List;
  *
  * @author <antonio@lcc.uma.es>
  */
-public class DistanceBetweenSolutionAndKNearestNeighbors<S extends Solution<?>>
-        implements Distance<S, List<S>> {
+@Slf4j
+public class DistanceBetweenSolutionAndKNearestNeighbors<S extends Solution<?>> implements Distance<S, List<S>> {
 
     private final int k;
     private Distance<S, S> distance;
 
     public DistanceBetweenSolutionAndKNearestNeighbors(int k, Distance<S, S> distance) {
+        /* 加一个k>0, 若否后续计算会报错 */
+        if (k <= 0) {
+            log.info("k must >= 0, actually is {}", k);
+            throw new IllegalArgumentException();
+        }
         this.k = k;
         this.distance = distance;
     }
@@ -39,18 +45,11 @@ public class DistanceBetweenSolutionAndKNearestNeighbors<S extends Solution<?>>
     public double compute(S solution, List<S> solutionList) {
         List<Double> listOfDistances = knnDistances(solution, solutionList);
         listOfDistances.sort(Comparator.naturalOrder());
-
         int limit = Math.min(k, listOfDistances.size());
-
         double result;
         if (limit == 0) {
             result = 0.0;
         } else {
-            //double sum = 0.0;
-            //for (int i = 0; i < limit; i++) {
-            //  sum += listOfDistances.get(i);
-            //}
-            //result = sum/limit ;
             result = listOfDistances.get(limit - 1);
         }
         return result;
@@ -71,7 +70,7 @@ public class DistanceBetweenSolutionAndKNearestNeighbors<S extends Solution<?>>
                 listOfDistances.add(distanceBetweenSolutions);
             }
         }
-
         return listOfDistances;
     }
+
 }

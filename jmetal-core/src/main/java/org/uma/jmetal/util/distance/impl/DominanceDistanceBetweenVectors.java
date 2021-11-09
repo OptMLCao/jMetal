@@ -25,4 +25,5 @@ public class DominanceDistanceBetweenVectors implements Distance<double[], doubl
         }
         return Math.sqrt(distance);
     }
+
 }

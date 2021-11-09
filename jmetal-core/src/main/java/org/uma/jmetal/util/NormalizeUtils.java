@@ -39,7 +39,7 @@ public class NormalizeUtils {
     public static double normalize(
             double value, double minRangeValue, double maxRangeValue, double min, double max) {
         Check.that(max != min, "Max minus min should not be zero");
-
+        /* 这么做的好处是？避免越界嘛？看起来是的 */
         return minRangeValue + (((value - min) * (maxRangeValue - minRangeValue)) / (max - min));
     }
 
@@ -65,8 +65,9 @@ public class NormalizeUtils {
         Check.notNull(matrix);
 
         double[][] normalizedMatrix = new double[matrix.length][matrix[0].length];
-
+        /* 获取正则化最小基准 */
         double[] minValue = getMinValuesOfTheColumnsOfAMatrix(matrix);
+        /* 获取正则化最大基准 */
         double[] maxValue = getMaxValuesOfTheColumnsOfAMatrix(matrix);
 
         for (int i = 0; i < matrix.length; i++) {
@@ -74,35 +75,29 @@ public class NormalizeUtils {
                 normalizedMatrix[i][j] = NormalizeUtils.normalize(matrix[i][j], minValue[j], maxValue[j]);
             }
         }
-
+        /* 输出正则化的矩阵 */
         return normalizedMatrix;
     }
 
     /**
-     * Normalize the vectors (rows) of bi-dimensional matrix
+     * Normalize the vectors (rows) of bi-dimensional matrix --> 参数传入上下边界.
      *
      * @param matrix
      * @return A matrix with normalized values for each of its rows
      */
     public static double[][] normalize(double[][] matrix, double[] minRangeValue, double[] maxRangeValue) {
         Check.notNull(matrix);
-
         double[][] normalizedMatrix = new double[matrix.length][matrix[0].length];
-
-        //double[] minValue = getMinValuesOfTheColumnsOfAMatrix(matrix) ;
-        //double[] maxValue = getMaxValuesOfTheColumnsOfAMatrix(matrix) ;
-
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
                 normalizedMatrix[i][j] = normalize(matrix[i][j], minRangeValue[j], maxRangeValue[j]);
             }
         }
-
         return normalizedMatrix;
     }
 
     /**
-     * Normalizes a vector of double values
+     * Normalizes a vector of double values --> 返回正则化向量.
      *
      * @param vector
      * @return The normalized vector
@@ -118,6 +113,7 @@ public class NormalizeUtils {
 
     /**
      * Returns a vector with the minimum values of the columns of a matrix
+     * 获取每行的最小值, 然后组成向量.
      *
      * @param matrix
      * @return
@@ -125,22 +121,21 @@ public class NormalizeUtils {
     public static double[] getMinValuesOfTheColumnsOfAMatrix(double[][] matrix) {
         int rowLength = matrix[0].length;
         double[] minValues = new double[rowLength];
-
         Arrays.fill(minValues, Double.MAX_VALUE);
-
         for (int j = 0; j < rowLength; j++) {
+            /* 获取列 */
             for (double[] values : matrix) {
                 if (values[j] < minValues[j]) {
                     minValues[j] = values[j];
                 }
             }
         }
-
         return minValues;
     }
 
     /**
      * Returns a vector with the maximum values of the columns of a matrix
+     * 获取每行的最大值，然后组成向量.
      *
      * @param matrix
      * @return
@@ -161,4 +156,5 @@ public class NormalizeUtils {
 
         return maxValues;
     }
+
 }

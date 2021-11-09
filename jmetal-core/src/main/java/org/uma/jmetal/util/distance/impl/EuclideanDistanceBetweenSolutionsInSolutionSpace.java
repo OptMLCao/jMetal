@@ -9,8 +9,7 @@ import org.uma.jmetal.util.distance.Distance;
  *
  * @author <antonio@lcc.uma.es>
  */
-public class EuclideanDistanceBetweenSolutionsInSolutionSpace<S extends Solution<Double>>
-        implements Distance<S, S> {
+public class EuclideanDistanceBetweenSolutionsInSolutionSpace<S extends Solution<Double>> implements Distance<S, S> {
 
     private EuclideanDistanceBetweenVectors distance = new EuclideanDistanceBetweenVectors();
 
@@ -22,7 +21,7 @@ public class EuclideanDistanceBetweenSolutionsInSolutionSpace<S extends Solution
             vector1[i] = solution1.variables().get(i);
             vector2[i] = solution2.variables().get(i);
         }
-
         return distance.compute(vector1, vector2);
     }
+
 }
