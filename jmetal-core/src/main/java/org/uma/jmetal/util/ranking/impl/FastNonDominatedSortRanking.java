@@ -92,7 +92,7 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
                 }
             }
         }
-        /* 种群中最后一个解的支配关系 */
+        /* 找出全部的dominateMe==0的Solution的索引 */
         for (int i = 0; i < population.size(); i++) {
             if (dominateMe[i] == 0) {
                 front.get(0).add(i);
@@ -136,10 +136,8 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
 
     @Override
     public List<S> getSubFront(int rank) {
-        Check.that(
-                rank < rankedSubPopulations.size(),
+        Check.that(rank < rankedSubPopulations.size(),
                 "Invalid rank: " + rank + ". Max rank = " + (rankedSubPopulations.size() - 1));
-
         return rankedSubPopulations.get(rank);
     }
 
@@ -151,7 +149,6 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
     @Override
     public Integer getRank(S solution) {
         Check.notNull(solution);
-
         Integer result = -1;
         if (solution.attributes().get(attributeId) != null) {
             result = (Integer) solution.attributes().get(attributeId);
