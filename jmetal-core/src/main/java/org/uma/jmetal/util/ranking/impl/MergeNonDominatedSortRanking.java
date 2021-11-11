@@ -19,8 +19,8 @@ import java.util.List;
  * @author Javier Moreno <javier.morenom@edu.uah.es>
  */
 public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Ranking<S> {
-    private final String attributeId = getClass().getName();
 
+    private final String attributeId = getClass().getName();
     private static final int INSERTIONSORT = 7;
     private int SOL_ID; //field to store the identifier of the jMetal solution
     private int SORT_INDEX; //field to store the solution index after ordering by the first objective
@@ -43,10 +43,8 @@ public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Rank
         SOL_ID = m;
         SORT_INDEX = SOL_ID + 1;
         work = new double[n][SORT_INDEX + 1];
-
-        population =
-                new double[n]
-                        [SORT_INDEX + 1]; // 2 extra fields to store: The solution id and the solution index after ordering by the first objective
+        // 2 extra fields to store: The solution id and the solution index after ordering by the first objective
+        population = new double[n][SORT_INDEX + 1];
         for (int i = 0; i < n; i++) {
             population[i] = new double[SORT_INDEX + 1];
             System.arraycopy(solutionSet.get(i).objectives(), 0, population[i], 0, m);
@@ -72,8 +70,7 @@ public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Rank
         return 0;
     }
 
-    private boolean merge_sort(
-            double src[][], double dest[][], int low, int high, int obj, int toObj) {
+    private boolean merge_sort(double src[][], double dest[][], int low, int high, int obj, int toObj) {
         int i, j, s;
         double temp[] = null;
         int destLow = low;
@@ -122,8 +119,9 @@ public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Rank
                 p++;
                 population[p] = work[q];
                 population[p][SORT_INDEX] = p;
-            } else
+            } else {
                 duplicatedSolutions.add(new int[]{(int) population[p][SOL_ID], (int) work[q][SOL_ID]});
+            }
         }
         n = p + 1;
         return n > 1;
@@ -152,17 +150,12 @@ public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Rank
         boolean dominance;
         System.arraycopy(population, 0, work, 0, n);
         for (int obj = 2; obj < m; obj++) {
-            if (merge_sort(
-                    population,
-                    work,
-                    0,
-                    n,
-                    obj,
-                    obj + 1)) { // Population has the same order as in previous objective
+            // Population has the same order as in previous objective
+            if (merge_sort(population, work, 0, n, obj, obj + 1)) {
                 if (obj == lastObjective) {
-                    for (p = 0; p < n; p++)
-                        bsManager.computeSolutionRanking(
-                                (int) population[p][SORT_INDEX], (int) population[p][SOL_ID]);
+                    for (p = 0; p < n; p++) {
+                        bsManager.computeSolutionRanking((int) population[p][SORT_INDEX], (int) population[p][SOL_ID]);
+                    }
                 }
                 continue;
             }
@@ -172,8 +165,11 @@ public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Rank
             for (p = 0; p < n; p++) {
                 initSolId = ((int) population[p][SOL_ID]);
                 solutionId = ((int) population[p][SORT_INDEX]);
-                if (obj < lastObjective) dominance |= bsManager.updateSolutionDominance(solutionId);
-                else bsManager.computeSolutionRanking(solutionId, initSolId);
+                if (obj < lastObjective) {
+                    dominance |= bsManager.updateSolutionDominance(solutionId);
+                } else {
+                    bsManager.computeSolutionRanking(solutionId, initSolId);
+                }
                 bsManager.updateIncrementalBitset(solutionId);
             }
             if (!dominance) {
@@ -195,10 +191,10 @@ public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Rank
         }
         ranking = bsManager.getRanking();
         // UPDATING DUPLICATED SOLUTIONS
-        for (int[] duplicated : duplicatedSolutions)
-            ranking[duplicated[1]] =
-                    ranking[duplicated[0]]; // ranking[dup solution]=ranking[original solution]
-
+        for (int[] duplicated : duplicatedSolutions) {
+            // ranking[dup solution]=ranking[original solution]
+            ranking[duplicated[1]] = ranking[duplicated[0]];
+        }
         n = initialPopulationSize; // equivalent to n += duplicatedSolutions.size();
         return ranking;
     }
@@ -206,8 +202,7 @@ public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Rank
     @Override
     public List<S> getSubFront(int rank) {
         if (rank >= rankedSubPopulations.size()) {
-            throw new JMetalException(
-                    "Invalid rank: " + rank + ". Max rank = " + (rankedSubPopulations.size() - 1));
+            throw new JMetalException("Invalid rank: " + rank + ". Max rank = " + (rankedSubPopulations.size() - 1));
         }
         return rankedSubPopulations.get(rank);
     }
@@ -219,8 +214,8 @@ public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Rank
 
     @Override
     public Integer getRank(S solution) {
+        /* not null */
         Check.notNull(solution);
-
         Integer result = -1;
         if (solution.attributes().get(attributeId) != null) {
             result = (Integer) solution.attributes().get(attributeId);
@@ -232,4 +227,5 @@ public class MergeNonDominatedSortRanking<S extends Solution<?>> implements Rank
     public Object getAttributedId() {
         return attributeId;
     }
+
 }

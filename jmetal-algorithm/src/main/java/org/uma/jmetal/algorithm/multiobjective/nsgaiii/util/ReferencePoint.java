@@ -50,9 +50,9 @@ public class ReferencePoint<S extends Solution<?>> {
     /**
      * 生成参考点阵列.
      *
-     * @param referencePoints    参考点
-     * @param numberOfObjectives 目标个数
-     * @param numberOfDivisions
+     * @param referencePoints    参考点.
+     * @param numberOfObjectives 目标个数.
+     * @param numberOfDivisions  目标向量方向上等分的份数.
      */
     public void generateReferencePoints(List<ReferencePoint<S>> referencePoints,
                                         int numberOfObjectives, int numberOfDivisions) {
@@ -63,12 +63,12 @@ public class ReferencePoint<S extends Solution<?>> {
     /**
      * 递归生成整个参考平面.
      *
-     * @param referencePoints
-     * @param refPoint
-     * @param numberOfObjectives
-     * @param left
-     * @param total
-     * @param element
+     * @param referencePoints    手动维护一个队列用于存储递归获取的参考点集合.
+     * @param refPoint           最初参考点.
+     * @param numberOfObjectives 优化多目标的个数.--> 进化目标的数量决定了参考点的想向量维数.
+     * @param left               开始的游标.
+     * @param total              一个目标的方向上等分的份数.
+     * @param element            当前填充的参考点对应目标的维度.
      */
     private void generateRecursive(List<ReferencePoint<S>> referencePoints, ReferencePoint<S> refPoint,
                                    int numberOfObjectives, int left, int total, int element) {
@@ -79,7 +79,8 @@ public class ReferencePoint<S extends Solution<?>> {
             /* i += 1 --> ++i */
             for (int i = 0; i <= left; ++i) {
                 refPoint.position.set(element, (double) i / total);
-                generateRecursive(referencePoints, refPoint, numberOfObjectives, left - i, total, element + 1);
+                generateRecursive(referencePoints, refPoint,
+                        numberOfObjectives, left - i, total, element + 1);
             }
         }
     }
@@ -113,6 +114,7 @@ public class ReferencePoint<S extends Solution<?>> {
         this.potentialMembers.sort(Comparator.comparing(Pair<S, Double>::getRight).reversed());
     }
 
+    /* 注意这里先执行上面的sort，且是反序排列，那么排在最后面的个体，也就是距离当前参考点正交距离最短的个体. */
     public S FindClosestMember() {
         return this.potentialMembers.remove(this.potentialMembers.size() - 1).getLeft();
     }

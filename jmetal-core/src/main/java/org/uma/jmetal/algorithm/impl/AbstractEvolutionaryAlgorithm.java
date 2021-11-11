@@ -64,6 +64,7 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 
     @Override
     public void run() {
+
         /* run中存在的为算法执行的主流程 */
         /* 子种群 */
         List<S> offspringPopulation;
@@ -83,7 +84,10 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
             /* 对解进行评价 */
             offspringPopulation = evaluatePopulation(offspringPopulation);
             population = replacement(population, offspringPopulation);
+            /* 更新迭代信息，开下来大部分都是 迭代次数++ */
             updateProgress();
         }
+
     }
+
 }

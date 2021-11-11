@@ -22,14 +22,17 @@ import java.util.stream.Collectors;
 @SuppressWarnings("serial")
 public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, List<S>> {
 
+    /* 最大迭代次数 */
     protected final int maxEvaluations;
-
+    /* 解适应度的评价器 */
     protected final SolutionListEvaluator<S> evaluator;
-
+    /* 当前的迭代次数 */
     protected int evaluations;
+    /* 支配关系比较器 */
     protected Comparator<S> dominanceComparator;
-
+    /* 杂交池的大小 */
     protected int matingPoolSize;
+    /* 子代种群规模 */
     protected int offspringPopulationSize;
 
     /**
@@ -91,7 +94,6 @@ public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
     protected List<S> evaluatePopulation(List<S> population) {
         /* 解的评价值就存放在Solution对应的目标字段之中 */
         population = evaluator.evaluate(population, getProblem());
-
         return population;
     }
 

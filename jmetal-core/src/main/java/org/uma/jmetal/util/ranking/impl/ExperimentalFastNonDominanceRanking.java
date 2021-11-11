@@ -27,27 +27,28 @@ import java.util.List;
  * @author Maxim Buzdalov
  */
 public class ExperimentalFastNonDominanceRanking<S extends Solution<?>> implements Ranking<S> {
+
     private final String attributeId = getClass().getName();
 
     // Interface support: the place to store the fronts.
     private final List<List<S>> subFronts = new ArrayList<>();
 
     // Constraint violation checking support.
-    private final ConstraintViolationComparator<S> constraintViolationComparator
-            = new ConstraintViolationComparator<>();
+    private final ConstraintViolationComparator<S> constraintViolationComparator = new ConstraintViolationComparator<>();
 
     // Delegation.
     private NonDominatedSorting sortingInstance = null;
 
     @Override
     public Ranking<S> compute(List<S> solutionList) {
+
         subFronts.clear();
         int nSolutions = solutionList.size();
         if (nSolutions == 0) {
             return this;
         }
 
-        // We have at least one individual
+        // We have at least one individual -->> 要求solutionList的长度至少为1.
         S first = solutionList.get(0);
         int nObjectives = first.objectives().length;
         boolean hasConstraintViolation = getConstraint(first) < 0;
@@ -56,6 +57,7 @@ public class ExperimentalFastNonDominanceRanking<S extends Solution<?>> implemen
         // and to get whether we have meaningful constraints
         for (int i = 1; i < nSolutions; ++i) {
             S current = solutionList.get(i);
+            /* 目标个数一致性校验 */
             if (nObjectives != current.objectives().length) {
                 throw new IllegalArgumentException("Solutions have different numbers of objectives");
             }
@@ -109,15 +111,10 @@ public class ExperimentalFastNonDominanceRanking<S extends Solution<?>> implemen
     }
 
     private void ensureEnoughSpace(int nPoints, int dimension) {
-        if (sortingInstance == null
-                || sortingInstance.getMaximumPoints() < nPoints
-                || sortingInstance.getMaximumDimension() < dimension) {
-
+        if (sortingInstance == null || sortingInstance.getMaximumPoints() < nPoints || sortingInstance.getMaximumDimension() < dimension) {
             // This might be more intellectual.
             // For instance, for nPoints <= 10000 and dimension >= 7 one can instead use SetIntersectionSort aka MNDS.
-            sortingInstance = JensenFortinBuzdalov
-                    .getRedBlackTreeSweepHybridENSImplementation(1)
-                    .getInstance(nPoints, dimension);
+            sortingInstance = JensenFortinBuzdalov.getRedBlackTreeSweepHybridENSImplementation(1).getInstance(nPoints, dimension);
         }
     }
 
@@ -150,4 +147,5 @@ public class ExperimentalFastNonDominanceRanking<S extends Solution<?>> implemen
     public Object getAttributedId() {
         return attributeId;
     }
+
 }

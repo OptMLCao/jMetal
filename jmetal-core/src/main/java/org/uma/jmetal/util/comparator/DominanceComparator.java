@@ -43,12 +43,9 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
     public int compare(S solution1, S solution2) {
         Check.notNull(solution1);
         Check.notNull(solution2);
-        Check.that(
-                solution1.objectives().length == solution2.objectives().length,
-                "Cannot compare because solution1 has "
-                        + solution1.objectives().length
-                        + " objectives and solution2 has "
-                        + solution2.objectives().length);
+        Check.that(solution1.objectives().length == solution2.objectives().length,
+                "Cannot compare because solution1 has " + solution1.objectives().length
+                        + " objectives and solution2 has " + solution2.objectives().length);
         /* 先比较约束的违反情况 */
         int result = constraintViolationComparator.compare(solution1, solution2);
         if (result == 0) {

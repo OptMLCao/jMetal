@@ -16,6 +16,7 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractGeneticAlgorithm<S, Result> extends AbstractEvolutionaryAlgorithm<S, Result> {
+
     protected int maxPopulationSize;
     /* 解的选择 */
     protected SelectionOperator<List<S>, S> selectionOperator;
@@ -81,7 +82,6 @@ public abstract class AbstractGeneticAlgorithm<S, Result> extends AbstractEvolut
             S solution = selectionOperator.execute(population);
             matingPopulation.add(solution);
         }
-
         return matingPopulation;
     }
 
@@ -98,9 +98,7 @@ public abstract class AbstractGeneticAlgorithm<S, Result> extends AbstractEvolut
     @Override
     protected List<S> reproduction(List<S> population) {
         int numberOfParents = crossoverOperator.getNumberOfRequiredParents();
-
         checkNumberOfParents(population, numberOfParents);
-
         List<S> offspringPopulation = new ArrayList<>(getMaxPopulationSize());
         for (int i = 0; i < getMaxPopulationSize(); i += numberOfParents) {
             List<S> parents = new ArrayList<>(numberOfParents);

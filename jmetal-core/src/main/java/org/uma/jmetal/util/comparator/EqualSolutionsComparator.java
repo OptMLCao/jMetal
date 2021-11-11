@@ -27,19 +27,17 @@ public class EqualSolutionsComparator<S extends Solution<?>> implements Comparat
      */
     @Override
     public int compare(S solution1, S solution2) {
+
         if (solution1 == null) {
             return 1;
         } else if (solution2 == null) {
             return -1;
         }
-
         int dominate1; // dominate1 indicates if some objective of solution1
         // dominates the same objective in solution2. dominate2
         int dominate2; // is the complementary of dominate1.
-
         dominate1 = 0;
         dominate2 = 0;
-
         int flag;
         double value1, value2;
         for (int i = 0; i < solution1.objectives().length; i++) {
@@ -79,6 +77,8 @@ public class EqualSolutionsComparator<S extends Solution<?>> implements Comparat
             return 1;
         }
         return 2;
+
     }
+
 }
 

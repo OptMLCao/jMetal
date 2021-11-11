@@ -29,11 +29,9 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
      * EPS defines the minimum difference allowed between real values
      */
     private static final double EPS = 1.0e-14;
-
     private double distributionIndex;
     private double crossoverProbability;
     private RepairDoubleSolution solutionRepair;
-
     private RandomGenerator<Double> randomGenerator;
 
     /**
@@ -46,44 +44,27 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
     /**
      * Constructor
      */
-    public SBXCrossover(
-            double crossoverProbability,
-            double distributionIndex,
-            RandomGenerator<Double> randomGenerator) {
-        this(
-                crossoverProbability,
-                distributionIndex,
-                new RepairDoubleSolutionWithBoundValue(),
-                randomGenerator);
+    public SBXCrossover(double crossoverProbability, double distributionIndex, RandomGenerator<Double> randomGenerator) {
+        this(crossoverProbability, distributionIndex, new RepairDoubleSolutionWithBoundValue(), randomGenerator);
     }
 
     /**
      * Constructor
      */
-    public SBXCrossover(
-            double crossoverProbability, double distributionIndex, RepairDoubleSolution solutionRepair) {
-        this(
-                crossoverProbability,
-                distributionIndex,
-                solutionRepair,
-                () -> JMetalRandom.getInstance().nextDouble());
+    public SBXCrossover(double crossoverProbability, double distributionIndex, RepairDoubleSolution solutionRepair) {
+        this(crossoverProbability, distributionIndex, solutionRepair, () -> JMetalRandom.getInstance().nextDouble());
     }
 
     /**
      * Constructor
      */
-    public SBXCrossover(
-            double crossoverProbability,
-            double distributionIndex,
-            RepairDoubleSolution solutionRepair,
-            RandomGenerator<Double> randomGenerator) {
+    public SBXCrossover(double crossoverProbability, double distributionIndex,
+                        RepairDoubleSolution solutionRepair, RandomGenerator<Double> randomGenerator) {
         Check.probabilityIsValid(crossoverProbability);
         Check.that(distributionIndex >= 0, "Distribution index is negative: " + distributionIndex);
-
         this.crossoverProbability = crossoverProbability;
         this.distributionIndex = distributionIndex;
         this.solutionRepair = solutionRepair;
-
         this.randomGenerator = randomGenerator;
     }
 
@@ -113,17 +94,13 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
     public List<DoubleSolution> execute(List<DoubleSolution> solutions) {
         Check.notNull(solutions);
         Check.that(solutions.size() == 2, "There must be two parents instead of " + solutions.size());
-
         return doCrossover(crossoverProbability, solutions.get(0), solutions.get(1));
     }
 
-    /**
-     * doCrossover method
-     */
-    public List<DoubleSolution> doCrossover(
-            double probability, DoubleSolution parent1, DoubleSolution parent2) {
-        List<DoubleSolution> offspring = new ArrayList<DoubleSolution>(2);
+    /* doCrossover method */
+    private List<DoubleSolution> doCrossover(double probability, DoubleSolution parent1, DoubleSolution parent2) {
 
+        List<DoubleSolution> offspring = new ArrayList<DoubleSolution>(2);
         offspring.add((DoubleSolution) parent1.copy());
         offspring.add((DoubleSolution) parent2.copy());
 

@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * 使用pareto解集前沿的一种使用方式，在外部存储非劣解的集合.
  * This class implements an archive containing non-dominated solutions
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
@@ -18,33 +19,33 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class NonDominatedSolutionListArchive<S extends Solution<?>> implements Archive<S> {
+
+    /* 非劣解的集合*/
     private List<S> solutionList;
+    /* 支配关系比较 */
     private Comparator<S> dominanceComparator;
+    /* 是否是相同的解 */
     private Comparator<S> equalSolutions = new EqualSolutionsComparator<S>();
 
-    /**
-     * Constructor
-     */
+    /* Constructor */
     public NonDominatedSolutionListArchive() {
         this(new DominanceComparator<S>());
     }
 
-    /**
-     * Constructor
-     */
+    /* Constructor */
     public NonDominatedSolutionListArchive(DominanceComparator<S> comparator) {
         dominanceComparator = comparator;
-
         solutionList = new ArrayList<>();
     }
 
     /**
+     * 插入非劣解.
      * Inserts a solution in the list
      *
      * @param solution The solution to be inserted.
      * @return true if the operation success, and false if the solution is dominated or if an
-     * identical individual exists. The decision variables can be null if the solution is read from a
-     * file; in that case, the domination tests are omitted
+     * identical individual exists. The decision variables can be null if the solution is read from a file;
+     * in that case, the domination tests are omitted
      */
     @Override
     public boolean add(S solution) {
@@ -53,9 +54,9 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
             solutionList.add(solution);
             solutionInserted = true;
         } else {
+            /* 遍历整个solution list */
             Iterator<S> iterator = solutionList.iterator();
             boolean isDominated = false;
-
             boolean isContained = false;
             while (((!isDominated) && (!isContained)) && (iterator.hasNext())) {
                 S listIndividual = iterator.next();
@@ -70,15 +71,13 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
                         isContained = true;
                 }
             }
-
+            /* 插入的解为非劣解，注意判断条件. */
             if (!isDominated && !isContained) {
                 solutionList.add(solution);
                 solutionInserted = true;
             }
-
             return solutionInserted;
         }
-
         return solutionInserted;
     }
 
@@ -90,7 +89,6 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
         for (S solution : list) {
             this.add(solution);
         }
-
         return this;
     }
 
@@ -109,4 +107,5 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
     public S get(int index) {
         return solutionList.get(index);
     }
+
 }

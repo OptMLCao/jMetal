@@ -7,12 +7,20 @@ import java.util.List;
 
 public class ConstraintHandling {
 
+    /**
+     * 判断是否为合法解.
+     *
+     * @param solution
+     * @param <S>
+     * @return
+     */
     public static <S extends Solution<?>> boolean isFeasible(S solution) {
         return numberOfViolatedConstraints(solution) == 0;
     }
 
     /**
      * Returns the number of constraints a solution violates.
+     * 返回的是违法约束的次数.
      *
      * @param solution
      * @param <S>
@@ -25,12 +33,12 @@ public class ConstraintHandling {
                 result++;
             }
         }
-
         return result;
     }
 
     /**
      * Returns the overall constraint violation degree of a solution.
+     * 返回的是违反约束的程度.
      *
      * @param solution
      * @param <S>
@@ -43,12 +51,12 @@ public class ConstraintHandling {
                 overallConstraintViolation += solution.constraints()[i];
             }
         }
-
         return overallConstraintViolation;
     }
 
     /**
      * Returns the ratio of feasible solutions in a solution list
+     * 返回合法解在解集中的占比.
      *
      * @param solutions
      * @return
@@ -61,7 +69,7 @@ public class ConstraintHandling {
                 result += 1;
             }
         }
-
         return result / solutions.size();
     }
+
 }
