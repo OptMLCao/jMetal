@@ -58,6 +58,7 @@ public class ReferencePoint<S extends Solution<?>> {
                                         int numberOfObjectives, int numberOfDivisions) {
         ReferencePoint<S> refPoint = new ReferencePoint<>(numberOfObjectives);
         generateRecursive(referencePoints, refPoint, numberOfObjectives, numberOfDivisions, numberOfDivisions, 0);
+        // generateRecursive(referencePoints, refPoint, numberOfObjectives, numberOfDivisions, numberOfDivisions, 0, 1);
     }
 
     /**
@@ -82,6 +83,17 @@ public class ReferencePoint<S extends Solution<?>> {
                 generateRecursive(referencePoints, refPoint,
                         numberOfObjectives, left - i, total, element + 1);
             }
+        }
+    }
+
+    private void generateRecursive(List<ReferencePoint<S>> referencePoints, ReferencePoint<S> refPoint,
+                                   int numberOfObjectives, int left, int total, int element, int depth) {
+        if (depth < 0) {
+            return;
+        } else if (depth == 0) {
+            generateRecursive(referencePoints, refPoint, numberOfObjectives, left, total, element);
+        } else if (depth >= 1) {
+            generateRecursive(referencePoints, refPoint, numberOfObjectives, left - 1, total - 1, element, depth - 1);
         }
     }
 

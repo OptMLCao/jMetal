@@ -1,9 +1,12 @@
 package org.uma.jmetal.example.multiobjective;
 
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIII;
 import org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIIIBuilder;
+import org.uma.jmetal.algorithm.multiobjective.nsgaiii.util.ReferencePoint;
 import org.uma.jmetal.example.AlgorithmRunner;
 import org.uma.jmetal.lab.visualization.plot.PlotFront;
+import org.uma.jmetal.lab.visualization.plot.impl.Plot2D;
 import org.uma.jmetal.lab.visualization.plot.impl.Plot3D;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
@@ -43,7 +46,7 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
         MutationOperator<DoubleSolution> mutation;
         SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
-        String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1";
+        String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4_2D";
 
         problem = ProblemUtils.loadProblem(problemName);
 
@@ -62,7 +65,7 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
                         .setCrossoverOperator(crossover)
                         .setMutationOperator(mutation)
                         .setSelectionOperator(selection)
-                        .setMaxIterations(300)
+                        .setMaxIterations(10000)
                         .setNumberOfDivisions(12)
                         .build();
 
@@ -80,7 +83,22 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
         JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
         JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
 
-        PlotFront plot = new Plot3D(new ArrayFront(population).getMatrix(), problem.getName() + " (NSGA-III)");
+        if (algorithm instanceof NSGAIII) {
+            List<ReferencePoint<DoubleSolution>> referencePointsCopy = ((NSGAIII<DoubleSolution>) algorithm).getReferencePointsCopy();
+            double[][] matrix = new double[referencePointsCopy.size()][];
+            for (int i = 0; i < referencePointsCopy.size(); i++) {
+                ReferencePoint<DoubleSolution> referencePoint = referencePointsCopy.get(i);
+                double[] value = new double[referencePoint.position.size()];
+                int j = 0;
+                for (Double aDouble : referencePoint.position) {
+                    value[j++] = aDouble;
+                }
+                matrix[i] = value;
+            }
+            PlotFront plot1 = new Plot2D(matrix, "referencePointsCopy" + " (NSGA-III)");
+            plot1.plot();
+        }
+        PlotFront plot = new Plot2D(new ArrayFront(population).getMatrix(), problem.getName() + " (NSGA-III)");
         plot.plot();
         //PlotFront plot = new PlotSmile(new ArrayFront(population).getMatrix(), problem.getName() + " (NSGA-III)") ;
         //plot.plot();

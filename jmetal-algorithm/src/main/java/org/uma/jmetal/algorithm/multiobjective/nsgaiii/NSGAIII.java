@@ -123,7 +123,7 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
      *
      * @return
      */
-    private List<ReferencePoint<S>> getReferencePointsCopy() {
+    public List<ReferencePoint<S>> getReferencePointsCopy() {
         List<ReferencePoint<S>> copy = new ArrayList<>();
         for (ReferencePoint<S> r : this.referencePoints) {
             copy.add(new ReferencePoint<>(r));
@@ -133,7 +133,7 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
 
     @Override
     protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
-
+        /* nsga-II与nsga-III 主要区别就在这里，产生子种群的过程 */
         List<S> jointPopulation = new ArrayList<>();
         jointPopulation.addAll(population);
         jointPopulation.addAll(offspringPopulation);
@@ -161,6 +161,7 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
         }
         /* pop种群中个体的数量大于的参数设置的最大种群规模数量的时候启用如下的选择机制 */
         // A copy of the reference list should be used as parameter of the environmental selection
+        /* keep note */
         EnvironmentalSelection<S> selection =
                 new EnvironmentalSelection<>(fronts, getMaxPopulationSize() - pop.size(),
                         getReferencePointsCopy(), getProblem().getNumberOfObjectives());

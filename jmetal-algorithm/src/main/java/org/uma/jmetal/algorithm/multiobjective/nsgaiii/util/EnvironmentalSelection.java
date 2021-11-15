@@ -239,10 +239,13 @@ public class EnvironmentalSelection<S extends Solution<?>> implements SelectionO
             denominator += Math.pow(direction.get(i), 2.0);
         }
         double k = numerator / denominator;
-
+        /** 具体参考原文<An Evolutionary Many-Objective Optimization Algorithm Using Reference-Point-Based
+         * Nondominated Sorting Approach, Part I_Solving Problems With Box Constraints> 章节D. Association Operation
+         * 中计算公式的描述.
+         **/
         double d = 0;
         for (int i = 0; i < direction.size(); i += 1) {
-            d += Math.pow(k * direction.get(i) - point.get(i), 2.0);
+            d += Math.pow(point.get(i) - k * direction.get(i), 2.0);
         }
         /* 注意：这里需要开平方 */
         return Math.sqrt(d);
@@ -269,6 +272,7 @@ public class EnvironmentalSelection<S extends Solution<?>> implements SelectionO
                 if (t + 1 != fronts.size()) {
                     this.referencePoints.get(min_rp).AddMember();
                 } else {
+                    /* 注意：不要看晕掉了，这里为什么最后一个支持排序层，别搞乱掉了 */
                     /* 参考点到最后一个支配分层的最近距离，实际计算的过程中，尤其在算法迭代的早期front中完全可能存在多个支配分层 */
                     this.referencePoints.get(min_rp).AddPotentialMember(s, min_dist);
                 }
@@ -332,7 +336,8 @@ public class EnvironmentalSelection<S extends Solution<?>> implements SelectionO
         // ---------- Step 15 / Algorithm 3, Step 16 ----------
         /* 联系个体和参考点 */
         associate();
-        /* 根据参考点关联的前沿中解的数量将参考点进行分组¬ */
+        /* nicking 过程 */
+        /* 根据参考点关联的前沿中解的数量将参考点进行分组 */
         for (var referencePoint : this.referencePoints) {
             /* ReferencePoint#sort() 内部的实现是逆序的，从大到小*/
             referencePoint.sort();
